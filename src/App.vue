@@ -1,36 +1,6 @@
 <template>
 <div id="app">
 
-<b-form class="marginTop center" inline>
-    <b-input-group style="width: 50%">
-        <b-form-input size="sm" type="text" placeholder="Search"/>
-            <b-input-group-append>
-                <b-btn size="sm" variant="info">검색</b-btn>
-            </b-input-group-append>
-    </b-input-group>
-
-    <b-btn class="btnGroup" size="sm">모임 만들기</b-btn>
-    <b-btn class="btnGroup" size="sm">내가 개설한 모임</b-btn>
-</b-form>
-
-<b-container class="marginTop container" style="width: 80%">
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-</b-container>
-
-<b-pagination class="marginTop" align="center" size="sm" :total-rows="50" :per-page="6">
-
-</b-pagination>
 
 </div>
 </template>
