@@ -13,7 +13,7 @@
     <b-btn class="btnGroup" size="sm">내가 개설한 모임</b-btn>
 </b-form>
 
-<b-container class="marginTop container" style="width: 70%">
+<b-container class="marginTop container" style="width: 80%">
     <b-row>
         <b-col> <ListView></ListView> </b-col>
         <b-col> <ListView></ListView> </b-col>
@@ -66,11 +66,6 @@ export default {
     width: 70%;
     margin-left: 25%;
     margin-right: 25%;
-}
-
-.container {
-    margin-left: 15%;
-    margin-right: 15%;
 }
 
 </style>

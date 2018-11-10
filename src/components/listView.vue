@@ -1,7 +1,7 @@
 <template>
     <div class="listView card">
         <table>
-            <td>
+            <td class="tdImg">
                 <b-img class="cardImg" left rounded="left" src="https://picsum.photos/600/300/?image=25"/>
             </td>
             <td class="cardBody">
@@ -32,18 +32,19 @@ table {
     height: 150px;
 }
 
-td {
-    vertical-align: middle;
-    width: 200px;
+.tdImg {
+    width: 150px;
 }
 
 .cardBody {
+    vertical-align: middle;
+    width: 250px;
     padding: 10px;
 }
 
 .cardImg {
     height: 147px;
-    width: 200px;
+    width: 150px;
 }
 
 p {
