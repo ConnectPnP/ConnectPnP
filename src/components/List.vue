@@ -5,12 +5,12 @@
     <b-input-group style="width: 50%">
         <b-form-input size="sm" type="text" placeholder="Search"/>
             <b-input-group-append>
-                <b-btn size="sm" variant="info">검색</b-btn>
+                <b-btn size="sm" variant="primary">검색</b-btn>
             </b-input-group-append>
     </b-input-group>
 
-    <b-btn class="btnGroup" size="sm">모임 만들기</b-btn>
-    <b-btn class="btnGroup" size="sm">내가 개설한 모임</b-btn>
+    <b-btn class="btnGroup" size="sm" variant="primary">모임 만들기</b-btn>
+    <b-btn class="btnGroup" size="sm" variant="primary">내가 개설한 모임</b-btn>
 </b-form>
 
 <b-container class="marginTop container" style="width: 80%">
