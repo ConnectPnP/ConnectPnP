@@ -1,47 +1,18 @@
 <template>
 <div id="app">
-
-<b-form class="marginTop center" inline>
-    <b-input-group style="width: 50%">
-        <b-form-input size="sm" type="text" placeholder="Search"/>
-            <b-input-group-append>
-                <b-btn size="sm" variant="info">검색</b-btn>
-            </b-input-group-append>
-    </b-input-group>
-
-    <b-btn class="btnGroup" size="sm">모임 만들기</b-btn>
-    <b-btn class="btnGroup" size="sm">내가 개설한 모임</b-btn>
-</b-form>
-
-<b-container class="marginTop container" style="width: 80%">
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-    <b-row>
-        <b-col> <ListView></ListView> </b-col>
-        <b-col> <ListView></ListView> </b-col>
-    </b-row>
-</b-container>
-
-<b-pagination class="marginTop" align="center" size="sm" :total-rows="50" :per-page="6">
-
-</b-pagination>
+    
+    <List></List>
 
 </div>
 </template>
 
 <script>
-import ListView from './components/listView.vue'
+import List from './components/List.vue'
 
 export default {
   name: 'app',
   components: {
-    ListView
+    List
   }
 }
 </script>
@@ -52,20 +23,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-.btnGroup {
-    margin-left: 15px;
-}
-
-.marginTop {
-    margin-top: 30px;
-}
-
-.center {
-    width: 70%;
-    margin-left: 25%;
-    margin-right: 25%;
 }
 
 </style>
