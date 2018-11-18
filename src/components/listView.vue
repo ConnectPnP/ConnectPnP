@@ -2,22 +2,41 @@
     <div class="listView card">
         <table>
             <td class="tdImg">
-                <b-img class="cardImg" left rounded="left" src="https://picsum.photos/600/300/?image=25"/>
+                <b-img class="cardImg" left rounded="left" :src="groupImg" />
             </td>
             <td class="cardBody">
-                    <h4>Title</h4>
-                    <h6>Location</h6>
-                    <p>content</p>
+                    <h4>{{ groupTitle }}</h4>
+                    <h6>{{ groupLocation }}</h6>
+                    <p>{{ groupContent }}</p>
             </td>
         </table>
+
     </div>
 </template>
 
 
 <script>
 export default {
-
-}
+    name: 'listView',
+    props: {
+        groupTitle: {
+            type: String,
+            default() { return "Title"; }
+        },
+        groupLocation: {
+            type: String,
+            default() { return "Location"; }
+        },
+        groupContent: {
+            type: String,
+            default() { return "content"; }
+        },
+        groupImg: {
+            type: String,
+            default() { return "https://www.freeiconspng.com/uploads/no-image-icon-6.png"; }
+        },
+    }
+};
 </script>
 
 <style>
