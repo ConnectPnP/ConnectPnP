@@ -3,17 +3,17 @@
         <b-container>
             <b-row>
                 <b-col>
-                    <h3>Title</h3>
-                    <h4>Date</h4>
+                    <h3>{{ groupTitle }}</h3>
+                    <h4>{{ groupDate }}</h4>
                     <br>
                 </b-col>
             </b-row>
             <b-row>
                 <b-col>
-                    <b-img class="profileImg" rounded="circle" src="https://picsum.photos/1024/480/?image=55" />
+                    <b-img class="profileImg" rounded="circle" :src="memberImg" />
                 </b-col>
                 <b-col>
-                    <h4>NickName</h4>
+                    <h4>{{ memberNickName }}</h4>
                     <star-rating id="starRating" :show-rating="false" :star-size="30" :increment="0.5"></star-rating>
                     <b-form-select v-model="selected" :options="options" size="sm" />
                 </b-col>
@@ -34,6 +34,24 @@ import StarRating from 'vue-star-rating'
 export default {
     components:{
         StarRating
+    },
+    props: {
+        groupTitle: {
+            type: String,
+            default() { return "Title"; }
+        },
+        groupDate: {
+            type: String,
+            default() { return "Date"; }
+        },
+        memberNickName: {
+            type: String,
+            default() { return "NickName"; }
+        },
+        memberImg: {
+            type: String,
+            default() { return "https://www.freeiconspng.com/uploads/no-image-icon-6.png"; }
+        }
     },
     data () {
         return {
