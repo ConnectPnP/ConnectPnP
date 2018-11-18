@@ -4,8 +4,6 @@
         로고 이미지
         <img alt="Vue logo" src="../assets/logo.png">-->
 
-
-
     <div class="mainTitleArea">
         <div class="mainTitle">
             Connect PnP
@@ -23,37 +21,16 @@
         </form>
     </div>
 
-
-        <!--
-        카테고리 정렬을 위한 v-for 함수
-
-            <div  v-for="item in catagoryList" :key="item.id">
-            <b-col sm class="catagorySingle">
-                <img alt="Vue logo" src="../assets/logo.png" height="120" width="120">
-                <a href="url"><span></span></a>
-                <p>{{item.catagory_name}}</p>
-            </b-col>
-        </div>
-
-
-        <div  v-for="item in catagoryList" :key="item.id">
-                    <ContactVue v-bind:catagoryName="item.catagoryName"/>
-                    <ContactVue v-bind:catagoryImg="item.catagoryImg"/>
-                    <ContactVue v-bind:catagoryURL="item.catagoryURL"/>
-                </div>
-
-        -->
-
+        <!--  카테고리 리스트가 보여지는 부분   -->
         <b-container class="catagoryGroup">
             <b-row>
                 <div  v-for="item in catagoryList" :key="item.id">
-                    <div v-if="item.id<=btnclicked*5">
+                    <div v-if="item.id<=btnclicked">
                         <b-col sm class="homePageCatagory catagorySingle">
                         <input type="image"
                                :src="item.catagoryImg"
                                height="120px"
-                               width="120px"
-                        />
+                               width="120px"/>
                         <b-link :href="item.catagoryURL"><span></span></b-link>
                         <p>{{item.catagoryName}}</p>
                     </b-col>
@@ -96,70 +73,21 @@
 
             <div class="rankingGroup">
                 <b-card-group>
-                <b-card title="Card Title"
-                        img-src="https://picsum.photos/600/300/?image=25"
+                <div  v-for="item in rankingList" :key="item.id">
+                 <b-card :title="item.partyName"
+                        :img-src="item.partyImg"
                         img-alt="Image"
                         img-top
                         tag="article"
-                        style="max-width: 20rem;"
+                        style="max-width: 260px;"
                         class="mb-2 rankingSingle">
                     <p class="card-text">
-                        Some quick example text to build on the card title and make up the bulk of the card's content.
+                        {{item.partyDiscription}}
                     </p>
-                    <b-button href="#" variant="primary">Go somewhere</b-button>
+                    <b-button href="#" variant="primary">참여하기</b-button>
                 </b-card>
-
-                <b-card title="Card Title"
-                        img-src="https://picsum.photos/600/300/?image=25"
-                        img-alt="Image"
-                        img-top
-                        tag="article"
-                        style="max-width: 20rem;"
-                        class="mb-2 rankingSingle">
-                    <p class="card-text">
-                        Some quick example text to build on the card title and make up the bulk of the card's content.
-                    </p>
-                    <b-button href="#" variant="primary">Go somewhere</b-button>
-                </b-card>
-                    <b-card title="Card Title"
-                            img-src="https://picsum.photos/600/300/?image=25"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2 rankingSingle">
-                        <p class="card-text">
-                            Some quick example text to build on the card title and make up the bulk of the card's content.
-                        </p>
-                        <b-button href="#" variant="primary">Go somewhere</b-button>
-                    </b-card>
-                    <b-card title="Card Title"
-                            img-src="https://picsum.photos/600/300/?image=25"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2 rankingSingle">
-                        <p class="card-text">
-                            Some quick example text to build on the card title and make up the bulk of the card's content.
-                        </p>
-                        <b-button href="#" variant="primary">Go somewhere</b-button>
-                    </b-card>
-                    <b-card title="Card Title"
-                            img-src="https://picsum.photos/600/300/?image=25"
-                            img-alt="Image"
-                            img-top
-                            tag="article"
-                            style="max-width: 20rem;"
-                            class="mb-2 rankingSingle">
-                        <p class="card-text">
-                            Some quick example text to build on the card title and make up the bulk of the card's content.
-                        </p>
-                        <b-button href="#" variant="primary">Go somewhere</b-button>
-                    </b-card>
+                </div>
                 </b-card-group>
-
-
             </div>
 
 
@@ -179,7 +107,7 @@
         } ,
         data() {
             return {
-                btnclicked:1,
+                btnclicked:5,
                 catagoryList: [
                     {   id: 1,
                         catagoryName: "catagory1",
@@ -218,15 +146,38 @@
                     }
                 ],
                 rankingList: [
-                    {   id: Number,
-                        party_name: String
+                    {   id: 1,
+                        partyName: "모임1",
+                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyDiscription:"이 모임은 영국에서 최초로 시작되어.."
+                    },
+                    {   id: 2,
+                        partyName: "모임2",
+                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyDiscription:"모임 일시: 2018.11.19- 11.22 모임 장소: 아주대학교"
+                    },
+                    {   id: 3,
+                        partyName: "모임3",
+                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyDiscription:"현재 참여 인원 : 86명"
+                    },
+                    {   id: 4,
+                        partyName: "모임4",
+                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyDiscription:"카테고리: 게임 "
+                    },
+                    {   id: 5,
+                        partyName: "모임5",
+                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyDiscription:"멋진 모임입니다!"
                     },
                 ]
             }
         },
         methods:{
+           //"더보기" 버튼이 클릭되면 보여지는 카테고리 수가 5개씩 늘어나도록
             moreBtn(){
-                this.btnclicked+=1;
+                this.btnclicked+=5;
             }
         }
     }
