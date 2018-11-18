@@ -6,6 +6,7 @@
     export default{
         name: 'Chart',
         props: {
+            name: String,
             ratingResult: []
         },
         mounted(){
@@ -25,7 +26,7 @@
                     }
                 },
                 series: [{
-                    name: '홍길동',
+                    name: this.name,
                     data: this.ratingResult
                 }]
             });

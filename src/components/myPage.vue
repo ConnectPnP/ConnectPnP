@@ -71,7 +71,7 @@
               <label style="font-weight:bold;">평가 지수</label>
             </div>
             <div class="col-sm-10 col-md-10 col-10">
-              <Chart :ratingResult="memberInfo.ratingStatus"></Chart>
+              <Chart :ratingResult="memberInfo.ratingStatus" :name="memberInfo.usrName"></Chart>
             </div>
           </b-row>
 
