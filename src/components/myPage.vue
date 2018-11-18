@@ -7,7 +7,7 @@
           <b-row>
 
             <div class="image-container">
-              <b-img src="http://placehold.it/150x150" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail"></b-img>
+              <b-img :src="memberInfo.img" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail"></b-img>
               <div class="middle">
                 <b-form-file v-model="file" accept=".jpg, .png" size="sm" class="mt-3" plain>프로필 바꾸기</b-form-file>
               </div>
@@ -79,7 +79,7 @@
 
         <b-tab title="Calendar" >
 
-            <full-calendar :events="memberInfo.events"></full-calendar>
+            <full-calendar :events="memberInfo.events" defaultView="month"></full-calendar>
 
 
 
@@ -109,7 +109,7 @@ export default {
       memberInfo: {
         id: 1,
         usrName: "Kim",
-        img: "http://placehold.it/150x150",
+        img: "https://img.sbs.co.kr/newimg/news/20180416/201172090_1280.jpg",
         nickName: "haha",
         interestedCategory:[true, true, false, false, true],
         starRating: 1.9,
@@ -118,15 +118,19 @@ export default {
           {
             title  : 'event1',
             start  : '2018-11-13',
+            editable  : false,
           },
           {
             title  : 'event2',
             start  : '2018-11-05',
             end    : '2018-11-07',
+            editable  : false,
+
           },
           {
             title  : 'event3',
-            start  : '2010-01-09T12:30:00',
+            start  : '2018-11-09T12:30:00',
+            editable  : false,
             allDay : false,
           },
         ]
