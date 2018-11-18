@@ -10,7 +10,7 @@
     </div>
 
     <div class="searchArea">
-        <form action="">
+        <form action="#">
             <b-input-group >
                 <b-form-input></b-form-input>
                 <b-input-group-append>
@@ -19,8 +19,6 @@
             </b-input-group>
         </form>
     </div>
-
-
 
 
         <!--
@@ -62,7 +60,13 @@
                     <a href="url"><span></span></a>
                     <p>catagory</p>
                 </b-col>
-
+            </b-row>
+            <b-row>
+                <b-col sm class="catagorySingle">
+                    <img alt="Vue logo" src="../assets/logo.png" height="120" width="120">
+                    <a href="url"><span></span></a>
+                    <p>catagory</p>
+                </b-col>
             </b-row>
         </b-container>
 
@@ -235,7 +239,7 @@
     .catagorySingle{
 
         height: 160px;
-        weight: 160px;
+        width: 160px;
         background-color: #007bff;
         margin: 20px 20px;
         text-align: center;
