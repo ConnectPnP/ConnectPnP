@@ -4,6 +4,10 @@
 
 <script>
     export default{
+        name: 'Chart',
+        props: {
+            ratingResult: []
+        },
         mounted(){
             Highcharts.chart('container', {
                 chart: {
@@ -22,7 +26,7 @@
                 },
                 series: [{
                     name: '홍길동',
-                    data: [1,7,4]
+                    data: this.ratingResult
                 }]
             });
         }

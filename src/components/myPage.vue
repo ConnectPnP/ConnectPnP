@@ -16,7 +16,7 @@
             <div class="userData ml-3">
               <b-row>
                 <div class="col-sm-3 col-md-4 col-5">
-                  <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold"><a href="javascript:void(0);">User Name</a></h2>
+                  <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold">{{ memberInfo.usrName }}</h2>
                 </div>
               </b-row>
 
@@ -25,7 +25,7 @@
                   <label style="font-weight:bold;">닉네임</label>
                 </div>
                 <div class="col-md-8 col-6">
-                  <input type="text" name="nickname" value="usrNickname">
+                  <input type="text" name="nickname" :value="memberInfo.nickName">
                   <a href="#" onclick="{props.handleSubmitProfile}" class="btn btn-primary ml-2">닉네임 변경</a>
                 </div>
               </b-row>
@@ -59,7 +59,7 @@
               <label style="font-weight:bold;">나의 평점</label>
             </div>
             <div class="col-sm-2 col-md-2 col-2">
-              <star-rating id="starRating" :rating="3.8" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
+              <star-rating id="starRating" :rating="memberInfo.starRating" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
             </div>
 
           </b-row>
@@ -71,7 +71,7 @@
               <label style="font-weight:bold;">평가 지수</label>
             </div>
             <div class="col-sm-10 col-md-10 col-10">
-              <Chart></Chart>
+              <Chart :ratingResult="memberInfo.ratingStatus"></Chart>
             </div>
           </b-row>
 
@@ -79,7 +79,7 @@
 
         <b-tab title="Calendar" >
 
-            <full-calendar :events="events"></full-calendar>
+            <full-calendar :events="memberInfo.events"></full-calendar>
 
 
 
@@ -106,22 +106,31 @@ export default {
   },
   data() {
     return {
-      events: [
-        {
+      memberInfo: {
+        id: 1,
+        usrName: "Kim",
+        img: "http://placehold.it/150x150",
+        nickName: "haha",
+        interestedCategory:[true, true, false, false, true],
+        starRating: 1.9,
+        ratingStatus: [1, 8, 4],
+        events: [
+          {
             title  : 'event1',
             start  : '2018-11-13',
-        },
-        {
+          },
+          {
             title  : 'event2',
             start  : '2018-11-05',
             end    : '2018-11-07',
-        },
-        {
+          },
+          {
             title  : 'event3',
             start  : '2010-01-09T12:30:00',
             allDay : false,
-        },
-      ]
+          },
+        ]
+      }
     }
   }
 }
