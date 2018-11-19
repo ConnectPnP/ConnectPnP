@@ -1,6 +1,8 @@
 <template>
-    <div>
-
+    <div id="signUp">
+       <!-- 로고 이미지
+       <img alt="Vue logo" src="./assets/logo.png">
+       -->
         <div class="mainTitleArea">
             <div class="mainTitle1">Sign Up</div>
             <div class="mainTitle2">Connect PnP</div>
@@ -32,40 +34,16 @@
                 <div class="checkboxBackground">
                 <div class="checkboxGroup">
 
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck1">
-                        <label class="custom-control-label" for="catagoryCheck1">catagory</label>
+                    <div  v-for="item in catagoryList" :key="item.id">
+                        <div class="custom-control custom-checkbox custom-control-inline singleCatagoryCheck">
+                            <input type="checkbox" class="custom-control-input" :id="item.id">
+                            <label class="custom-control-label" :for="item.id">{{item.catagoryName}}</label>
+                        </div>
                     </div>
 
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck2">
-                        <label class="custom-control-label" for="catagoryCheck2">catagory</label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck3">
-                        <label class="custom-control-label" for="catagoryCheck3">catagory</label>
-                    </div>
 
                 </div>
 
-                <div class="checkboxGroup">
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck4">
-                        <label class="custom-control-label" for="catagoryCheck4">catagory</label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck5">
-                        <label class="custom-control-label" for="catagoryCheck5">catagory</label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="catagoryCheck6">
-                        <label class="custom-control-label" for="catagoryCheck6">catagory</label>
-                    </div>
-
-                </div>
                 </div>
                 <div >
                     <div class="col-sm-10">
@@ -83,7 +61,32 @@
 <script>
 
     export default {
-        name: "signUp"
+        name: "signUp",
+        data() {
+            return {
+                catagoryList: [
+                    {   id: 1,
+                        catagoryName: "catagory1"
+                    },
+                    {   id: 2,
+                        catagoryName: "catagory2"
+                    },
+                    {   id: 3,
+                        catagoryName: "catagory3"
+                    },
+                    {   id: 4,
+                        catagoryName: "catagory4"
+                    },
+                    {   id: 5,
+                        catagoryName: "catagory5"
+                    },
+                    {   id: 6,
+                        catagoryName: "catagory6"
+                    }
+                ]
+            }
+        }
+
     }
 </script>
 
@@ -104,7 +107,7 @@
 
     .signUp-backGround{
         padding: 30px 100px;
-        height: 730px;
+
         background-color: #f3edff;
         margin: 50px 400px;
     }
@@ -137,6 +140,9 @@
     }
     .checkboxGroup{
         margin: 20px 50px;
+    }
+    .singleCatagoryCheck{
+        margin-bottom: 20px;
     }
 
 </style>
