@@ -31,7 +31,7 @@
                               label="Party Picture File:"
                               label-class="text-sm-right"
                               class="mb-0 file_input">
-                    <b-form-file class="file_input " v-model="file" :state="Boolean(file)"
+                    <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
                                  placeholder="Choose a file..."
                                  @change="onFileChange"></b-form-file>
                     <b-row>
