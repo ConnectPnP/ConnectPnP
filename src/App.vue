@@ -8,6 +8,7 @@
   export default {
     name: 'app',
   };
+
 </script>
 
 <style>
@@ -21,4 +22,3 @@
   margin-top: 60px;
 }
 
-</style>
