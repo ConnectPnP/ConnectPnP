@@ -4,8 +4,8 @@
               href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
               crossorigin="anonymous">
-        <b-form @submit="onSubmit">
-            <b-form-group class="form">
+        <b-form @submit="onSubmit" class="form" >
+            <b-form-group >
                 <h1><b>Party Registration</b></h1>
                 <b-form-group horizontal
                               label="Party Title :"
@@ -225,6 +225,7 @@
 
     .form {
         width: 50%;
+        margin: 0 auto;
     }
 
     h1 {
