@@ -134,7 +134,7 @@
         },
         data() {
             return {
-                dateFormat: 'DD MMM YYYY',
+                dateFormat: 'YYYY-MM-DD',
                 file: null,
                 party_form:
                     {

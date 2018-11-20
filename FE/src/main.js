@@ -9,7 +9,8 @@ import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-awesome/icons';
-import 'vuesax/dist/vuesax.css' 
+import 'vuesax/dist/vuesax.css'
+import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
 
 Vue.use(Vuesax);
 Vue.use(BootstrapVue);
