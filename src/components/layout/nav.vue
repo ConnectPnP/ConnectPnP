@@ -5,7 +5,12 @@
     <vs-button @click="active=!active" color="Secondary" type="filled">Category</vs-button>
     <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
       <div v-for="category in categoryList">
-        <navItem :key="category.id" :category="category"></navItem>
+        <vs-divider position="left">
+            {{category.category_name}}
+        </vs-divider>
+        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub.id' >
+            {{sub.category_name}}
+        </vs-sidebar-item>
       </div>
     </vs-sidebar>
   </div>
@@ -13,12 +18,9 @@
 </template>
 
 <script>
-import navItem from './navItem.vue';
+
 
 export default {
-  components: {
-    navItem,
-  },
   data:()=>({
     active:false,
     categoryList: [
