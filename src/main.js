@@ -21,6 +21,7 @@ const datepickerOptions = {};
 Vue.use(BootstrapVue);
 Vue.use(AirbnbStyleDatepicker, datepickerOptions);
 
+
 new Vue({
   el: '#app',
   router,

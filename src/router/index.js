@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Main from '@/components/index';
+import main from '@/components/index';
 import createParty from '@/components/board/createParty';
 import detailParty from '@/components/board/detailParty';
+import partyList from '@/components/list/list';
 
 Vue.use(Router);
 
@@ -13,7 +14,7 @@ export default new Router ({
     {
       path: '/',
       name: 'Main',
-      component: Main,
+      component: main,
     },
     {
       path: '/party/create',
@@ -21,9 +22,14 @@ export default new Router ({
       component: createParty,
     },
     {
-      path: '/party/detail',
+      path: '/party/detail', // id parameter 필요
       name: 'detailParty',
       component: detailParty,
+    },
+    {
+      path: '/party/list', 
+      name: 'partyList',
+      component: partyList,
     },
     { 
       path: '*', 
