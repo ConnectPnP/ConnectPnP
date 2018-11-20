@@ -14,7 +14,7 @@ export default new Router ({
     {
       path: '/',
       name: 'main',
-      component: signUp
+      component: main
     },
     {
       path: '/party/create',
