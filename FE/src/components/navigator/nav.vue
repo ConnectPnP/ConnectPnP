@@ -1,3 +1,4 @@
+
 <template>
 
   <div id="parentx">
@@ -5,11 +6,11 @@
     <vs-button @click="active=!active" color="Secondary" type="filled">Category</vs-button>
     <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
       <div v-for="category in categoryList">
-        <vs-divider position="left">
-            {{category.category_name}}
+        <vs-divider position="left" >
+          {{category.category_name}}
         </vs-divider>
-        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub.id' >
-            {{sub.category_name}}
+        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub.id' href="/party/list"> 
+          {{sub.category_name}}
         </vs-sidebar-item>
       </div>
     </vs-sidebar>
@@ -18,7 +19,8 @@
 </template>
 
 <script>
-
+// pary/list/:category 
+// parameter 추가 필요
 
 export default {
   data:()=>({
