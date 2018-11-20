@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
+import Vue from 'vue'
+import BootstrapVue from 'bootstrap-vue'
 import App from './App.vue'
 import router from './router'
 import Vuesax from 'vuesax'
@@ -21,7 +21,6 @@ const datepickerOptions = {};
 
 Vue.use(BootstrapVue);
 Vue.use(AirbnbStyleDatepicker, datepickerOptions);
-
 
 new Vue({
   el: '#app',

@@ -5,6 +5,7 @@ import createParty from '@/components/board/createParty'
 import detailParty from '@/components/board/detailParty'
 import partyList from '@/components/list/list'
 import myPage from '@/components/myPage/myPage'
+import signUp from '@/components/signUp'
 
 Vue.use(Router)
 
@@ -13,7 +14,7 @@ export default new Router ({
     {
       path: '/',
       name: 'main',
-      component: main
+      component: signUp
     },
     {
       path: '/party/create',
@@ -34,6 +35,11 @@ export default new Router ({
       path: '/myPage', 
       name: 'myPage',
       component: myPage
+    },
+    {
+      path: '/signUp', 
+      name: 'signUp',
+      component: signUp
     },
     { 
       path: '*',
