@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <b-container fluid class="px-0">
-      <router-view></router-view>
-    </b-container>
+    <router-view></router-view>
   </div>
-
 </template>
 
 <script>

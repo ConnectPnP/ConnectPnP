@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="top">
     <b-navbar toggleable="md" type="dark" variant="secondary">
 
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
@@ -46,5 +46,7 @@
 </script>
 
 <style scoped>
-
+  .top {
+    padding-bottom : 30px;
+  }
 </style>
