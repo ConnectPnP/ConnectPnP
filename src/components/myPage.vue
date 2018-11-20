@@ -39,13 +39,6 @@
                   <label style="font-weight:bold;">관심 카테고리</label>
                 </div>
                 <div class="col-md-5 col-6">
-                  <!-- <b-form-checkbox-group id="checkboxes" name="interestCategory">
-                    <b-form-checkbox v-model="checked" value="categoryName1">category 1</b-form-checkbox>
-                    <b-form-checkbox value="categoryName2">category 2</b-form-checkbox>
-                    <b-form-checkbox value="categoryName3">category 3</b-form-checkbox>
-                    <b-form-checkbox value="categoryName4">category 4</b-form-checkbox>
-                    <b-form-checkbox value="categoryName5">category 5</b-form-checkbox>
-                  </b-form-checkbox-group> -->
                   <b-form-group>
                     <b-form-checkbox-group v-model="memberInfo.interestedCategory" name="flavour1" :options="options"></b-form-checkbox-group>
                   </b-form-group>
@@ -127,8 +120,8 @@ export default {
         img: "https://scontent-sea1-1.cdninstagram.com/vp/7a5265ee63e43334d660ebd242da2206/5C8240E9/t51.2885-19/s150x150/13556877_1756206201259678_2048804432_a.jpg",
         nickName: "haha",
         interestedCategory: ["category1", "category5"],
-        starRating: 1.9,
-        ratingStatus: [1, 8, 4],
+        starRating: 3.4,
+        ratingStatus: [10, 8, 10],
         events: [
           {
             title  : 'event1',
