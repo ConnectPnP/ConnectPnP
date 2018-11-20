@@ -24,8 +24,10 @@
                 <div class="col-sm-3 col-md-4 col-5">
                   <label style="font-weight:bold;">닉네임</label>
                 </div>
-                <div class="col-md-8 col-6">
+                <div class="col-md-5 col-6">
                   <input type="text" name="nickname" :value="memberInfo.nickName">
+                </div>        
+                <div class="col-md-1 col-2">
                   <a href="#" onclick="{props.handleSubmitProfile}" class="btn btn-primary ml-2">닉네임 변경</a>
                 </div>
               </b-row>
@@ -36,12 +38,17 @@
                 <div class="col-sm-3 col-md-4 col-5">
                   <label style="font-weight:bold;">관심 카테고리</label>
                 </div>
-                <div class="col-md-7 col-5">
-                  <input type="checkbox" name="interestCategory" value="categoryName1">category 1
-                  <input type="checkbox" name="interestCategory" value="categoryName2">category 2
-                  <input type="checkbox" name="interestCategory" value="categoryName3">category 3
-                  <input type="checkbox" name="interestCategory" value="categoryName4">category 4
-                  <input type="checkbox" name="interestCategory" value="categoryName5">category 5
+                <div class="col-md-5 col-6">
+                  <!-- <b-form-checkbox-group id="checkboxes" name="interestCategory">
+                    <b-form-checkbox v-model="checked" value="categoryName1">category 1</b-form-checkbox>
+                    <b-form-checkbox value="categoryName2">category 2</b-form-checkbox>
+                    <b-form-checkbox value="categoryName3">category 3</b-form-checkbox>
+                    <b-form-checkbox value="categoryName4">category 4</b-form-checkbox>
+                    <b-form-checkbox value="categoryName5">category 5</b-form-checkbox>
+                  </b-form-checkbox-group> -->
+                  <b-form-group>
+                    <b-form-checkbox-group v-model="memberInfo.interestedCategory" name="flavour1" :options="options"></b-form-checkbox-group>
+                  </b-form-group>
                 </div>
                 <div class="col-md-1 col-2">
                   <a href="#" onclick="{props.handleSubmitProfile}" class="btn btn-primary ml-2">관심 카테고리 변경</a>
@@ -106,12 +113,20 @@ export default {
   },
   data() {
     return {
+      options: [
+        {text: 'Category1', value: 'category1'},
+        {text: 'Category2', value: 'category2'},
+        {text: 'Category3', value: 'category3'},
+        {text: 'Category4', value: 'category4'},
+        {text: 'Category5', value: 'category5'},
+        {text: 'Category6', value: 'category6'},
+      ],
       memberInfo: {
         id: 1,
         usrName: "Kim",
-        img: "https://img.sbs.co.kr/newimg/news/20180416/201172090_1280.jpg",
+        img: "https://scontent-sea1-1.cdninstagram.com/vp/7a5265ee63e43334d660ebd242da2206/5C8240E9/t51.2885-19/s150x150/13556877_1756206201259678_2048804432_a.jpg",
         nickName: "haha",
-        interestedCategory:[true, true, false, false, true],
+        interestedCategory: ["category1", "category5"],
         starRating: 1.9,
         ratingStatus: [1, 8, 4],
         events: [
