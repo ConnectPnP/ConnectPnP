@@ -16,7 +16,7 @@
               <b-img class="profileImg" rounded="circle" width="40px" stype="margin-right:5px" :src="profile_path" />
               <em>  {{user_name}}</em>
             </template>
-            <b-dropdown-item href="/">MyPage</b-dropdown-item>
+            <b-dropdown-item href="/myPage">MyPage</b-dropdown-item>
             <b-dropdown-item href="/">Signout</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
