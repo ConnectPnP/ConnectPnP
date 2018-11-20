@@ -1,6 +1,5 @@
 <template>
     <div id="createParty">
-        <top/>
         <link rel="stylesheet"
               href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
@@ -127,13 +126,11 @@
 <script>
     import format from 'date-fns/format'
     import vueSlider from 'vue-slider-component';
-    import top from '../navigator/top'
 
     export default {
         name: "createParty",
         components: {
             vueSlider,
-            top,
         },
         data() {
             return {

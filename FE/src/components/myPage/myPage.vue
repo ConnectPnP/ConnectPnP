@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <top/>
     <div>
       <b-tabs>
 
@@ -94,7 +93,6 @@
 <script>
 import StarRating from 'vue-star-rating'
 import Chart from './Chart.vue'
-import top from '../navigator/top'
 
 import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.css'
@@ -105,7 +103,6 @@ export default {
     StarRating,
     Chart,
     FullCalendar,
-    top,
   },
   data() {
     return {

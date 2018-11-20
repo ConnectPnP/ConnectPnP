@@ -1,7 +1,6 @@
 <template>
 
 <div id="list">
-<top/>
 <b-form class="marginTop center" inline>
     <b-input-group style="width: 50%">
         <b-form-input size="sm" type="text" placeholder="Search"/>
@@ -10,7 +9,7 @@
             </b-input-group-append>
     </b-input-group>
 
-    <b-btn class="btnGroup" size="sm" variant="primary">모임 만들기</b-btn>
+    <b-btn class="btnGroup" size="sm" variant="primary" href="/party/create">모임 만들기</b-btn>
     <b-btn class="btnGroup" size="sm" variant="primary">내가 개설한 모임</b-btn>
 </b-form>
 
@@ -34,13 +33,11 @@
 
 <script>
 import ListView from './listView.vue'
-import top from '../navigator/top'
 
 export default {
   name: 'list',
   components: {
     ListView,
-    top,
   },
   data(){
       return {

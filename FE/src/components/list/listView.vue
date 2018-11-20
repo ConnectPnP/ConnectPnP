@@ -1,6 +1,6 @@
 <template>
-    <div class="listView card">
-        <table>
+    <div class="listView card" onclick="location.href='/party/detail'">
+        <table> 
             <td class="tdImg">
                 <b-img class="cardImg" left rounded="left" :src="groupImg" />
             </td>
@@ -40,6 +40,10 @@ export default {
 </script>
 
 <style>
+.listView {
+    cursor : pointer
+}
+
 .card {
     width: 400px;
     height: 150px;

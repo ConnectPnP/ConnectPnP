@@ -1,6 +1,5 @@
 <template>
     <div id="dev-detailParty">
-        <top/>
         <b-container>
             <b-row>
                 <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="2"></coverflow>
@@ -76,7 +75,6 @@
     import coverflow from 'vue-coverflow'
     import memberSimpleProfile from './memberSimpleProfile.vue'
     import commentTemplate from './comment.vue'
-    import top from '../navigator/top'
 
     export default {
         name: "detailParty",
@@ -84,7 +82,6 @@
             coverflow,
             memberSimpleProfile,
             commentTemplate,
-            top,
         },
         data() {
             return {
