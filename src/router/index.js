@@ -1,15 +1,28 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import home from '@/components/index';
+import Main from '@/components/home';
+import createParty from '@/components/board/createParty';
 
 Vue.use(Router);
+
+const NotFound = { template: '<div>Not Found</div>'}
 
 export default new Router ({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: home,
+      name: 'Main',
+      component: Main,
+    },
+    {
+      path: '/party/create',
+      name: 'createParty',
+      component: createParty,
+    },
+    { 
+      path: '*', 
+      name : 'errorPage',
+      component: NotFound,
     },
   ],
 });
