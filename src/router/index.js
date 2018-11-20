@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Main from '@/components/home';
+import Main from '@/components/index';
 import createParty from '@/components/board/createParty';
+import detailParty from '@/components/board/detailParty';
 
 Vue.use(Router);
 
@@ -18,6 +19,11 @@ export default new Router ({
       path: '/party/create',
       name: 'createParty',
       component: createParty,
+    },
+    {
+      path: '/party/detail',
+      name: 'detailParty',
+      component: detailParty,
     },
     { 
       path: '*', 

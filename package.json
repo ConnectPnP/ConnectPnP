@@ -25,7 +25,10 @@
     "date-fns": "^1.29.0",
     "vue-airbnb-style-datepicker": "^2.2.0",
     "vue-slider-component": "^2.8.1",
-    "vue2-google-maps": "^0.10.3"
+    "vue2-google-maps": "^0.10.3",
+    "style.css": "^1.0.0",
+    "vue-carousel": "^0.16.0-rc2",
+    "vue-coverflow": "^2.2.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.1.1",
