@@ -15,10 +15,6 @@ import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
 Vue.use(Vuesax);
 Vue.use(BootstrapVue);
 
-//VueCookie
-var VueCookie = require('vue-cookie');
-// Tell Vue to use the plugin
-Vue.use(VueCookie);
 
 Vue.config.productionTip = false;
 
