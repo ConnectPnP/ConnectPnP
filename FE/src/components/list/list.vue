@@ -4,8 +4,8 @@
 <b-form class="marginTop center" inline>
     <b-input-group style="width: 50%">
         <b-input-prepend>
-            <b-form-select v-model="selectedFirst" :options="options1" size="sm" />
-            <b-form-select v-model="selectedSecond" :options="options2" size="sm" />
+            <b-form-select v-model="firstSelect" :options="select1" size="sm" @change="selectOption" />
+            <b-form-select v-model="secondSelect" :options="select2" size="sm" />
         </b-input-prepend>
         <b-form-input size="sm" type="text" placeholder="Search"/>
             <b-input-group-append>
@@ -46,22 +46,29 @@ export default {
   data(){
       return {
           currentPage: 1,
-          selectedFirst: null,
-          selectedSecond: null,
-            options1: [
+          firstSelect: null, secondSelect:null,
+            select1 : [
                 { value: null, text: '--대분류--', disabled:true},
                 { value: 1, text: '카테고리'},
                 { value: 2, text: '주최자'},
                 { value: 3, text: '위치'}
             ],
+            select2: [
+                { value: null, text: '----', disabled:true}
+                ],
+            options1: [
+                { value: null, text: '--카테고리--', disabled:true},
+                { value: 11, text: '게임'},
+                { value: 12, text: '운동'},
+                { value: 13, text: '여행'},
+                { value: 14, text: '공동구매'},
+                { value: 15, text: '사진'},
+                { value: 16, text: '멍멍이'},
+            ],
             options2: [
-                { value: null, text: '--소분류--', disabled:true},
-                { value: 1, text: '1'},
-                { value: 2, text: '2'},
-                { value: 3, text: '3'},
-                { value: 4, text: '4'},
-                { value: 5, text: '5'},
-                { value: 6, text: '6'},
+                { value: null, text: '--주최자--', disabled:true},
+                { value: 21, text: 'ID'},
+                { value: 22, text: '닉네임'}
             ],
           groupList : [
               {
@@ -133,6 +140,18 @@ export default {
   methods: {
        getPostData (currentPage) {
            
+        },
+        selectOption(select){
+            this.secondSelect = null;
+            if(select == 1){
+                this.select2 = this.options1;
+            } else if(select == 2){
+                this.select2 = this.options2;
+            } else if(select == 3){
+                this.select2 = [
+                { value: null, text: '----', disabled:true}
+                ];
+            }
         }
     }
 }
