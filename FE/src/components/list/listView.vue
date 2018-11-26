@@ -7,7 +7,7 @@
             <td class="cardBody">
                     <h4>{{ groupTitle }}</h4>
                     <h6>{{ groupLocation }}</h6>
-                    <p>{{ groupContent }}</p>
+                    <p>{{ viewContent }}</p>
             </td>
         </table>
 
@@ -35,6 +35,16 @@ export default {
             type: String,
             default() { return "https://www.freeiconspng.com/uploads/no-image-icon-6.png"; }
         },
+    },
+    computed: {
+        viewContent: function (){
+            var str = this.groupContent;
+            if(str.length > 25){
+                str = str.substring(0,25);
+                str += "...";
+            }
+            return str;
+        }
     }
 };
 </script>

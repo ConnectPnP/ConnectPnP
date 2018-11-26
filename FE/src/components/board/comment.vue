@@ -12,6 +12,10 @@
             <b-col class="comment-content">
                 <p>{{comment.content}}</p>
             </b-col>
+            <b-col>
+                <b-btn size="sm" class="btn btn-info" variant="primary">수정</b-btn>
+                <b-btn size="sm" class="btn btn-info" variant="primary">삭제</b-btn>
+            </b-col>
         </b-row>
     </li>
 </template>

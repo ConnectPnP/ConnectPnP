@@ -3,6 +3,10 @@
 <div id="list">
 <b-form class="marginTop center" inline>
     <b-input-group style="width: 50%">
+        <b-input-prepend>
+            <b-form-select v-model="selectedFirst" :options="options1" size="sm" />
+            <b-form-select v-model="selectedSecond" :options="options2" size="sm" />
+        </b-input-prepend>
         <b-form-input size="sm" type="text" placeholder="Search"/>
             <b-input-group-append>
                 <b-btn size="sm" variant="primary">검색</b-btn>
@@ -42,6 +46,23 @@ export default {
   data(){
       return {
           currentPage: 1,
+          selectedFirst: null,
+          selectedSecond: null,
+            options1: [
+                { value: null, text: '--대분류--', disabled:true},
+                { value: 1, text: '카테고리'},
+                { value: 2, text: '주최자'},
+                { value: 3, text: '위치'}
+            ],
+            options2: [
+                { value: null, text: '--소분류--', disabled:true},
+                { value: 1, text: '1'},
+                { value: 2, text: '2'},
+                { value: 3, text: '3'},
+                { value: 4, text: '4'},
+                { value: 5, text: '5'},
+                { value: 6, text: '6'},
+            ],
           groupList : [
               {
                   id:1,

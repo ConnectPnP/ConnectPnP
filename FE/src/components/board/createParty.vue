@@ -94,7 +94,9 @@
                               label="Cost :"
                               label-class="text-sm-right"
                               label-for="js-party-cost">
-                    <b-form-input class="input" id="js-party-cost"></b-form-input>
+                    <b-form-input class="input"
+                                id="js-party-cost"
+                                v-model="party_form.cost"></b-form-input>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Condition :"
@@ -144,6 +146,7 @@
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
                         date: '',
+                        cost: '',
                         file_array: [],
                         selected_category_id:null
                     },
@@ -185,9 +188,30 @@
                 }
                 return formattedDates
             },
-            onSubmit(evt) {
+            onSubmit(evt) { // 서버로 데이터 넘겨주기
                 evt.preventDefault();
-                alert(JSON.stringify(this.party_form));
+
+                var party = this.party_form;
+                alert(JSON.stringify(party));
+
+                this.$http.post('http://localhost:3000/board/',{
+                    title: party.title,
+                    detail: party.detail,
+                    images_array: party.file_array,
+                    start_date: party.recruitment_period_dateOne,
+                    due_date: party.recruitment_period_dateTwo,
+                    meeting_date: party.date,
+                    //location: ,
+                    cost: partym.cost,
+                    //condition: ,
+                    category_id: party.selected_category_id,
+                    min_num: party.number_of_member[0],
+                    max_num: party.number_of_member[1]
+                }).then((result)=>{
+                    console.log(result);
+                    // 디테일 파티 페이지로 가기
+                });
+
             }
         }
     }
