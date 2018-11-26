@@ -7,7 +7,7 @@
             <td class="cardBody">
                     <h4>{{ groupTitle }}</h4>
                     <h6>{{ groupLocation }}</h6>
-                    <p>{{ viewContent }}</p>
+                    <p>{{ viewDetail }}</p>
             </td>
         </table>
 
@@ -27,9 +27,9 @@ export default {
             type: String,
             default() { return "Location"; }
         },
-        groupContent: {
+        groupDetail: {
             type: String,
-            default() { return "content"; }
+            default() { return "detail"; }
         },
         groupImg: {
             type: String,
@@ -37,8 +37,8 @@ export default {
         },
     },
     computed: {
-        viewContent: function (){
-            var str = this.groupContent;
+        viewDetail: function (){
+            var str = this.groupDetail;
             if(str.length > 25){
                 str = str.substring(0,25);
                 str += "...";

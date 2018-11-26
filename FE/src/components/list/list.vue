@@ -21,7 +21,7 @@
     <div class="row" v-for="i in Math.ceil(groupList.length / 2)">
     <span v-for="group in groupList.slice((i-1)*2,i*2)">
         <ListView v-bind:groupTitle=group.groupInfo.title v-bind:groupLocation=group.groupInfo.location
-            v-bind:groupContent=group.groupInfo.content v-bind:groupImg=group.groupInfo.group_img />
+            v-bind:groupDetail=group.groupInfo.detail v-bind:groupImg=group.groupInfo.group_img />
     </span>
 </div>
 </div>
@@ -71,12 +71,13 @@ export default {
                 { value: 22, text: '닉네임'}
             ],
           groupList : [
+              // { id : , groupInfo: { title, location, detail, group_img } }
               {
                   id:1,
                   groupInfo: {
                       title : "보드게임 하쟈",
                       location : "경기도 용인시",
-                      content : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
+                      detail : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
                       group_img: "http://magazine.hankyung.com/magazinedata/images/photo/201707/c3667962b7df3ae222a3306d4d59fc6f.jpg"
                   }
               }, 
@@ -85,7 +86,7 @@ export default {
                   groupInfo: {
                       title : "노래방 기기",
                       location : "아주대학교 판타스틱 코인노래방",
-                      content : "저랑 듀엣할분 구함니다,,,",
+                      detail : "저랑 듀엣할분 구함니다,,,",
                       group_img: "https://github.com/Eumji/Seoul-Bammm-v2/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png?raw=true"
                   }
               }, 
@@ -94,7 +95,7 @@ export default {
                   groupInfo: {
                       title : "무선마이크 공구",
                       location : "모름",
-                      content : "무선마이크가 너무 사고싶은데 좀 비싸네여... 같이 공구해요!",
+                      detail : "무선마이크가 너무 사고싶은데 좀 비싸네여... 같이 공구해요!",
                       group_img: "http://i.011st.com/ex_t/R/400x400/1/85/0/src/pd/17/5/3/4/8/3/5/LxXLR/1784534835_B.jpg"
                   }
               }, 
@@ -103,7 +104,7 @@ export default {
                   groupInfo: {
                       title : "로떼월드 단체할인 받아오",
                       location : "로떼월드",
-                      content : "로떼월드 너무 비싸오 같이 단체할인 받아오",
+                      detail : "로떼월드 너무 비싸오 같이 단체할인 받아오",
                       group_img: "http://adventure.lotteworld.com/common/images/logo.png"
                   }
               },
@@ -112,7 +113,7 @@ export default {
                   groupInfo: {
                       title : "보드게임 하자구",
                       location : "경기도 용인시",
-                      content : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
+                      detail : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
                       group_img: "http://magazine.hankyung.com/magazinedata/images/photo/201707/c3667962b7df3ae222a3306d4d59fc6f.jpg"
                   }
               }, 
@@ -121,7 +122,7 @@ export default {
                   groupInfo: {
                       title : "보드게임 하쟈하쟈",
                       location : "경기도 용인시",
-                      content : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
+                      detail : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
                       group_img: "http://magazine.hankyung.com/magazinedata/images/photo/201707/c3667962b7df3ae222a3306d4d59fc6f.jpg"
                   }
               }, 
@@ -130,12 +131,31 @@ export default {
                   groupInfo: {
                       title : "보드게임 해염",
                       location : "경기도 용인시",
-                      content : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
+                      detail : "저랑 같이 보드게임 할 사람 찾습니다! 몸만 오세요~~",
                       group_img: "http://magazine.hankyung.com/magazinedata/images/photo/201707/c3667962b7df3ae222a3306d4d59fc6f.jpg"
                   }
               }
           ]
       }
+  },
+  created(){
+      this.$http.get('http://localhost:3000/board/list/') // +page..?
+        .then((result)=>{
+            var data = result.data;
+            this.groupList = [];
+            for(var i =0;i<data.length;i++){
+                var post = {
+                    id: data[i].category_id,
+                    groupInfo: {
+                        title: data[i].title,
+                        location: data[i].location,
+                        detail: data[i].detail,
+                        group_img: data[i].images[0].img_path
+                    }
+                };
+                this.groupList.push(post);
+            }
+        })
   },
   methods: {
        getPostData (currentPage) {
