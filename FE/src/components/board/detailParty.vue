@@ -27,12 +27,26 @@
                                   size="md"
                         >　Join　
                         </button>
-                        
                     </b-card>
-                        <button class="btn btn-info" id="js-join-list" size="md">
-                            join list
-                        </button>
                 </b-col>
+                <b-col>
+                    <div class="hostBtnGroup">
+                            <b-button-group>
+                                <b-button class="btn btn-info" id="js-join-list">
+                                    수정
+                                </b-button>
+                                <b-button class="btn btn-info" id="js-edit">
+                                    삭제
+                                </b-button>
+                                <b-button class="btn btn-info" id="js-delete">
+                                    신청 리스트
+                                </b-button>
+                            </b-button-group>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row>
+                
                 <b-col>
                     <b-tabs>
                         <b-tab id="tabsInfo-detail" title="Detail" active>
@@ -53,20 +67,20 @@
             <hr>
             <p class="comment-info" style="text-align: left;padding-left: 30px">댓글 수 : {{commentList.length}} 조회수 : 0</p>
             <b-row>
-                <b-input-group prepend="Username" v-model="commentContent"
+                <b-input-group prepend="Username"
                                style="padding-top: 2px;padding-left: 30px; padding-right: 10px; width: 90%">
-                    <b-form-input></b-form-input>
+                    <b-form-input v-model="commentContent"></b-form-input>
                     <b-input-group-append>
                         <b-btn variant="info" v-on:click="enter"> Enter</b-btn>
                     </b-input-group-append>
                 </b-input-group>
             </b-row>
             <b-row>
-                <ul>
+                <div>
                     <commentTemplate
                             v-for="comment in commentList" :key="comment.id"
-                            :comment="comment"></commentTemplate>
-                </ul>
+                            :comment="comment" />
+                </div>
             </b-row>
             <br>
 
@@ -91,101 +105,106 @@
             return {
                 commentList: [ // id: number, member: { id, name, age, sex, profile_img}, content: String, depth: number, parentComment:  
 
-                    // {
-                    //     id: 1,
-                    //     member: {
-                    //         id: 1,
-                    //         name: "seo",
-                    //         age: "23",
-                    //         sex: "F",
-                    //         profile_img: ""
-                    //     },
-                    //     content: "This will be fun and " +
-                    //         "This is the loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Sentence for the check the layout ",
-                    //     depth: 0,
-                    //     parentComment: null
-                    // },
-                    // {
-                    //     id: 2,
-                    //     member: {
-                    //         id: 1,
-                    //         name: "ko",
-                    //         age: "24",
-                    //         sex: "F",
-                    //         profile_img: ""
-                    //     },
-                    //     content: "Yes it will be cool",
-                    //     depth: 1,
-                    //     parentComment: 1
-                    // }
+                    {
+                        id: 1,
+                        member: {
+                            id: 1,
+                            name: "seo",
+                            age: "23",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
+                        },
+                        content: "This will be fun and " +
+                            "This is the loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Sentence for the check the layout ",
+                        depth: 0,
+                        parentComment: null
+                    },
+                    {
+                        id: 2,
+                        member: {
+                            id: 1,
+                            name: "ko",
+                            age: "24",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
+                        },
+                        content: "Yes it will be cool",
+                        depth: 1,
+                        parentComment: 1
+                    }
                 ],
                 coverList: [ 
                     // {cover : String(url)}, { }, { }, ...
+                    { cover : "http://magazine.hankyung.com/magazinedata/images/photo/201707/c3667962b7df3ae222a3306d4d59fc6f.jpg"},
+                    { cover : "http://i.011st.com/ex_t/R/400x400/1/85/0/src/pd/17/5/3/4/8/3/5/LxXLR/1784534835_B.jpg"},
+                    { cover : "http://adventure.lotteworld.com/common/images/logo.png"}
+                    
                 ],
 
                 detailPartyInfo: { 
                     // title: String, location: String, host: String, recruitment_period: String, party_date: String, category: String, min: number, max: number, cost: String, condition: String
 
-                    // title: "Go to Disney Land!",
-                    // location: "Japan",
-                    // host:"seo",
-                    // recruitment_period: "2018-11-17 ~ 2018-11-22",
-                    // party_date: "2018-12-01",
-                    // category: "travel",
-                    // min: 2,
-                    // max: 5,
-                    // cost: "100000 won",
-                    // condition: " under 25 years old"
+                    title: "Go to Disney Land!",
+                    location: "Japan",
+                    host:"seo",
+                    recruitment_period: "2018-11-17 ~ 2018-11-22",
+                    party_date: "2018-12-01",
+                    category: "travel",
+                    min: 2,
+                    max: 5,
+                    cost: "100000 won",
+                    condition: " under 25 years old"
                 },
                 tabsInfo: { 
                     // detail: String
                     // members: [{id:number, name:String, age:String, sex:String, profile_img:String(url)}]
-                    // detail: "This is for the example of detail info of specific Party",
-                    // members: [
-                    //     {
-                    //         // 멤버 모델에 따른 attribute
-                    //         id: 1,
-                    //         name: "seo",
-                    //         age: "23",
-                    //         sex: "F",
-                    //         profile_img: ""
+                    
+                    detail: "This is for the example of detail info of specific Party",
+                    members: [
+                        {
+                            // 멤버 모델에 따른 attribute
+                            id: 1,
+                            name: "seo",
+                            age: "23",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
-                    //     },
-                    //     {
-                    //         // 멤버 모델에 따른 attribute
-                    //         id: 2,
-                    //         name: "ko",
-                    //         age: "24",
-                    //         sex: "F",
-                    //         profile_img: ""
-                    //     },
-                    //     {
-                    //         // 멤버 모델에 따른 attribute
-                    //         id: 3,
-                    //         name: "jo",
-                    //         age: "23",
-                    //         sex: "F",
-                    //         profile_img: ""
-                    //     },
-                    //     {
-                    //         // 멤버 모델에 따른 attribute
-                    //         id: 4,
-                    //         name: "kim",
-                    //         age: "22",
-                    //         sex: "F",
-                    //         profile_img: """
+                        },
+                        {
+                            // 멤버 모델에 따른 attribute
+                            id: 2,
+                            name: "ko",
+                            age: "24",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
+                        },
+                        {
+                            // 멤버 모델에 따른 attribute
+                            id: 3,
+                            name: "jo",
+                            age: "23",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
+                        },
+                        {
+                            // 멤버 모델에 따른 attribute
+                            id: 4,
+                            name: "kim",
+                            age: "22",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
-                    //     },
-                    //     {
-                    //         // 멤버 모델에 따른 attribute
-                    //         id: 5,
-                    //         name: "won",
-                    //         age: "22",
-                    //         sex: "F",
-                    //         profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
+                        },
+                        {
+                            // 멤버 모델에 따른 attribute
+                            id: 5,
+                            name: "won",
+                            age: "22",
+                            sex: "F",
+                            profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
-                    //     }
-                    // ],
+                        }
+                    ],
 
                 }
 
@@ -216,12 +235,11 @@
         },
         methods: {
             enter(){
-                alert(this.commentContent);
-                var commentId =  this.commentList; //??
+                var commentId =  this.commentList; //?? 어떻게 하는지 물어보기
                 this.$http.post('http://localhost:3000/board/comments/'+commentId, {
-                    // id: ??,
+                    // id: ??, 댓글 아이디
                     member: {
-                        // id: ??
+                        // id: ?? 멤버 아이디
                     },
                     content: this.commentContent,
                     depth: 0, // 대댓글 할때는 가변적
@@ -241,11 +259,11 @@
         bottom: 10px;
     }
 
-    #js-join-list {
+    /* #js-join-list {
         position: absolute;
         right: 10px;
         bottom: 10px;
-    }
+    } */
 
     #tabsInfo-detail
     {
@@ -257,11 +275,12 @@
         text-align: left;
         padding-left: 10px;
     }
-    ul {
-        list-style-type: none;
-    }
     .comment-info{
         font-size: smaller;
+    }
+
+    .hostBtnGroup {
+        text-align: right;
     }
 
 </style>

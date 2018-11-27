@@ -14,7 +14,7 @@
     </b-input-group>
 
     <b-btn class="btnGroup" size="sm" variant="primary" href="/party/create">모임 만들기</b-btn>
-    <b-btn class="btnGroup" size="sm" variant="primary">내가 개설한 모임</b-btn>
+    <b-btn class="btnGroup" size="sm" variant="primary" href="">내가 개설한 모임</b-btn>
 </b-form>
 
 <div class="margin">

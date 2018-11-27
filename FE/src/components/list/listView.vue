@@ -39,8 +39,8 @@ export default {
     computed: {
         viewDetail: function (){
             var str = this.groupDetail;
-            if(str.length > 25){
-                str = str.substring(0,25);
+            if(str.length > 18){
+                str = str.substring(0,18);
                 str += "...";
             }
             return str;

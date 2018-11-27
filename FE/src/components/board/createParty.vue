@@ -197,7 +197,7 @@
                 this.$http.post('http://localhost:3000/board/',{
                     title: party.title,
                     detail: party.detail,
-                    images_array: party.file_array,
+                    //images_array: party.file_array,
                     start_date: party.recruitment_period_dateOne,
                     due_date: party.recruitment_period_dateTwo,
                     meeting_date: party.date,
@@ -208,7 +208,7 @@
                     min_num: party.number_of_member[0],
                     max_num: party.number_of_member[1]
                 }).then((result)=>{
-                    console.log(result);
+                    console.log(result); // result : 그룹 ID
                     // 디테일 파티 페이지로 가기
                 });
 
