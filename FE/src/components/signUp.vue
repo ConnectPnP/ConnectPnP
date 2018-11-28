@@ -32,7 +32,7 @@
 
                             <div  v-for="item in catagoryList" :key="item.id">
                                 <div class="custom-control custom-checkbox custom-control-inline singleCatagoryCheck">
-                                    <input type="checkbox" class="custom-control-input" :id="item.id" :name="item.name" :value="item.name" >
+                                    <input type="checkbox" class="custom-control-input" :id="item.id"  :value="item.catagoryName" v-model="checkedCatagory">
                                     <label class="custom-control-label" :for="item.id">{{item.catagoryName}}</label>
                                 </div>
                             </div>
@@ -40,7 +40,6 @@
 
                         </div>
                     </div>
-
 
 
             <button class="btn btn-primary" @click="senddata">회원가입</button>
@@ -57,15 +56,17 @@
 </template>
 
 <script>
-
+    const axios = require('axios');
 
     export default {
         /* eslint-disable no-console*/
         name: "signUp",
         data() {
             return {
+                checkedCatagory: [],
+
                 signUpData:{
-                    kakaoID: String,
+                    kakaoID:"dd",
                     userNickName: String,
                     profileImg : String,
                 },
@@ -95,40 +96,31 @@
 
        },
         methods:{
-            senddata(){
-                var userData = new FormData();
-                Kakao.API.request({
-                    url: '/v1/user/me',
-                    success: function (res) {
-                        //console.log(res);
-                        // var userID = res.id;      //유저의 카카오톡 고유 id
-                        //var userNickName = res.properties.nickname; //유저가 등록한 별명
-                        //var profile_image = res.properties.profile_image;   //유저의 프로필 이미지
-                        //console.log("image>>"+ profile_image);
-                        //console.log(res);
-                        this.kakaoID=res.id;
-                        this.userNickName=res.properties.nickname;
-                        this.profileImg=res.properties.profile_image;
-                        console.log( this.kakaoID);
-                        //userData.append('kakaoID',this.kakaoID);
-                        //userData.append('userNickName',this.userNickName);
-                        //userData.append('profileImg',this.profileImg);
+            async senddata(){
 
-                        // console.log(userID);
-                        // console.log(profile_image);
-                        // console.log(userNickName);
-                    }
-                });
-                userData.set('tmp','hello!');
-                console.log(userData.get('tmp'));
-                this.$http.post("http://localhost:3000/user",userData)
-                    .then(response => {
-                        console.log(response);
-                    }, error => {
-                        console.log(error);
+                var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
+                console.log(kakaoData);
+                this.kakaoID=kakaoData.id;
+                this.userNickName=kakaoData.properties.nickname;
+                this.profile_img=kakaoData.properties.nickname;
+                //id, nickname, profile_img
+                console.log(this.checkedCatagory);
+                var userData ={
+                    catagoryList: this.checkedCatagory
+                }
+
+                    console.log("data loaded!" + this.loaded);
+                    this.$http.post('http://localhost:3000/user', [kakaoData,userData]).then(function (response) {
+                        // Success
+                        console.log(response.data)
+                    },function (response) {
+                        // Error
+                        console.log(response.data)
                     });
 
+
             }
+
         }
 
     }
