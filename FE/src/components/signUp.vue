@@ -23,6 +23,21 @@
                 아래 항목에 답하고 ConnectPnP 회원가입을 완료하세요!
             </div>
 
+            <div class="inputLabel"> 나이</div>
+            <b-form-input id="age" class="ageInput" v-model="userAge"
+                          type="number"
+                          placeholder=""></b-form-input>
+
+
+
+            <div class="inputLabel"> 성별</div>
+            <input type="radio" id="female" value="female" v-model="userGender">
+            <label class="radioButtonlabel" for="female">여성</label>
+
+
+            <input type="radio" id="male" value="male" v-model="userGender">
+            <label class="radioButtonlabel" for="male">남성</label>
+
 
 
             <!-- <form action="http://localhost:3000/user" method="post">-->
@@ -44,11 +59,6 @@
 
             <button class="btn btn-primary" @click="senddata">회원가입</button>
 
-
-
-
-
-
         </div>
 
 
@@ -63,13 +73,11 @@
         name: "signUp",
         data() {
             return {
+                userAge:Number,
+                userGender:String,
                 checkedCatagory: [],
 
-                signUpData:{
-                    kakaoID:"dd",
-                    userNickName: String,
-                    profileImg : String,
-                },
+
                 catagoryList: [
                     {   id: 1,
                         catagoryName: "catagory1"
@@ -104,12 +112,14 @@
                 this.userNickName=kakaoData.properties.nickname;
                 this.profile_img=kakaoData.properties.nickname;
                 //id, nickname, profile_img
-                console.log(this.checkedCatagory);
+                console.log(this.userGender);
+                console.log(this.userAge);
                 var userData ={
+                    age: this.userAge,
+                    gender: this.userGender,
                     catagoryList: this.checkedCatagory
                 }
 
-                    console.log("data loaded!" + this.loaded);
                     this.$http.post('http://localhost:3000/user', [kakaoData,userData]).then(function (response) {
                         // Success
                         console.log(response.data)
@@ -145,7 +155,7 @@
         padding: 30px 100px;
 
         background-color: #f3edff;
-        margin: 50px 400px;
+        margin: 50px 300px;
     }
 
     .contact-form-title{
@@ -160,10 +170,15 @@
     .inputGroup{
 
     }
+    .ageInput{
+
+        width: 100px;
+    }
+
     .inputLabel{
         margin-top: 40px;
         margin-bottom: 10px;
-        font-size: 17px;
+        font-size: 25px;
         font-weight: bold;
     }
     .inputForm{
@@ -172,6 +187,11 @@
         padding: 0px 50px;
     }
 
+    .radioButtonlabel{
+        font-size: 20px ;
+        margin-right: 20px;
+        margin-left: 20px;
+    }
     .checkboxBackground{
         padding: 20px 10px;
         border: 10px solid #d2e8ff;
