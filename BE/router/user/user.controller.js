@@ -27,8 +27,25 @@ exports.create = (req, res) => {
 // 회원 생성
 exports.create = (req, res) => {
 // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
-    console.log(req.body);
+    var kakaoData = req.body[0];
+    var signUpData = req.body[1];
+    console.log(signUpData.gender);
     console.log("/signUp post received>>")
+    // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
+    User.findOne({user_code : kakaoData.id}, function (err, user) {
+        if(err) return res.json({});
+        else if(user == null) {
+            User.create({user_code:kakaoData.id,avatar_path: kakaoData.properties.profile_image, name: kakaoData.properties.nickname,
+            age: signUpData.age, gender: signUpData.gender, catagoryList:signUpData.catagoryList}, (err, result) => {
+                if(!err) {
+                    return  res.json({result : "ok"});
+                }
+            }); // 존재하지 않는 회원 id는 새로 생성.
+        }
+        else {
+            return res.json({result : "exist"});
+        }
+    });
 };
 
 
