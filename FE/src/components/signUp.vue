@@ -28,8 +28,6 @@
                           type="number"
                           placeholder=""></b-form-input>
 
-
-
             <div class="inputLabel"> 성별</div>
             <input type="radio" id="female" value="female" v-model="userGender">
             <label class="radioButtonlabel" for="female">여성</label>
@@ -108,25 +106,26 @@
 
                 var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
                 console.log(kakaoData);
-                this.kakaoID=kakaoData.id;
-                this.userNickName=kakaoData.properties.nickname;
-                this.profile_img=kakaoData.properties.nickname;
+
                 //id, nickname, profile_img
                 console.log(this.userGender);
-                console.log(this.userAge);
+
                 var userData ={
                     age: this.userAge,
                     gender: this.userGender,
                     catagoryList: this.checkedCatagory
                 }
 
-                    this.$http.post('http://localhost:3000/user', [kakaoData,userData]).then(function (response) {
-                        // Success
-                        console.log(response.data)
-                    },function (response) {
-                        // Error
-                        console.log(response.data)
-                    });
+                var userFindRes = await this.$http.post('http://localhost:3000/user', [kakaoData,userData]);
+                console.log(userFindRes.data.result);
+
+                if(userFindRes.data.result=='exist'){
+                    alert("이미 회원가입된 회원입니다.");
+                    location.href="/"
+                } else{
+                    alert("회원가입이 완료되었습니다.");
+                    location.href="/"
+                }
 
 
             }
