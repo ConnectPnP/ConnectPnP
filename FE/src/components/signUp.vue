@@ -6,17 +6,15 @@
         <div class="mainTitleArea">
             <div class="mainTitle1">Sign Up</div>
             <div class="mainTitle2">Connect PnP</div>
-            <p>Connect PnP와 함께 새로운 만남을 시작하세요!</p>
+            <h5>Connect PnP와 함께 새로운 만남을 시작하세요!</h5>
         </div>
 
 
         <div class="signUp-backGround" align="center">
-            <div class="contact-form-title">
-                회원 가입
-            </div>
 
+            <b-img class="profileImg" rounded="circle" width="120px" height="120px" stype="margin-right:5px" :src="userInfo[1]" />
             <div class="contact-form-title">
-                반갑습니다 ___ 님
+                반갑습니다 {{userInfo[0]}} 님
             </div>
 
             <div class="guid-msg">
@@ -101,6 +99,14 @@
        mounted: function () {
 
        },
+        computed:{
+            userInfo(){
+                var userInfoName=this.$cookie.get('userName');
+                var userInfoProfile = this.$cookie.get('profile_path');
+                return [userInfoName, userInfoProfile]
+            }
+
+        },
         methods:{
             async senddata(){
 
