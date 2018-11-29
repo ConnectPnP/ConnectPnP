@@ -24,6 +24,27 @@ exports.create = (req, res) => {
 };
 */
 
+exports.findUser= (req,res)=>{
+    var userid = req.params.id;
+    console.log(req.params.id);
+    User.findOne({user_code : userid}, function (err, user) {
+        if(err) {
+            return res.json({});}
+        else if(user == null) {
+            //회원이 아님.
+                    console.log("not found");
+                    res.send({user:false});
+            }
+        else {
+            //회원임.
+            console.log("Found!");
+            res.send({user:true});
+        }
+
+    });
+};
+
+
 // 회원 생성
 exports.create = (req, res) => {
 // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
@@ -38,7 +59,8 @@ exports.create = (req, res) => {
             User.create({user_code:kakaoData.id,avatar_path: kakaoData.properties.profile_image, name: kakaoData.properties.nickname,
             age: signUpData.age, gender: signUpData.gender, catagoryList:signUpData.catagoryList}, (err, result) => {
                 if(!err) {
-                    return  res.json({result : "ok"});
+                    return  res.json({result : "create"});
+
                 }
             }); // 존재하지 않는 회원 id는 새로 생성.
         }
@@ -47,7 +69,6 @@ exports.create = (req, res) => {
         }
     });
 };
-
 
 exports.getUser = (req, res) => {
   User.find({user_code : req.params.id}, (err, result) => {
