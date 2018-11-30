@@ -40,13 +40,13 @@
             </template>
   * */
 
-
   import topItem from './topItem';
   import sidebar from './nav';
-
+  var topVue = this;
   //import kakaoLogin from '../kakaoLogin';
   /* eslint-disable no-console*/
   export default {
+
     name: 'top',
     components: { topItem , sidebar},
     data(){
@@ -54,6 +54,9 @@
               user_name : String,
               profile_path : String
           }
+      },
+      created:function() {
+
       },
       mounted: function () {
           const scriptId = 'kakao_login';
@@ -70,7 +73,7 @@
 
       },
       computed:{
-        //현재 로그인 상태 확인, 쿠키로 저장.
+        //현재 로그인 상태 확인. 로그인/ 로그아웃시 보여져야하는 UI 조정.
           loginStatus(){
               var cookie_status= this.$cookie.get('loginStatus');
               console.log("loginStatus>>"+ cookie_status);
@@ -101,35 +104,54 @@
               Kakao.init("08991fe24f4ff6700ae96d13f881ea66");
           },
           handleError: (err) => {
-              /* eslint-disable no-console*/
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
 
           //로그인
-          async loginWithKakao(){
-              var loginResult = await Kakao.Auth.login();
-              console.log("loginResult>>"+loginResult);
+           loginWithKakao(){
+              //카카오 인증하는 부분. 창을 띄워 이메일,비밀번호 값을 받아 토큰 반환.
+               Kakao.Auth.login({
+                   success: function(authObj) {
+                       afterAuth();
+                   },
+                   fail: function(err) {
+                       console.log("AuthError>>"+err);
+                   }
+               });
+                var topVuethis = this;
 
-              //카카오 계정에서 유저 정보 얻기
-              var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
-              var userID= kakaoData.id;
-              var getURL = "http://localhost:3000/user/"+userID;
-              var user_name = kakaoData.properties.nickname.toString();
-              var profile_path = kakaoData.properties.profile_image.toString();
-              this.$cookie.set('userName',user_name, 1);
-              this.$cookie.set('profile_path',profile_path, 1);
+                //카카오에서 받은 토큰으로 유저 데이터 불러오기, 유저가 등록된 회원인지 판별
+               async function  afterAuth (){
+                   //유저 데이터 불러오기
+                   var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
+                   var userID= kakaoData.id;
+                   var user_name = kakaoData.properties.nickname.toString();
+                   var profile_path = kakaoData.properties.profile_image.toString();
+
+                   //유저 이름, 프로필 이미지 쿠키로 저장.
+                   topVuethis.$cookie.set('userName',user_name, 1);
+                   topVuethis.$cookie.set('profile_path',profile_path, 1);
+
+                   //유저가 이미 등록된 회원인지 판별.
+                   var getURL = "http://localhost:3000/user/"+userID;
+                   var userResult = await topVuethis.$http.get(getURL);
+
+                   //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
+                   if(userResult.data.user){
+                       topVuethis.$cookie.set('loginStatus','login', 1);
+                       console.log( topVuethis.$cookie.get('loginStatus'));
+                       location.href="/"
+
+                   } else{  //회원이 아닌 경우 -> 회원가입 창으로
+                       location.href="/signUp"
+                   }
+
+                }
 
 
 
-              var userResult = await this.$http.get(getURL);
-              if(userResult.data.user){ //유저일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침
-                  this.$cookie.set('loginStatus','login', 1);
-                  console.log( this.$cookie.get('loginStatus'));
-                  location.href="/"
 
-              } else{   //유저가 아닌 경우 -> 회원가입 창으로
-                 location.href="/signUp"
-              }
+
 
               //location.href="/"
           },
@@ -140,7 +162,9 @@
                   setTimeout(function(){
                       location.href="/"
                   },1000);//로그아웃 처리되는 타임을 임시적으로 1000설정
+                  location.href="/"
               });
+              Kakao.Auth.cleanup();
               this.$cookie.set('loginStatus','logout', 1);
               console.log( this.$cookie.get('loginStatus'));
               location.href="/"
