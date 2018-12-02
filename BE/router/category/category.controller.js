@@ -35,9 +35,7 @@ exports.updateCategory = (req, res) => {
 // 카테고리 삭제
 exports.deleteCategory = (req, res) => {
   category.findOneAndRemove({_id: req.params.id}, (err, result) => {
-    if(!err && result) { fs.unlink(path.join(__dirname, `../../files/${result.img_path}`), (fsErr) => {
-      if (fsErr) console.warn({ err: 'not removed on Server' });
-    }); // db에 저장된 img_path와 함께 해당 파일 삭제
+    if(!err && result) { 
     return res.json(result);
   };
   return res.status(404).send({ message: 'No data found to delete' });
@@ -49,7 +47,7 @@ exports.deleteCategory = (req, res) => {
 
 // 소분류 카테고리 생성 
 exports.createSubCategory = (req, res) => {
-  category.create( req.body , (err, result) => {
+  category.findOneAndUpdate( {_id: req.params.cat} ,{ $push : { sub_category: {name : req.body.name, description : req.body.description}}} ,(err, result) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(result);
   });
@@ -57,7 +55,7 @@ exports.createSubCategory = (req, res) => {
 
 // 대분류의 모든 소분류 카테고리 보기
 exports.getAllSubCategory = (req, res) => {
-  category.find({}, (err, category) => {
+  category.find({_id : req.params.cat}, (err, category) => {
     if (err) return res.status(500).send(err); // 500 error
       return res.json(category);
   });
@@ -66,7 +64,7 @@ exports.getAllSubCategory = (req, res) => {
 // 소분류 카테고리 수정
 exports.updateSubCategory = (req, res) => {
   category.findOneAndUpdate(
-    {_id: req.params.id}, { $set:req.body }, (err, result) => {
+    { 'sub_category.id': req.params.id, _id: req.params.cat}, { $set:{'sub_category.$': req.body} }, (err, result) => {
       if(!err) {
         return res.json({result : "ok"});
       }
@@ -76,10 +74,9 @@ exports.updateSubCategory = (req, res) => {
 
 // 소분류 카테고리 삭제
 exports.deleteSubCategory = (req, res) => {
-  category.findOneAndRemove({_id: req.params.id}, (err, result) => {
-    if(!err && result) { fs.unlink(path.join(__dirname, `../../files/${result.img_path}`), (fsErr) => {
-      if (fsErr) console.warn({ err: 'not removed on Server' });
-    }); // db에 저장된 img_path와 함께 해당 파일 삭제
+  category.findOneAndUpdate({_id: req.params.cat}, {$pull : {sub_category : {_id: req.params.id}}}
+  ,(err, result) => {
+    if(!err && result) { 
     return res.json(result);
   };
   return res.status(404).send({ message: 'No data found to delete' });

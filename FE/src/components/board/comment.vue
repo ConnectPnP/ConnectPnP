@@ -3,11 +3,11 @@
     <li>
         <b-row class="comment">
             <b-col cols="1" class="comment-profile">
-                <b-img left
+                <!--<b-img left
                        :src="comment.member.profile_img"
                        rounded="circle" width="75" height="75"
                 />
-                <b>{{comment.member.name}} </b>
+                <b>{{comment.member.name}} </b> -->
             </b-col>
             <b-col class="comment-content">
                 <p>{{comment.content}}</p>
