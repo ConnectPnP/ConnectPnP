@@ -11,7 +11,7 @@ const userCtrl = require('./user.controller');
 router.post('/',userCtrl.create);
 //유저로 등록되어 있는지 확인
 router.get('/:id',userCtrl.findUser)
-// get user info
+// get user info . 유저 아이디로 정보 불러오기
 router.get('/details/:id',userCtrl.getUser);
 
 // make & edit profile by user code

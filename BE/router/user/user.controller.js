@@ -37,8 +37,11 @@ exports.findUser= (req,res)=>{
         else {
             //회원임.
             console.log("Found!");
+
+            //서버에 현재 로그인 된 유저 아이디값 저장.
             global.currentUser=userid;
             console.log("현재 유저 아이디: "+global.currentUser);
+
             res.send({user:true});
         }
 
@@ -52,7 +55,8 @@ exports.create = (req, res) => {
     var kakaoData = req.body[0];
     var signUpData = req.body[1];
     console.log(signUpData.gender);
-    console.log("/signUp post received>>")
+    console.log("/signUp post received>>");
+
     // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
     User.findOne({user_code : kakaoData.id}, function (err, user) {
         if(err) return res.json({});
@@ -72,12 +76,15 @@ exports.create = (req, res) => {
 };
 
 exports.getUser = (req, res) => {
-  User.find({user_code : userid}, function (err, user) {
-    if(!err) {
-      return res.json(result);
-    }
-    return res.json({result : "fail"});
-  })
+    var userid = req.params.id;
+    User.findOne({user_code : userid}, function (err, user) {
+        if(err) {
+            return res.json({});}
+        else {
+            console.log(user);
+            res.send(user);
+        }
+    });
 }
 
 exports.delete = (req, res) => {
