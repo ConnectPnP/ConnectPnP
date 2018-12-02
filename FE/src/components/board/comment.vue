@@ -20,6 +20,8 @@
             </b-col>
             <b-col class="btn">
                 <b-btn size="sm" class="btn" variant="secondary"
+                                 @click="replyComment">답글</b-btn>
+                <b-btn size="sm" class="btn" variant="secondary"
                                  @click="modifyComment">수정</b-btn>
                 <b-btn size="sm" class="btn" variant="secondary"
                                  v-if="!isModify" @click="deleteComment">삭제</b-btn>
@@ -57,6 +59,9 @@
             },
             deleteComment(){
                     // 댓글 삭제
+            },
+            replyComment(){
+                    // 답글 달기
             }
         }
     }
