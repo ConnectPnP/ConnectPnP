@@ -23,7 +23,7 @@
                         Min number of member : <b> {{detailPartyInfo.min}}</b><br>
                         Max number of member : <b> {{detailPartyInfo.max}}</b><br>
                         Cost : <b> {{detailPartyInfo.cost}}</b><br>
-                        condition : <b> {{detailPartyInfo.condition}}</b><br>
+                        condition : <b> {{showConditions}}</b><br>
                         <button class="btn btn-info" id="js-party-join-btn"
                                   size="md"
                         >Join</button>
@@ -32,7 +32,7 @@
                 <b-col>
                     <div class="hostBtnGroup">
                             <b-button-group>
-                                <b-button class="btn btn-info" id="js-join-list">
+                                <b-button class="btn btn-info" id="js-join-list" href="/party/edit">
                                     수정
                                 </b-button>
                                 <b-button class="btn btn-info" id="js-edit">
@@ -156,7 +156,7 @@
                 ],
 
                 detailPartyInfo: { 
-                    // title: String, locationText: String, host: String, recruitment_period: String, party_date: String, category: String, min: number, max: number, cost: String, condition: String
+                    // title: String, locationText: String, host: String, recruitment_period: String, party_date: String, category: String, min: number, max: number, cost: String, conditions: String
 
                     title: "Go to Disney Land!",
                     location: {lat:37.282908, lng:127.046402},
@@ -168,7 +168,10 @@
                     min: 2,
                     max: 5,
                     cost: "100000 won",
-                    condition: " under 25 years old"
+                    conditions: {
+                        gender: 'none',
+                        age: [0,100]
+                    }
                 },
                 tabsInfo: { 
                     // detail: String
@@ -251,11 +254,31 @@
                     this.detailPartyInfo.min = data.min_num;
                     this.detailPartyInfo.max = data.max_num;
                     this.detailPartyInfo.cost = data.cost;
-                    this.detailPartyInfo.condition = data.condition;
+                    this.detailPartyInfo.conditions = data.conditions;
                     this.tabsInfo.detail = data.detail;
                     this.tabsInfo.members = data.guest; // 멤버 정보 가져와야함
                     this.commentList = data.comments; // 댓글 가져와야함
                 })
+        },
+        computed:{
+            showConditions(){
+                var condition = '';
+                var gender = this.detailPartyInfo.conditions.gender;
+                var age = this.detailPartyInfo.conditions.age;
+                if(gender == 'none'){
+                    condition += '성별 무관, ';
+                } else if(gender == 'female'){
+                    condition += '성별 : 여성, ';
+                } else {
+                    condition += '성별 : 남성, ';
+                }
+                if(age[0] == 0 && age[1] == 100){
+                    condition += '나이 무관';
+                } else {
+                    condition += '나이 : '+ age[0] +'세 이상 ' + age[1]+'세 이하';
+                }
+                return condition;
+            }
         },
         methods: {
             onLoad(map){
