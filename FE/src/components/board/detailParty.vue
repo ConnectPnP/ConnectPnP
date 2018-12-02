@@ -25,7 +25,7 @@
                         Cost : <b> {{detailPartyInfo.cost}}</b><br>
                         condition : <b> {{showConditions}}</b><br>
                         <button class="btn btn-info" id="js-party-join-btn"
-                                  size="md"
+                                  size="md" @click="joinParty"
                         >Join</button>
                     </b-card>
                 </b-col>
@@ -76,11 +76,11 @@
             <hr>
             <p class="comment-info" style="text-align: left;padding-left: 30px">댓글 수 : {{commentList.length}} 조회수 : 0</p>
             <b-row>
-                <b-input-group prepend="Username"
+                <b-input-group :prepend=currentUserEx.name
                                style="padding-top: 2px;padding-left: 30px; padding-right: 10px; width: 90%">
                     <b-form-input v-model="commentContent"></b-form-input>
                     <b-input-group-append>
-                        <b-btn variant="info" v-on:click="enter"> Enter</b-btn>
+                        <b-btn variant="info" v-on:click="enter">Enter</b-btn>
                     </b-input-group-append>
                 </b-input-group>
             </b-row>
@@ -117,7 +117,15 @@
         data() {
             commentContent: "";
             return {
-                commentList: [ // id: number, member: { id, name, age, sex, profile_img}, content: String, depth: number, parentComment:  
+                boardId:'',
+                currentUserEx:{
+                    user_code: 'abcd',
+                    name: 'wow',
+                    age: 12,
+                    gender: 'female',
+                    profile_img: 'http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg'
+                },
+                commentList: [ // id: number, member: { id, name, age, gender, profile_img}, content: String, depth: number, parentComment:  
 
                     {
                         id: 1,
@@ -125,7 +133,7 @@
                             id: 1,
                             name: "seo",
                             age: "23",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
                         },
                         content: "This will be fun and " +
@@ -139,7 +147,7 @@
                             id: 1,
                             name: "ko",
                             age: "24",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
                         },
                         content: "Yes it will be cool",
@@ -175,7 +183,7 @@
                 },
                 tabsInfo: { 
                     // detail: String
-                    // members: [{id:number, name:String, age:String, sex:String, profile_img:String(url)}]
+                    // members: [{id:number, name:String, age:String, gender:String, profile_img:String(url)}]
                     
                     detail: "This is for the example of detail info of specific Party",
                     members: [
@@ -184,7 +192,7 @@
                             id: 1,
                             name: "seo",
                             age: "23",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
                         },
@@ -193,7 +201,7 @@
                             id: 2,
                             name: "ko",
                             age: "24",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
                         },
                         {
@@ -201,7 +209,7 @@
                             id: 3,
                             name: "jo",
                             age: "23",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
                         },
                         {
@@ -209,7 +217,7 @@
                             id: 4,
                             name: "kim",
                             age: "22",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
                         },
@@ -218,7 +226,7 @@
                             id: 5,
                             name: "won",
                             age: "22",
-                            sex: "F",
+                            gender: "F",
                             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
 
                         }
@@ -238,7 +246,7 @@
         },
         created(){
             var url = window.location.pathname;
-            var boardId = url.split('/')[3]; // 이렇게 해도 되나..?
+            this.boardId = url.split('/')[3]; // 이렇게 해도 되나..?
 
             this.$http.get('http://localhost:3000/board/details/'+boardId)
                 .then((result)=>{
@@ -298,18 +306,27 @@
                 
             },
             enter(){
-                var commentId =  this.commentList; //?? 어떻게 하는지 물어보기
-                this.$http.post('http://localhost:3000/board/comments/'+commentId, {
-                    // id: ??, 댓글 아이디
-                    member: {
-                        // id: ?? 멤버 아이디
-                    },
+                // var commentId =  this.commentList; //?? 어떻게 하는지 물어보기
+                // this.$http.post('http://localhost:3000/board/comments/'+commentId, {
+                //     // id: ??, 댓글 아이디
+                //     member: this.currentUserEx,
+                //     content: this.commentContent,
+                //     depth: 0, // 대댓글 할때는 가변적
+                //     //parentComment: 
+                // }).then((result)=>{
+                //     console.log(result);
+                // });
+
+                // test
+                var comment = {
+                    id: this.commentList.length +1,
+                    member: this.currentUserEx,
                     content: this.commentContent,
-                    depth: 0, // 대댓글 할때는 가변적
-                    //parentComment: 
-                }).then((result)=>{
-                    console.log(result);
-                });
+                    depth: 0,
+                    parentComment: null
+                };
+                this.commentList.push(comment);
+                this.commentContent = '';
             },
             showJoinList(){
                 this.$modal.show(JoinList,{
@@ -320,6 +337,22 @@
                     height: '440px',
                     draggable: true
                 })
+            },
+            joinParty(){
+                // 이미 신청 or 가입 되어있는지 확인해야 함
+
+                var condition = this.detailPartyInfo.conditions;
+                if(((condition.gender == 'none')||(condition.gender == this.currentUserEx.gender))
+                    &&((this.currentUserEx.age >= condition.age[0])&&(this.currentUserEx.age <= condition.age[1]))){
+                        //참여 신청 보내기
+                        this.$http.post('http://localhost:3000/board/join',{
+                            id: this.boardId, // 모임 Id
+                            // user 정보
+                        })
+                        alert("신청 완료 되었습니다.");
+                } else {
+                    alert("조건에 맞지 않아 참여할 수 없습니다!");
+                }
             }
         }
     }
