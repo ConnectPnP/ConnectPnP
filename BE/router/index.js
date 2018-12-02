@@ -17,8 +17,6 @@ router.get('/', (req, res) => {
         for(var i=0; i<data.length; i++){
             var rate = 0;
             var starRate = 0;
-            var applicants = 0;
-            var hits = 0;
 
             // rate += data[i].applicants; // 스키마에 추가해야함
             // rate += data[i].hits; // 스키마에 추가해야함
@@ -26,7 +24,6 @@ router.get('/', (req, res) => {
             rate = ((data[i].applicants)/(data[i].hits)*(1/3)) + ((data[i].guest.length)/(data[i].max_num)*(1/3));
             console.log((data[i].applicants)/(data[i].hits)); // log
             console.log((data[i].guest.length)/(data[i].max_num)); // log
-
 
             for(var j=0; j<data[i].guest.length; j++){
                 starRate += data[i].guest[j].star_rate;
