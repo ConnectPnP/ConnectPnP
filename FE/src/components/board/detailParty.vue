@@ -51,9 +51,9 @@
             <b-row>
                 <b-input-group prepend="Username"
                                style="padding-top: 2px;padding-left: 30px; padding-right: 10px; width: 90%">
-                    <b-form-input></b-form-input>
+                    <b-form-input v-model="content"></b-form-input>
                     <b-input-group-append>
-                        <b-btn variant="info"> Enter</b-btn>
+                        <b-btn variant="info" @click="createComment(content)"> Enter</b-btn>
                     </b-input-group-append>
                 </b-input-group>
             </b-row>
@@ -198,8 +198,22 @@
                 var vm = this
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
                 .then((result) => {
+                    console.log(result)
                     vm.detailPartyInfo = result.data
                 })
+            },
+            createComment (content) {
+                var vm = this
+                this.$http.defaults.headers.post['Content-Type'] = 'application/json'
+                this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
+                {
+                    // 추가 post data 입력
+                    content : content
+                })
+                .then((result) => {
+                    console.log(result)
+                })
+
             }
         },
         mounted() {

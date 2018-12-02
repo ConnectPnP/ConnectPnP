@@ -21,17 +21,24 @@
         name: "comment",
         props: {
             comment: {
-                id: Number,
+                _id: String,
                 member: {
-                    id: Number,
-                    name: String,
+                    _id: String,
+                    name: {
+                        type: String,
+                        default() { return "noName";}
+                    },
                     age: Number,
                     sex: String,
-                    profile_img: String
+                    profile_img: {
+                        type: String,
+                        default() { return "http://www.cchannel.com/images/noimg.gif"; }
+                    }
                 },
                 content: String,
                 depth: Number,
-                parentComment: Number
+                parentComment: Number,
+                createdAt : String
             }
         }
     }

@@ -23,7 +23,13 @@ const GroupSchema = new Schema({
  location : {type: String},
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
  comments : [
-    {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
+   {
+      member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
+      content : {type: String},
+      depth : {type: Number},
+      parentComment : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'},
+      createdAt : {type: Date, default: Date.now}
+  }
 ],
  guest: [
     {type : mongoose.Schema.Types.ObjectId, ref:'User'}

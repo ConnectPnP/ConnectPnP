@@ -9,10 +9,11 @@ const Schema = mongoose.Schema;
 */
 
 const CommentSchema = new Schema({
-    user_id : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
-    context : {type: String},
+    member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
+    content : {type: String},
     depth : {type: Number},
-    parent_id : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
+    parentComment : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'},
+    createdAt : {type: Date, default: Date.now}
 });
 
 CommentSchema.plugin(autoIncrement.plugin, 'Comment');
