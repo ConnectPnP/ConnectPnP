@@ -149,22 +149,6 @@
                         cost: ''
                     },
                 categoryList: [
-                    {
-                        value: null,
-                        text: "select Category"
-                    },
-                    {
-                        value: 1, //category_id 넣으면될듯
-                        text: "sports"
-                    },
-                    {
-                        value: 2,
-                        text: "game"
-                    },
-                    {
-                        value: 3,
-                        text: "travel"
-                    }
                 ]
             }
         },
@@ -186,9 +170,21 @@
                 }
                 return formattedDates
             },
+            getCategoryList() {
+                var vm = this
+                this.$http.get('http://localhost:3000/category/sub')
+                .then((result) => {
+                    for(var i=0; i<result.data.length; i++) {
+                        for(var j=0; j<result.data[i].sub_category.length ; j++){
+                            var categoryOption = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].value+'"}'
+                            vm.categoryList.push(JSON.parse(categoryOption))
+                        }
+                    }
+                })
+            }
+            ,
             onSubmit(evt) {
                 evt.preventDefault();
-                alert(JSON.stringify(this.party_form));
                 this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                 this.$http.post('http://localhost:3000/board', {
                     title : this.party_form.title,
@@ -203,23 +199,29 @@
                     detail:this.party_form.detail,
                     // location :,
                     // host :,
-            }).then((result) => {
-                var boardId = result.data._id
-                console.log('boardId : ' + boardId)
-                var formdata = new FormData()
-                for( var i = 0; i < this.party_form.file_array.length; i++ ){
-                    let file = this.party_form.file_array[i].file
+            })
+            // 이미지 업로드
+            // .then((result) => {
+            //     var boardId = result.data._id
+            //     console.log('boardId : ' + boardId)
+            //     var formdata = new FormData()
+            //     for( var i = 0; i < this.party_form.file_array.length; i++ ){
+            //         let file = this.party_form.file_array[i].file
 
-                    formdata.append('files[' + i + ']', file)
-                }
-                console.log('post files')
-                this.$http.post('http://localhost:3000/board/files/'+ boardId, formdata, {headers: {'Content_Type':'multipart/form-data'}})
+            //         formdata.append('files[' + i + ']', file)
+            //     }
+            //     console.log('post files')
+            //     this.$http.post('http://localhost:3000/board/files/'+ boardId, formdata, {headers: {'Content_Type':'multipart/form-data'}})
 
-            }).then((result)=> {
-                console.log(result);
+            // })
+            .then((result)=> {
+                window.location.href = "http://localhost:8080/party/detail/" + result.data._id
             })
             }
-        }
+        },
+        mounted() {
+        this.getCategoryList()
+    }
     }
 </script>
 

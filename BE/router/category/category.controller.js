@@ -53,10 +53,11 @@ exports.createSubCategory = (req, res) => {
   });
 };
 
-// 대분류의 모든 소분류 카테고리 보기
+// 모든 소분류 카테고리 보기
 exports.getAllSubCategory = (req, res) => {
-  category.find({_id : req.params.cat}, (err, category) => {
+  category.find({},{ "sub_category": 1,"_id": 0 }, (err, category) => {
     if (err) return res.status(500).send(err); // 500 error
+    console.log(category)
       return res.json(category);
   });
 };
