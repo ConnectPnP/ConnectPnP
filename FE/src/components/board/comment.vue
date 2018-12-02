@@ -39,7 +39,7 @@
                     id: Number,
                     name: String,
                     age: Number,
-                    sex: String,
+                    gender: String,
                     profile_img: String
                 },
                 content: String,

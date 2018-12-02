@@ -11,7 +11,7 @@
         <b-popover v-bind:target="`memberSimpleProfile${member.id}`" triggers="hover focus">
             <template slot="title">{{member.name}}</template>
             Age : <strong>{{member.age}}</strong> <br>
-            Sex : <strong>{{member.sex}}</strong>
+            gender : <strong>{{member.gender}}</strong>
         </b-popover>
 
 
@@ -26,7 +26,7 @@
                 id: Number,
                 name: String,
                 age: Number,
-                sex: String,
+                gender: String,
                 profile_img: String
             },
             index: Number
