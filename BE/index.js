@@ -13,7 +13,7 @@ const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
 
-
+//로그인 된 유저 id값 저장
 global.currentUser='no current userid';
 
 console.log(global.currentUser);
