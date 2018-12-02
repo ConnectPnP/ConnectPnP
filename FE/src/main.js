@@ -5,6 +5,7 @@ import router from './router'
 import Vuesax from 'vuesax'
 import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 import axios from 'axios'
+import VModal from 'vue-js-modal'
 
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -25,6 +26,7 @@ const datepickerOptions = {};
 
 Vue.use(BootstrapVue);
 Vue.use(AirbnbStyleDatepicker, datepickerOptions);
+Vue.use(VModal, {dynamic: true});
 
 new Vue({
   el: '#app',

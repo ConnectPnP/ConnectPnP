@@ -82,6 +82,8 @@ export default {
   max-width: 500px;
   max-height: 480px;
 
+  text-align: center;
+
   padding: 15px;
 }
 
