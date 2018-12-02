@@ -1,5 +1,6 @@
 <template>
     <div id="dev-detailParty">
+        <modals-container />
         <b-container>
             <b-row>
                 <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="2"></coverflow>
@@ -14,7 +15,7 @@
 
                         <hr>
                         Host : <b> {{detailPartyInfo.host}} </b> <br>
-                        Location : <b> {{detailPartyInfo.location}}</b><br>
+                        Location : <b> {{detailPartyInfo.locationText}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.recruitment_period}}</b><br>
                         Party Date : <b> {{detailPartyInfo.party_date}}</b><br>
                         Category : <b> {{detailPartyInfo.category}}</b><br>
@@ -25,8 +26,7 @@
                         condition : <b> {{detailPartyInfo.condition}}</b><br>
                         <button class="btn btn-info" id="js-party-join-btn"
                                   size="md"
-                        >　Join　
-                        </button>
+                        >Join</button>
                     </b-card>
                 </b-col>
                 <b-col>
@@ -38,7 +38,7 @@
                                 <b-button class="btn btn-info" id="js-edit">
                                     삭제
                                 </b-button>
-                                <b-button class="btn btn-info" id="js-delete">
+                                <b-button class="btn btn-info" id="js-delete" @click="showJoinList">
                                     신청 리스트
                                 </b-button>
                             </b-button-group>
@@ -59,7 +59,16 @@
                             </b-card-group>
                         </b-tab>
                         <b-tab id="tabsInfo-locationMap" title="Location Map">
-                            <br>Here will be with location map
+                            <!-- Here will be with location map -->
+                            <br><vue-daum-map :appKey="daumMap.appKey"
+                                :center.sync="detailPartyInfo.location"
+                                :level.sync="daumMap.level"
+                                :mapTypeId="daumMap.mapTypeId"
+                                :libraries="daumMap.libraries"
+                                @load="onLoad"
+
+                                style="width:500px;height:400px;"
+                            />
                         </b-tab>
                     </b-tabs>
                 </b-col>
@@ -88,10 +97,13 @@
     </div>
 </template>
 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a3cfd8f8c44ef55f94f2fa1a99a18558"></script>
 <script>
     import coverflow from 'vue-coverflow'
     import memberSimpleProfile from './memberSimpleProfile.vue'
     import commentTemplate from './comment.vue'
+    import VueDaumMap from 'vue-daum-map';
+    import JoinList from '../joinListPopup/joinList.vue'
 
     export default {
         name: "detailParty",
@@ -99,6 +111,8 @@
             coverflow,
             memberSimpleProfile,
             commentTemplate,
+            VueDaumMap,
+            JoinList
         },
         data() {
             commentContent: "";
@@ -142,10 +156,11 @@
                 ],
 
                 detailPartyInfo: { 
-                    // title: String, location: String, host: String, recruitment_period: String, party_date: String, category: String, min: number, max: number, cost: String, condition: String
+                    // title: String, locationText: String, host: String, recruitment_period: String, party_date: String, category: String, min: number, max: number, cost: String, condition: String
 
                     title: "Go to Disney Land!",
-                    location: "Japan",
+                    location: {lat:37.282908, lng:127.046402},
+                    locationText: "Japan",
                     host:"seo",
                     recruitment_period: "2018-11-17 ~ 2018-11-22",
                     party_date: "2018-12-01",
@@ -206,6 +221,14 @@
                         }
                     ],
 
+                },
+                daumMap:{
+                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
+                    // center: {lat:37.282908, lng:127.046402},
+                    level: 4,
+                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
+                    libraries: [],
+                    map: null
                 }
 
             }
@@ -221,6 +244,7 @@
                     this.detailPartyInfo.title = data.title;
                     this.detailPartyInfo.host = data.host;
                     this.detailPartyInfo.location = data.location;
+                    this.detailPartyInfo.locationText = data.locationText;
                     this.detailPartyInfo.recruitment_period = data.start_date + " ~ " + data.due_date;
                     this.detailPartyInfo.party_date = data.meeting_date;
                     this.detailPartyInfo.category = data.category_id; // 카테고리 이름 가져와야 함
@@ -234,6 +258,22 @@
                 })
         },
         methods: {
+            onLoad(map){
+                var bounds = map.getBounds();
+
+                var iwContent = '<br><pre> 아주대학교 </pre>'
+                var iwPosition = new daum.maps.LatLng(this.detailPartyInfo.location["lat"], this.detailPartyInfo.location["lng"]);
+                var marker = new daum.maps.Marker({
+                    position: iwPosition,
+                    map: map
+                });
+                var infowindow = new daum.maps.InfoWindow({
+                    position: iwPosition,
+                    content: iwContent
+                });
+                infowindow.open(map, marker)
+                
+            },
             enter(){
                 var commentId =  this.commentList; //?? 어떻게 하는지 물어보기
                 this.$http.post('http://localhost:3000/board/comments/'+commentId, {
@@ -247,6 +287,16 @@
                 }).then((result)=>{
                     console.log(result);
                 });
+            },
+            showJoinList(){
+                this.$modal.show(JoinList,{
+                    // 주최자 정보
+                },{
+                    name: 'joinList',
+                    width: '500px',
+                    height: '440px',
+                    draggable: true
+                })
             }
         }
     }

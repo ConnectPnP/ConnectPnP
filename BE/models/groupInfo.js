@@ -19,7 +19,8 @@ const GroupSchema = new Schema({
  cost : {type : Number},
  condition : {type : String},
  images : [{img_path : {type:String}}],
- location : {type: String},
+ locationText : {type: String},
+ location: {lat:{type: String}, lng: {type: String}},
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
  comments : [{
      comment_id : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}

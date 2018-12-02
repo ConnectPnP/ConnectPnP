@@ -89,8 +89,30 @@
                               label="Location :"
                               label-class="text-sm-right"
                               class="mb-0">
-                    This is for the map
                     <!--API이용한 map 필요-->
+                    <b-input-group>
+                        <b-form-input id="location"
+                                    v-model="party_form.locationText"
+                                    size="sm" 
+                                    type="text"
+                                    placeholder="장소를 검색해주세요" />
+                            <b-input-group-append>
+                                <b-button variant="primary" size="sm" @click="searchPlace">장소 검색</b-button>
+                            </b-input-group-append>
+                    </b-input-group>
+                    <br>
+                    <vue-daum-map :appKey="daumMap.appKey"
+                                :center.sync="daumMap.center"
+                                :level.sync="daumMap.level"
+                                :mapTypeId="daumMap.mapTypeId"
+                                :libraries="daumMap.libraries"
+                                @load="onLoad"
+
+
+                                style="width:500px;height:400px;"
+
+                            />
+
                 </b-form-group>
                 <b-form-group horizontal
                               label="Cost :"
@@ -146,14 +168,17 @@
     </div>
 </template>
 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a3cfd8f8c44ef55f94f2fa1a99a18558"></script>
 <script>
-    import format from 'date-fns/format'
+    import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
+    import VueDaumMap from 'vue-daum-map';
 
     export default {
         name: "createParty",
         components: {
             vueSlider,
+            VueDaumMap
         },
         data() {
             return {
@@ -171,6 +196,8 @@
                         recruitment_period_dateTwo: '',
                         todayDate: '',
                         date: '',
+                        locationText: '',
+                        location:{},
                         cost: '',
                         conditions: {
                             gender: 'none',
@@ -206,13 +233,22 @@
                         value: 3,
                         text: "travel"
                     }
-                ]
+                ],
+                daumMap:{
+                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
+                    center: {lat:37.282908, lng:127.046402},
+                    level: 4,
+                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
+                    libraries: ['services'],
+                    map: null
+                }
             }
         },
         mounted(){
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
             // console.log("today: "+today);
+
         },
         methods: {
             onFileChange(e) {
@@ -271,7 +307,7 @@
                         due_date: party.recruitment_period_dateTwo,
                         meeting_date: party.date,
                         //location: ,
-                        cost: partym.cost,
+                        cost: party.cost,
                         conditions: {
                             gender: party.conditions.gender,
                             age: party.conditions.age
@@ -284,8 +320,29 @@
                         // 디테일 파티 페이지로 가기
                     }); 
                 }
-                
             },
+            onLoad(map){
+                this.daumMap.map = map;
+                var bounds = map.getBounds();
+                var boundsStr = bounds.toString();
+
+                var iwContent = '<br><pre> 아주대학교 </pre>'
+                var iwPosition = new daum.maps.LatLng(this.daumMap.center["lat"], this.daumMap.center["lng"]);
+                var marker = new daum.maps.Marker({
+                    position: iwPosition,
+                    map: map
+                });
+                var infowindow = new daum.maps.InfoWindow({
+                    position: iwPosition,
+                    content: iwContent
+                });
+                infowindow.open(map, marker)
+                
+
+            },
+            searchPlace(){
+                // 장소 찾기....
+             },
             changeAgeCondition(){
                 if(this.party_form.conditions.selectAge == 'none'){
                     this.party_form.conditions.age = [20,30];
