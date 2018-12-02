@@ -6,7 +6,7 @@ import detailParty from '@/components/board/detailParty'
 import partyList from '@/components/list/list'
 import myPage from '@/components/myPage/myPage'
 import signUp from '@/components/signUp'
-
+import admin from '@/components/admin'
 Vue.use(Router)
 
 export default new Router ({
@@ -41,6 +41,12 @@ export default new Router ({
       path: '/signUp', 
       name: 'signUp',
       component: signUp
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin
+
     },
     { 
       path: '*',

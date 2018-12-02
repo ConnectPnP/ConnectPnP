@@ -109,6 +109,7 @@
 
           //로그인
            loginWithKakao(){
+
               //카카오 인증하는 부분. 창을 띄워 이메일,비밀번호 값을 받아 토큰 반환.
                Kakao.Auth.login({
                    success: function(authObj) {
