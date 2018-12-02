@@ -5,8 +5,8 @@
                 <b-img class="cardImg" left rounded="left" :src="groupImg" />
             </td>
             <td class="cardBody">
-                    <h4>{{ groupTitle }}</h4>
-                    <h6>{{ groupLocation }}</h6>
+                    <h4>{{ viewTitle }}</h4>
+                    <h6>{{ viewLocation }}</h6>
                     <p>{{ viewDetail }}</p>
             </td>
         </table>
@@ -37,6 +37,14 @@ export default {
         },
     },
     computed: {
+        viewTitle: function(){
+            var str = this.groupTitle;
+            if(str.length > 8){
+                str = str.substring(0,8);
+                str += "...";
+            }
+            return str;
+        },
         viewDetail: function (){
             var str = this.groupDetail;
             if(str.length > 18){
@@ -44,7 +52,15 @@ export default {
                 str += "...";
             }
             return str;
-        }
+        },
+        viewLocation: function (){
+            var str = this.groupLocation;
+            if(str.length > 13){
+                str = str.substring(0,13);
+                str += "...";
+            }
+            return str;
+        },
     }
 };
 </script>

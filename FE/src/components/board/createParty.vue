@@ -59,6 +59,7 @@
                             :trigger-element-id="'party-recruitment-period'"
                             :mode="'range'"
                             :fullscreen-mobile="true"
+                            :min-date="todayDate"
                             :date-one="party_form.recruitment_period_dateOne"
                             :date-two="party_form.recruitment_period_dateTwo"
                             @date-one-selected="val => { party_form.recruitment_period_dateOne = val }"
@@ -78,6 +79,7 @@
                     <AirbnbStyleDatepicker
                             :trigger-element-id="'party-date'"
                             :mode="'single'"
+                            :min-date="party_form.recruitment_period_dateTwo"
                             :fullscreen-mobile="true"
                             :date-one="party_form.date"
                             @date-one-selected="val => { party_form.date = val }"
@@ -96,13 +98,32 @@
                               label-for="js-party-cost">
                     <b-form-input class="input"
                                 id="js-party-cost"
+                                placeholder="ex) 1회 5만원 / 재료비 30000원 / 가입비 오천원"
                                 v-model="party_form.cost"></b-form-input>
                 </b-form-group>
                 <b-form-group horizontal
-                              label="Condition :"
+                              label="Gender :"
                               label-class="text-sm-right"
-                              label-for="js-party-condition">
-                    세부 조건 추가 후, radio와 같은 것으로 고르게 하기 ex ) 성별 / 나이
+                              label-for="js-party-Gender">
+                            <b-form-radio-group v-model="party_form.conditions.gender"
+                                    :options="gender"
+                                    id="js-party-Gender">
+                            </b-form-radio-group>
+                </b-form-group>
+                <b-form-group horizontal
+                              label="Age :"
+                              label-class="text-sm-right"
+                              label-for="js-party-Age">
+                              <b-form-radio-group 
+                                    v-model="party_form.conditions.selectAge"
+                                    :options="age"
+                                    @change="changeAgeCondition">
+                            </b-form-radio-group>
+                </b-form-group>
+                <b-form-group horizontal
+                              v-if="party_form.conditions.selectAge =='selectAge'"
+                              style="padding-top: 10px">
+                    <vueSlider v-model="party_form.conditions.age" id="js-party-conditions-age"></vueSlider>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Category :"
@@ -138,6 +159,9 @@
             return {
                 dateFormat: 'YYYY-MM-DD',
                 file: null,
+                checkList: [
+                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Cost', 'Image', 'Category'
+                ],
                 party_form:
                     {
                         title:'',
@@ -145,11 +169,26 @@
                         detail: '',
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
+                        todayDate: '',
                         date: '',
                         cost: '',
+                        conditions: {
+                            gender: 'none',
+                            selectAge: 'none',
+                            age: [0,100],
+                        },
                         file_array: [],
                         selected_category_id:null
                     },
+                    gender: [
+                        { text: '상관 없음', value: 'none' },
+                        { text: 'Female', value: 'female' },
+                        { text: 'Male', value: 'male' }
+                    ],
+                    age: [
+                        {text: '상관 없음', value: 'none'},
+                        {text: '직접 설정', value: 'selectAge'}
+                    ],
                 categoryList: [
                     {
                         value: null,
@@ -169,6 +208,11 @@
                     }
                 ]
             }
+        },
+        mounted(){
+            this.todayDate = new Date();
+            this.todayDate = this.formatDates(this.todayDate);
+            // console.log("today: "+today);
         },
         methods: {
             onFileChange(e) {
@@ -192,26 +236,62 @@
                 evt.preventDefault();
 
                 var party = this.party_form;
-                alert(JSON.stringify(party));
+                var checkList = this.checkList;
+                var alertString = '';
+                var validationCheck = [
+                    party.title,
+                    party.detail,
+                    party.recruitment_period_dateOne,
+                    party.recruitment_period_dateTwo,
+                    party.date,
+                    party.cost,
+                    party.file_array,
+                    party.selected_category_id
+                ];
 
-                this.$http.post('http://localhost:3000/board/',{
-                    title: party.title,
-                    detail: party.detail,
-                    //images_array: party.file_array,
-                    start_date: party.recruitment_period_dateOne,
-                    due_date: party.recruitment_period_dateTwo,
-                    meeting_date: party.date,
-                    //location: ,
-                    cost: partym.cost,
-                    //condition: ,
-                    category_id: party.selected_category_id,
-                    min_num: party.number_of_member[0],
-                    max_num: party.number_of_member[1]
-                }).then((result)=>{
-                    console.log(result); // result : 그룹 ID
-                    // 디테일 파티 페이지로 가기
-                });
+                for(var i=0;i<validationCheck.length;i++){
+                    if(validationCheck[i]==null||validationCheck[i]==''){
+                        alertString += checkList[i] + ', ';
+                    }
+                }
+                if(alertString != ''){
+                    alert(alertString+" 칸을 채워주세요!");
+                }
+                else if(party.date < party.recruitment_period_dateTwo){
+                    alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
+                }
+                else {
+                   alert(JSON.stringify(party));
 
+                    this.$http.post('http://localhost:3000/board/',{
+                        title: party.title,
+                        detail: party.detail,
+                        //images_array: party.file_array,
+                        start_date: party.recruitment_period_dateOne,
+                        due_date: party.recruitment_period_dateTwo,
+                        meeting_date: party.date,
+                        //location: ,
+                        cost: partym.cost,
+                        conditions: {
+                            gender: party.conditions.gender,
+                            age: party.conditions.age
+                         },
+                        category_id: party.selected_category_id,
+                        min_num: party.number_of_member[0],
+                        max_num: party.number_of_member[1]
+                    }).then((result)=>{
+                        console.log(result); // result : 그룹 ID
+                        // 디테일 파티 페이지로 가기
+                    }); 
+                }
+                
+            },
+            changeAgeCondition(){
+                if(this.party_form.conditions.selectAge == 'none'){
+                    this.party_form.conditions.age = [20,30];
+                } else {
+                    this.party_form.conditions.age = [0,100];
+                }
             }
         }
     }
