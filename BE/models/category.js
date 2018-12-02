@@ -10,8 +10,12 @@ const Schema = mongoose.Schema;
 
 const CategorySchema = new Schema({
     name: { type: String },
-    description: {type: String}
+    img_path:{type:String},
+    sub_category : [ {
+        name : {type: String},
+        description:{type:String}}]
 });
+
 
 CategorySchema.plugin(autoIncrement.plugin, 'Category');
 
