@@ -7,11 +7,16 @@ const autoIncrement = require('mongoose-auto-increment');
 // [CONFIGURE SERVER PORT]
 const port = process.env.PORT || 3000;
 
+
 // [RUN SERVER]
 const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
 
+
+global.currentUser='no current userid';
+
+console.log(global.currentUser);
 mongoose.connect(config.dbUrl());
 
 const db = mongoose.connection;

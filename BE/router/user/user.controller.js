@@ -3,7 +3,6 @@ const path = require('path');
 const User  = require('../../models/user');
 const upload = require('../../middlewares/uploadAvatar');
 const config = require('../../config/server.config');
-
 /*
 // 회원 생성
 exports.create = (req, res) => {
@@ -38,6 +37,8 @@ exports.findUser= (req,res)=>{
         else {
             //회원임.
             console.log("Found!");
+            global.currentUser=userid;
+            console.log("현재 유저 아이디: "+global.currentUser);
             res.send({user:true});
         }
 
@@ -71,7 +72,7 @@ exports.create = (req, res) => {
 };
 
 exports.getUser = (req, res) => {
-  User.find({user_code : req.params.id}, (err, result) => {
+  User.find({user_code : userid}, function (err, user) {
     if(!err) {
       return res.json(result);
     }

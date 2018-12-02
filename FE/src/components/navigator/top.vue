@@ -129,6 +129,7 @@
                    var profile_path = kakaoData.properties.profile_image.toString();
 
                    //유저 이름, 프로필 이미지 쿠키로 저장.
+                   topVuethis.$cookie.set('userID',userID, 1);
                    topVuethis.$cookie.set('userName',user_name, 1);
                    topVuethis.$cookie.set('profile_path',profile_path, 1);
 
