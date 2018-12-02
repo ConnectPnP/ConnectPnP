@@ -11,6 +11,8 @@ const Schema = mongoose.Schema;
 const GroupSchema = new Schema({
  category_id : {type : mongoose.Schema.Types.ObjectId, ref:'Category'},
  title : {type : String},
+ hits : {type: Number, default: 1},
+ applicants : {type: Number, default: 0},
  due_date : {type: Date},
  start_date : {type : Date},
  meeting_date : {type : Date},
@@ -24,9 +26,7 @@ const GroupSchema = new Schema({
  comments : [{
      comment_id : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
  }],
- guest: [{
-     user_id : {type : mongoose.Schema.Types.ObjectId, ref:'User'}
- }]
+ guest: [{type : mongoose.Schema.Types.ObjectId, ref:'User'}]
 });
 
 GroupSchema.plugin(autoIncrement.plugin, 'Group');
