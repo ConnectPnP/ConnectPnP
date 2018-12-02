@@ -47,11 +47,13 @@
 
 <!--대분류에 속해있는 소분류 카테고리 -->
         <article class="subCatagory">
-            <h2>소분류 카테고리</h2>
             <br>
 
+            <div class="subCatagoryTitle" v-if="selectedCategory=='n'">
+                <h2> 대분류 카테고리를 선택해주세요</h2>
+            </div>
             <div  v-for="item in mainCatagoryList" :key="item.id">
-                <div v-if="tmp==item.catagoryName">
+                <div v-if="selectedCategory==item.catagoryName">
                     <div v-for="sub in item.sub_category">
                         <b-col sm class="homePageCatagory">
                         <div class="subCatagorySingle">
@@ -62,7 +64,7 @@
                 </div>
             </div>
 
-            <div class="createCatagory">
+            <div class="createCatagory" v-if="selectedCategory!='n'">
                 <div class="inputMain">
                     <label for="subCatagory"> 소분류 이름: </label>  &nbsp;
                     <input id="subCatagory" size="sm" type="text" placeholder="입력해주세요."></input>
@@ -83,7 +85,10 @@
     export default {
         name: "admin",
         props: {
-            tmp:String
+            selectedCategory:{
+                type: String,
+                default : "n"
+            }
         },
         data() {
             return {
@@ -149,7 +154,7 @@
         },
         methods:{
             catagoryClicked(catagoryname){
-                this.tmp=catagoryname;
+                this.selectedCategory=catagoryname;
                 console.log(catagoryname+"clicked!");
             },
 
@@ -214,6 +219,12 @@
     .subCatagory{
         float:left;
         alignment: left;
+    }
+
+    .subCatagoryTitle{
+        text-align: center;
+        margin-top: 100px;
+        margin-left: 30px;
     }
 
     .subCatagorySingle{
