@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const Board  = require('../../models/board');
+//const Board  = require('../../models/board');
 const User = require('../../models/user');
 const config = require('../../config/server.config');
-const upload = require('../../middlewares/uploadPost');
+//const upload = require('../../middlewares/uploadPost');
 
 const npage = 5 ; // 페이지당 5개 게시글 불러오기
 

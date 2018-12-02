@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const board = require('./board');
 const user = require('./user');
+const GroupInfo  = require('../models/groupInfo');
+const User  = require('../models/user'); // test
 
 router.use('/board', board);
 router.use('/user', user);
