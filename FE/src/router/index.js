@@ -23,7 +23,7 @@ export default new Router ({
       component: createParty
     },
     {
-      path: '/party/detail', // id parameter 필요
+      path: '/party/detail/:id', // id parameter 필요
       name: 'detailParty',
       component: detailParty
     },

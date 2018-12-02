@@ -11,22 +11,23 @@ const Schema = mongoose.Schema;
 const GroupSchema = new Schema({
  category_id : {type : mongoose.Schema.Types.ObjectId, ref:'Category'},
  title : {type : String},
- due_date : {type: Date},
- start_date : {type : Date},
- meeting_date : {type : Date},
+ detail : {type: String},
+ due_date : {type: String},
+ start_date : {type : String},
+ meeting_date : {type : String},
  min_num : {type: Number},
  max_num : {type: Number},
- cost : {type : Number},
+ cost : {type : String},
  condition : {type : String},
- images : [{img_path : {type:String}}],
+ images : [{img_path : {type:String}, name : {type: String}}],
  location : {type: String},
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
- comments : [{
-     comment_id : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
- }],
- guest: [{
-     user_id : {type : mongoose.Schema.Types.ObjectId, ref:'User'}
- }]
+ comments : [
+    {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
+],
+ guest: [
+    {type : mongoose.Schema.Types.ObjectId, ref:'User'}
+ ]
 });
 
 GroupSchema.plugin(autoIncrement.plugin, 'Group');

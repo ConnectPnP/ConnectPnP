@@ -36,7 +36,7 @@
                                  @change="onFileChange"></b-form-file>
                     <b-row>
                         <div class="preview" v-for="(file,index) in party_form.file_array" v-bind:key="index">
-                            <b-img v-bind:id="`js-file_preview${index}`" v-if="file" :src="file.path"/>
+                            <b-img v-bind:id="`js-file_preview${index}`" v-if="file" :src="file.blob"/>
                             <div class="mt-3"><b>Selected file:</b><br> {{file.name}}</div>
                             <b-button class="js-delete-file" v-bind:id="`js-delete_file${index}`"
                                       @click="onDeleteButtonClick(index)">
@@ -94,7 +94,7 @@
                               label="Cost :"
                               label-class="text-sm-right"
                               label-for="js-party-cost">
-                    <b-form-input class="input" id="js-party-cost"></b-form-input>
+                    <b-form-input class="input" id="js-party-cost" v-model="party_form.cost" ></b-form-input>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Condition :"
@@ -145,7 +145,8 @@
                         recruitment_period_dateTwo: '',
                         date: '',
                         file_array: [],
-                        selected_category_id:null
+                        selected_category_id:null,
+                        cost: ''
                     },
                 categoryList: [
                     {
@@ -170,7 +171,7 @@
         methods: {
             onFileChange(e) {
                 const file = e.target.files[0];
-                this.party_form.file_array.push({path: URL.createObjectURL(file), name: file.name});
+                this.party_form.file_array.push({blob: URL.createObjectURL(file), name: file.name, file : file});
             },
             onDeleteButtonClick(index) {
                 this.$delete(this.party_form.file_array, index)
@@ -188,6 +189,35 @@
             onSubmit(evt) {
                 evt.preventDefault();
                 alert(JSON.stringify(this.party_form));
+                this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
+                this.$http.post('http://localhost:3000/board', {
+                    title : this.party_form.title,
+                    due_date : this.party_form.recruitment_period_dateTwo,
+                    start_date : this.party_form.recruitment_period_dateOne,
+                    meeting_date : this.party_form.date,
+                    min_num : this.party_form.number_of_member[0],
+                    max_num : this.party_form.number_of_member[1],
+                    cost : this.party_form.cost,
+                    category_id : this.party_form.selected_category_id,
+                    // condition :,
+                    detail:this.party_form.detail,
+                    // location :,
+                    // host :,
+            }).then((result) => {
+                var boardId = result.data._id
+                console.log('boardId : ' + boardId)
+                var formdata = new FormData()
+                for( var i = 0; i < this.party_form.file_array.length; i++ ){
+                    let file = this.party_form.file_array[i].file
+
+                    formdata.append('files[' + i + ']', file)
+                }
+                console.log('post files')
+                this.$http.post('http://localhost:3000/board/files/'+ boardId, formdata, {headers: {'Content_Type':'multipart/form-data'}})
+
+            }).then((result)=> {
+                console.log(result);
+            })
             }
         }
     }

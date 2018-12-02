@@ -12,7 +12,10 @@ const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
 
-mongoose.connect(config.dbUrl());
+mongoose.connect(config.dbUrl(), {
+  useCreateIndex: true,
+  useNewUrlParser: true
+})
 
 const db = mongoose.connection;
 db.on('error', console.error);
@@ -22,6 +25,13 @@ db.once('open', () => {
 autoIncrement.initialize(db);
 
 // [CONFIGURE APP TO USE bodyParser]
+app.use((req, res, next) =>{
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.header("Access-Control-Allow-Headers", "*")
+  next()
+})
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/',require('./router'));

@@ -3,7 +3,8 @@ exports.dbUrl = function(){
 };
 
 exports.serverUrl = function() {
-  return 'http://54.180.96.156:3000/'
+  // return 'http://54.180.96.156:3000/'
+  return 'http://localhost:3000/'
 };
 
 // persist Server

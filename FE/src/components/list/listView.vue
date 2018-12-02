@@ -1,5 +1,6 @@
 <template>
-    <div class="listView card" onclick="location.href='/party/detail'">
+    <router-link :to= "{name: 'detailParty' , params: {id: groupId}}">
+    <div class="listView card">
         <table> 
             <td class="tdImg">
                 <b-img class="cardImg" left rounded="left" :src="groupImg" />
@@ -10,8 +11,8 @@
                     <p>{{ groupContent }}</p>
             </td>
         </table>
-
     </div>
+    </router-link>
 </template>
 
 
@@ -19,6 +20,10 @@
 export default {
     name: 'listView',
     props: {
+        groupId : {
+            type : String,
+            default() { return "Id"; }
+        },
         groupTitle: {
             type: String,
             default() { return "Title"; }
