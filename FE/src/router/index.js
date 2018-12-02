@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import main from '@/components/index'
 import createParty from '@/components/board/createParty'
 import detailParty from '@/components/board/detailParty'
+import editParty from '@/components/board/editParty'
 import partyList from '@/components/list/list'
 import myPage from '@/components/myPage/myPage'
 import signUp from '@/components/signUp'
@@ -26,6 +27,11 @@ export default new Router ({
       path: '/party/detail', // id parameter 필요
       name: 'detailParty',
       component: detailParty
+    },
+    {
+      path: '/party/edit', // id parameter 필요
+      name: 'editParty',
+      component: editParty
     },
     {
       path: '/party/list', 

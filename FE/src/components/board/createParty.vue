@@ -111,7 +111,7 @@
 
                                 style="width:500px;height:400px;"
 
-                            />
+                            /><br>
 
                 </b-form-group>
                 <b-form-group horizontal
@@ -180,9 +180,13 @@
             vueSlider,
             VueDaumMap
         },
+        props:[
+            '_title','_number_of_member','_detail','_dateOne','_dateTwo','_date',
+            '_loactionText','_loaction','_cost','_conditions','_file','_categoryId'],
         data() {
             return {
                 dateFormat: 'YYYY-MM-DD',
+                todayDate: '',
                 file: null,
                 checkList: [
                     'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Cost', 'Image', 'Category'
@@ -194,7 +198,6 @@
                         detail: '',
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
-                        todayDate: '',
                         date: '',
                         locationText: '',
                         location:{},
@@ -247,7 +250,6 @@
         mounted(){
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
-            // console.log("today: "+today);
 
         },
         methods: {
@@ -302,11 +304,12 @@
                     this.$http.post('http://localhost:3000/board/',{
                         title: party.title,
                         detail: party.detail,
-                        //images_array: party.file_array,
+                        //images: party.file_array,
                         start_date: party.recruitment_period_dateOne,
                         due_date: party.recruitment_period_dateTwo,
                         meeting_date: party.date,
-                        //location: ,
+                        location: party.location,
+                        locationText: party.locationText,
                         cost: party.cost,
                         conditions: {
                             gender: party.conditions.gender,
@@ -349,6 +352,22 @@
                 } else {
                     this.party_form.conditions.age = [0,100];
                 }
+            },
+            editor(){
+                var party = this.party_form;
+                party.title = this._title;
+                party.number_of_member = this._number_of_member;
+                party.detail =this._detail;
+                party.recruitment_period_dateOne = this._dateOne;
+                party.recruitment_period_dateTwo = this._dateTwo;
+                party.date = this._date;
+                party.locationText = this._locationText;
+                party.location = this._location;
+                party.cost = this._cost;
+                party.conditions = this._conditions;
+                party.file_array = this._file;
+                party.selected_category_id = this._categoryId;
+                // alert(party.title);
             }
         }
     }
