@@ -25,17 +25,17 @@
     </div>
 
         <!--  카테고리 리스트가 보여지는 부분   -->
-        <b-container class="catagoryGroup">
+        <b-container class="categoryGroup">
             <b-row>
-                <div  v-for="item in catagoryList" :key="item.id">
+                <div  v-for="item in categoryList" :key="item.id">
                     <div v-if="item.id<=btnclicked">
-                        <b-col sm class="homePageCatagory catagorySingle">
+                        <b-col sm class="homePageCategory categorySingle">
                         <input type="image"
-                               :src="item.catagoryImg"
+                               :src="item.categoryImg"
                                height="120px"
                                width="120px"/>
-                        <b-link :href="item.catagoryURL"><span></span></b-link>
-                        <p>{{item.catagoryName}}</p>
+                        <b-link :href="item.categoryURL"><span></span></b-link>
+                        <p>{{item.categoryName}}</p>
                     </b-col>
                     </div>
                 </div>
@@ -129,42 +129,42 @@
         data() {
             return {
                 btnclicked:5,
-                catagoryList: [
+                categoryList: [
                     {   id: 1,
-                        catagoryName: "catagory1",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                         },
                     {   id: 2,
-                        catagoryName: "catagory2",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 3,
-                        catagoryName: "catagory3",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 4,
-                        catagoryName: "catagory4",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 5,
-                        catagoryName: "catagory5",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 6,
-                        catagoryName: "catagory6",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 7,
-                        catagoryName: "catagory7",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
-                    }
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
+                    },
                 ],
                 rankingList: [
                     {   id: 1,
@@ -236,12 +236,12 @@
         padding-bottom: 50px;
     }
 
-    .catagoryGroup{
+    .categoryGroup{
 
         width: 1000px;
         position: relative;
     }
-    .catagorySingle{
+    .categorySingle{
 
         height: 160px;
         width: 160px;

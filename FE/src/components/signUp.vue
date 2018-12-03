@@ -41,10 +41,10 @@
                     <div class="checkboxBackground">
                         <div class="checkboxGroup">
 
-                            <div  v-for="item in catagoryList" :key="item.id">
-                                <div class="custom-control custom-checkbox custom-control-inline singleCatagoryCheck">
-                                    <input type="checkbox" class="custom-control-input" :id="item.id"  :value="item.catagoryName" v-model="checkedCatagory">
-                                    <label class="custom-control-label" :for="item.id">{{item.catagoryName}}</label>
+                            <div  v-for="item in categoryList" :key="item.id">
+                                <div class="custom-control custom-checkbox custom-control-inline singleCategoryCheck">
+                                    <input type="checkbox" class="custom-control-input" :id="item.id"  :value="item.categoryName" v-model="checkedCategory">
+                                    <label class="custom-control-label" :for="item.id">{{item.categoryName}}</label>
                                 </div>
                             </div>
 
@@ -71,28 +71,28 @@
             return {
                 userAge:Number,
                 userGender:String,
-                checkedCatagory: [],
+                checkedCategory: [],
 
 
-                catagoryList: [
+                categoryList: [
                     {   id: 1,
-                        catagoryName: "catagory1"
+                        categoryName: "category1"
                     },
                     {   id: 2,
-                        catagoryName: "catagory2"
+                        categoryName: "category1"
                     },
                     {   id: 3,
-                        catagoryName: "catagory3"
+                        categoryName: "category1"
                     },
                     {   id: 4,
-                        catagoryName: "catagory4"
+                        categoryName: "category1"
                     },
                     {   id: 5,
-                        catagoryName: "catagory5"
+                        categoryName: "category1"
                     },
                     {   id: 6,
-                        catagoryName: "catagory6"
-                    }
+                        categoryName: "category1"
+                    },
                 ]
             }
         },
@@ -119,7 +119,7 @@
                 var userData ={
                     age: this.userAge,
                     gender: this.userGender,
-                    catagoryList: this.checkedCatagory
+                    categoryList: this.checkedCategory
                 }
 
                 var userFindRes = await this.$http.post('http://localhost:3000/user', [kakaoData,userData]);
@@ -205,7 +205,7 @@
     .checkboxGroup{
         margin: 20px 50px;
     }
-    .singleCatagoryCheck{
+    .singleCategoryCheck{
         margin-bottom: 20px;
     }
 

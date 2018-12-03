@@ -62,7 +62,7 @@ exports.create = (req, res) => {
         if(err) return res.json({});
         else if(user == null) {
             User.create({user_code:kakaoData.id,avatar_path: kakaoData.properties.profile_image, name: kakaoData.properties.nickname,
-            age: signUpData.age, gender: signUpData.gender, catagoryList:signUpData.catagoryList}, (err, result) => {
+            age: signUpData.age, gender: signUpData.gender, categoryList:signUpData.categoryList}, (err, result) => {
                 if(!err) {
                     return  res.json({result : "create"});
 
