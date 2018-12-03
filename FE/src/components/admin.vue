@@ -3,19 +3,19 @@
 
 
 <!--대분류 카테고리 -->
-        <nav class="mainCatagoryGroup">
+        <nav class="mainCategoryGroup">
             <h3>대분류 카테고리</h3>
             <br>
 
 
-        <div  v-for="item in mainCatagoryList" :key="item.id">
-            <table class="catagoryTable">
+        <div  v-for="item in mainCategoryList" :key="item._id">
+            <table class="categoryTable">
                 <tr>
-                    <th class="catagoryImg"  rowspan="2">
-                        <input v-on:click="catagoryClicked(item.catagoryName)" type="image" :src="item.catagoryImg"
+                    <th class="categoryImg"  rowspan="2">
+                        <input v-on:click="categoryClicked(item._id)" type="image" :src="item.categoryImg"
                                height="140px" width="140px"/>
                     </th>
-                    <th class="mainCatagoryTitle">{{item.catagoryName}}</th>
+                    <th class="mainCategoryTitle">{{item.name}}</th>
                 </tr>
                 <tr>
                     <td class="tg-0lax">
@@ -25,17 +25,17 @@
             </table>
         </div>
 
-            <div class="createCatagory">
+            <div class="createCategory">
                 <div class="inputMain">
-                    <label for="mainCatagory"> 대분류 이름: </label>  &nbsp;
-                    <input id="mainCatagory" size="sm" type="text" placeholder="입력해주세요."></input>
+                    <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
+                    <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
 
                 <div class="inputMain">
                     <label for="imgURL"> 이미지 URL: </label>  &nbsp;
-                    <input id="imgURL" size="sm" type="text" placeholder="입력해주세요."></input>
+                    <input id="imgURL" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryPath"></input>
                 </div>
-                <button class="plusbtn btn btn-primary" v-on:click="addCatagory" >+</button>
+                <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
             </div>
 
         </nav>
@@ -46,17 +46,18 @@
 
 
 <!--대분류에 속해있는 소분류 카테고리 -->
-        <article class="subCatagory">
+        <article class="subCategory">
             <br>
 
-            <div class="subCatagoryTitle" v-if="selectedCategory=='n'">
+            <div class="subCategoryTitle" v-if="selectedCategory==-1">
                 <h2> 대분류 카테고리를 선택해주세요</h2>
             </div>
-            <div  v-for="item in mainCatagoryList" :key="item.id">
-                <div v-if="selectedCategory==item.catagoryName">
+
+            <div  v-for="item in mainCategoryList" :key="item.id">
+                <div v-if="selectedCategory==item._id">
                     <div v-for="sub in item.sub_category">
-                        <b-col sm class="homePageCatagory">
-                        <div class="subCatagorySingle">
+                        <b-col sm class="homePageCategory">
+                        <div class="subCategorySingle">
                             <h3>{{sub.name}}</h3>
                         </div>
                         </b-col>
@@ -64,12 +65,12 @@
                 </div>
             </div>
 
-            <div class="createCatagory" v-if="selectedCategory!='n'">
+            <div class="createCategory" v-if="selectedCategory!= -1">
                 <div class="inputMain">
-                    <label for="subCatagory"> 소분류 이름: </label>  &nbsp;
-                    <input id="subCatagory" size="sm" type="text" placeholder="입력해주세요."></input>
+                    <label for="subCategory"> 소분류 이름: </label>  &nbsp;
+                    <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
                 </div>
-                <button class="subplusbtn btn btn-primary" v-on:click="addCatagory" >+</button>
+                <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
             </div>
 
 
@@ -86,80 +87,65 @@
         name: "admin",
         props: {
             selectedCategory:{
-                type: String,
-                default : "n"
+                type: Number,
+                default : -1
             }
         },
         data() {
             return {
-                mainCatagoryList: [
+                addCategoryName:"",
+                addCategoryPath:"",
+                addSubCategoryName:"",
+
+                mainCategoryList: [
                     {
-                        id:0,
-                        catagoryName: "catagory1",
-                        catagoryImg:tempimg,
-                        sub_category:[
+                        _id: Number,
+                        name: String,
+                        img_path: String,
+                        sub_category: [
                             {
-                                name:"catagory1-1"
-                            },
-                            {
-                                name:"catagory1-2"
-                            },
-                            {
-                                name:"catagory1-3"
-                            },
-                            {
-                                name:"catagory1-4"
-                            },
+                                name: String
+                            }
                         ]
 
-                    },
-                    {
-                        id:1,
-                        catagoryName: "catagory2",
-                        catagoryImg:tempimg,
-                        sub_category:[{
-                            name:"catagory2-1"
-                        },
-                            {
-                                name:"catagory2-2"
-                            },
-                            {
-                                name:"catagory2-3"
-                            },
-                            {
-                                name:"catagory2-4"
-                            },]
-
-                    },
-                    {
-                        id:2,
-                        catagoryName: "catagory3",
-                        catagoryImg:tempimg,
-                        sub_category:[
-                            {
-                                name:"catagory3-1"
-                            },
-                            {
-                                name:"catagory3-2"
-                            },
-                        ]
-
-                    },
-
-
+                    }
                 ]
 
 
             }
         },
+        mounted: function () {
+            this.getCategory()
+
+        },
         methods:{
-            catagoryClicked(catagoryname){
-                this.selectedCategory=catagoryname;
-                console.log(catagoryname+"clicked!");
+            categoryClicked(categoryid){
+                this.selectedCategory=categoryid;
+                console.log(categoryid);
             },
 
-            addCatagory(){
+            async getCategory(){
+                var categoryList  = await this.$http.get('http://localhost:3000/category');
+                console.log(categoryList.data);
+                this.mainCategoryList=categoryList.data;
+            },
 
+            addCategory(){
+                //https://picsum.photos/250/250/?image=54
+                var categoryData ={
+                    name:this.addCategoryName,
+                    img_path: this.addCategoryPath
+                };
+
+                this.$http.post('http://localhost:3000/category', categoryData);
+                location.href="/admin"
+            },
+            addSubCategory(){
+                var subcategoryData ={
+                    name:this.addSubCategoryName
+                };
+                var addsubURL='http://localhost:3000/category/'+this.selectedCategory+'/sub';
+                this.$http.post(addsubURL, subcategoryData);
             }
         }
     }
@@ -167,24 +153,24 @@
 
 <style scoped>
 
-    .mainCatagoryGroup{
+    .mainCategoryGroup{
         padding-right:15px;
         border-right: 5px solid #d2e8ff;
         float:left;
     }
 
-    .mainCatagoryTitle{
+    .mainCategoryTitle{
         font-size: 30px;
     }
 
-    .catagoryTable{
+    .categoryTable{
         margin-left: 20px;
         margin-bottom: 15px;
 
         border: 5px solid #007bff;
     }
 
-    .catagoryImg{
+    .categoryImg{
         width: 160px;
         background-color: #007bff;
         margin: 20px 20px;
@@ -192,7 +178,7 @@
         color:white;
     }
 
-    .createCatagory{
+    .createCategory{
         background-color: white;
         width: 410px;
         border-radius:10px;
@@ -216,18 +202,18 @@
         width: 405px;
     }
 
-    .subCatagory{
+    .subCategory{
         float:left;
         alignment: left;
     }
 
-    .subCatagoryTitle{
+    .subCategoryTitle{
         text-align: center;
         margin-top: 100px;
         margin-left: 30px;
     }
 
-    .subCatagorySingle{
+    .subCategorySingle{
         background-color: white;
         height: 60px;
         width: 250px;
