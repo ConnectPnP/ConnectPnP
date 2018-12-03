@@ -19,7 +19,7 @@
                 </tr>
                 <tr>
                     <td class="tg-0lax">
-                        <button class="btn btn-danger">삭제</button>
+                        <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
                     </td>
                 </tr>
             </table>
@@ -53,17 +53,23 @@
                 <h2> 대분류 카테고리를 선택해주세요</h2>
             </div>
 
-            <div  v-for="item in mainCategoryList" :key="item.id">
-                <div v-if="selectedCategory==item._id">
-                    <div v-for="sub in item.sub_category">
-                        <b-col sm class="homePageCategory">
-                        <div class="subCategorySingle">
-                            <h3>{{sub.name}}</h3>
-                        </div>
-                        </b-col>
+            <b-container class="subCategoryGroup">
+                <b-row>
+                    <div  v-for="item in mainCategoryList" :key="item.id">
+                                <div v-if="selectedCategory==item._id">
+                                    <div v-for="sub in item.sub_category">
+                                        <b-col sm class="subCategorySingle">
+
+                                                <h3>{{sub.name}}</h3>
+                                                <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
+
+                                        </b-col>
+                                    </div>
+                                </div>
                     </div>
-                </div>
-            </div>
+                </b-row>
+            </b-container>
+
 
             <div class="createCategory" v-if="selectedCategory!= -1">
                 <div class="inputMain">
@@ -146,6 +152,16 @@
                 };
                 var addsubURL='http://localhost:3000/category/'+this.selectedCategory+'/sub';
                 this.$http.post(addsubURL, subcategoryData);
+                location.href="/admin"
+            },
+            categoryDelete(id){
+                var deleteURL='http://localhost:3000/category/delete/'+id;
+                this.$http.delete(deleteURL);
+                //location.href="/admin"
+            },
+            subCategoryDelete(id){
+                var subdeleteURL='http://localhost:3000/category/'+this.selectedCategory+'/sub/delete/'+id;
+                this.$http.delete(subdeleteURL);
             }
         }
     }
@@ -207,6 +223,11 @@
         alignment: left;
     }
 
+    .subCategoryGroup{
+        width: 1000px;
+        position: relative;
+    }
+
     .subCategoryTitle{
         text-align: center;
         margin-top: 100px;
@@ -215,7 +236,7 @@
 
     .subCategorySingle{
         background-color: white;
-        height: 60px;
+
         width: 250px;
         border-radius:10px;
         border: 5px solid #007bff;
@@ -223,5 +244,6 @@
         margin-left: 20px;
         margin-bottom: 50px;
     }
+
 
 </style>

@@ -237,7 +237,6 @@
     }
 
     .categoryGroup{
-
         width: 1000px;
         position: relative;
     }
