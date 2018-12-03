@@ -8,7 +8,7 @@ router.use('/board', board);
 router.use('/user', user);
 
 ///////////////////// (여기서 추천.. 접속하자마자 FE에서 '/' get 요청으로 받아와야함)
-router.get('/', (req, res) => {
+router.get('/home', (req, res) => {
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
     GroupInfo.find({}).populate('guest').exec((err, data) => {
         

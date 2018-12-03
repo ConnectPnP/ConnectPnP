@@ -74,15 +74,16 @@
             <div class="rankingGroup">
                 <b-card-group>
                 <div  v-for="item in rankingList" :key="item.id">
-                 <b-card :title="item.partyName"
-                        :img-src="item.partyImg"
+                 <b-card :title="item.title"
+                        :img-src="item.images[0]"
                         img-alt="Image"
                         img-top
                         tag="article"
                         style="max-width: 260px;"
                         class="mb-2 rankingSingle">
                     <p class="card-text">
-                        {{item.partyDiscription}}
+                        {{item.condition}}
+                        <!-- {{item.images[0]}}  -->
                     </p>
                     <b-button href="#" variant="primary">참여하기</b-button>
                 </b-card>
@@ -145,34 +146,14 @@
                         catagoryURL:'http://www.naver.com'
                     }
                 ],
-                rankingList: [
-                    {   id: 1,
-                        partyName: "모임1",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
-                        partyDiscription:"이 모임은 영국에서 최초로 시작되어.."
-                    },
-                    {   id: 2,
-                        partyName: "모임2",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
-                        partyDiscription:"모임 일시: 2018.11.19- 11.22 모임 장소: 아주대학교"
-                    },
-                    {   id: 3,
-                        partyName: "모임3",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
-                        partyDiscription:"현재 참여 인원 : 86명"
-                    },
-                    {   id: 4,
-                        partyName: "모임4",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
-                        partyDiscription:"카테고리: 게임 "
-                    },
-                    {   id: 5,
-                        partyName: "모임5",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
-                        partyDiscription:"멋진 모임입니다!"
-                    },
-                ]
+                rankingList: []
             }
+        },
+        beforeMount() {
+            this.$http.get(`http://localhost:3000/home`).then((result) => {
+                console.log(result);
+                this.rankingList = result.data;
+            })
         },
         methods:{
            //"더보기" 버튼이 클릭되면 보여지는 카테고리 수가 5개씩 늘어나도록

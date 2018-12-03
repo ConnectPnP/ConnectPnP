@@ -22,6 +22,7 @@
     "vue": "^2.5.17",
     "vue-airbnb-style-datepicker": "^2.2.0",
     "vue-awesome": "^3.2.0",
+    "vue-axios": "^2.1.4",
     "vue-carousel": "^0.16.0-rc2",
     "vue-coverflow": "^2.2.0",
     "vue-full-calendar": "^2.7.0",
