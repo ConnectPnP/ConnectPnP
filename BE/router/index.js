@@ -38,7 +38,7 @@ router.get('/home', (req, res) => {
             console.log('starRate               ' + starRate); // log
 
 
-
+            
             // 조회수 대비 신청자수 bayesian_rating
             hitsApplicantsRate = (data[i].applicants)/(data[i].hits);
             hitsApplicantsRate = ((C*m_hitapplicant) + (hitsApplicantsRate*data[i].hits)) / (C + data[i].hits);
