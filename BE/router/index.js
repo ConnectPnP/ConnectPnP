@@ -21,7 +21,7 @@ router.get('/home', (req, res) => {
             
             var C = 5;   // C 가 클수록 원래 값에서 멀어짐
             // star rate
-            var m_star = 8;   // m 은 거의 리뷰가 없는 그룹의 평균 리뷰를 조정할 값
+            var m_star = 7;   // m 은 거의 리뷰가 없는 그룹의 평균 리뷰를 조정할 값
             // 조회수 대비 신청자수 
             var m_hitapplicant = 0.5;
 
