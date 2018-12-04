@@ -4,17 +4,19 @@
 <b-form class="marginTop center" inline>
     <b-input-group style="width: 50%">
         <b-input-prepend>
-            <b-form-select v-model="firstSelect" :options="select1" size="sm" @change="selectOption" />
-            <b-form-select v-model="secondSelect" :options="select2" size="sm" />
+            <b-form-select v-model="firstSelect" :options="select1" @change="selectOption" />
+            <b-form-select v-model="secondSelect" :options="select2" />
         </b-input-prepend>
-        <b-form-input size="sm" type="text" placeholder="Search"/>
+        <b-form-input type="text" placeholder="Search"/>
             <b-input-group-append>
-                <b-btn size="sm" variant="primary">검색</b-btn>
+                <b-btn class="btn-info">검색</b-btn>
             </b-input-group-append>
     </b-input-group>
-
-    <b-btn class="btnGroup" size="sm" variant="primary" href="/party/create">모임 만들기</b-btn>
-    <b-btn class="btnGroup" size="sm" variant="primary" href="">내가 개설한 모임</b-btn>
+                <b-button-group class="btnGroup">
+                <b-btn class="btn-info btnGroup" href="/party/create">모임 생성</b-btn>
+                <b-btn class="btn-info btnGroup" variant="primary" href="">내 모임</b-btn>
+                </b-button-group>
+    
 </b-form>
 
 <div class="margin">
@@ -187,6 +189,7 @@ export default {
 
 .btnGroup {
     margin-left: 15px;
+    text-align: center;
 }
 
 .marginTop {
