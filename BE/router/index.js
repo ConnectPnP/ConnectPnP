@@ -15,28 +15,38 @@ router.get('/home', (req, res) => {
         var rank5GroupList = [];
 
         for(var i=0; i<data.length; i++){
-            var rate = 0;
+            var hitsApplicantsRate = 0;
             var starRate = 0;
+            
+            
+            var C = 5;   // C 가 클수록 원래 값에서 멀어짐
+            // star rate
+            var m_star = 8;   // m 은 거의 리뷰가 없는 그룹의 평균 리뷰를 조정할 값
+            // 조회수 대비 신청자수 
+            var m_hitapplicant = 0.5;
 
-            // rate += data[i].applicants; // 스키마에 추가해야함
-            // rate += data[i].hits; // 스키마에 추가해야함
-
-            rate = ((data[i].applicants)/(data[i].hits)*(1/3)) + ((data[i].guest.length)/(data[i].max_num)*(1/3));
-            console.log((data[i].applicants)/(data[i].hits)); // log
-            console.log((data[i].guest.length)/(data[i].max_num)); // log
-
-            for(var j=0; j<data[i].guest.length; j++){
-                starRate += data[i].guest[j].star_rate;
+            var guestnum = data[i].guest.length;
+            
+            // 참여자 별점 평균 bayesian_rating
+            if((guestnum) > 0){
+                for(var j=0; j<guestnum; j++){
+                    starRate += data[i].guest[j].star_rate;
+                }
+                starRate /= guestnum;            
             }
+            starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
+            console.log('starRate               ' + starRate); // log
 
-            if((data[i].guest.length) > 0){
-                starRate /= data[i].guest.length;
-                console.log(starRate); // log
-            }
-            rate = rate + (starRate/10*(1/3));            
-            console.log(starRate/10); // log
 
-            data[i].evaluationIndex = rate;
+
+            // 조회수 대비 신청자수 bayesian_rating
+            hitsApplicantsRate = (data[i].applicants)/(data[i].hits);
+            hitsApplicantsRate = ((C*m_hitapplicant) + (hitsApplicantsRate*data[i].hits)) / (C + data[i].hits);
+            console.log('hitsApplicantsRate     ' + hitsApplicantsRate); // log
+            
+
+
+            data[i].evaluationIndex = starRate + hitsApplicantsRate;
 
             rank5GroupList.push(data[i]); 
         }
