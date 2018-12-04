@@ -24,13 +24,10 @@
                         Max number of member : <b> {{detailPartyInfo.max}}</b><br>
                         Cost : <b> {{detailPartyInfo.cost}}</b><br>
                         condition : <b> {{showConditions}}</b><br>
-                        <button class="btn btn-info" id="js-party-join-btn"
-                                  size="md" @click="joinParty"
-                        >Join</button>
                     </b-card>
                 </b-col>
                 <b-col>
-                    <div class="hostBtnGroup">
+                    <div class="hostBtnGroup" v-if="isHost">
                             <b-button-group>
                                 <b-button class="btn btn-info" id="js-join-list" href="/party/edit">
                                     수정
@@ -43,6 +40,16 @@
                                 </b-button>
                             </b-button-group>
                     </div>
+                    <!-- <div class="guestBtnGroup"> -->
+                    <div class="guestBtnGroup" v-if="!isHost">
+                        <b-button v-if="!isJoined" class="btn btn-info" @click="joinParty">참여</b-button>
+                        <b-button v-if="isJoined" class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
+                        
+                        <b-modal id="exitParty" @ok="exitParty" title="모임 나가기">
+                            <p>정말 나가시겠습니까?</p>
+                        </b-modal>
+                    </div>
+
                 </b-col>
             </b-row>
             <b-row>
@@ -118,6 +125,8 @@
             commentContent: "";
             return {
                 boardId:'',
+                isHost:false, // host인지 guest인지 
+                isJoined:true, // 이 모임에 참여중인지
                 currentUserEx:{
                     user_code: 'abcd',
                     name: 'wow',
@@ -353,17 +362,22 @@
                 } else {
                     alert("조건에 맞지 않아 참여할 수 없습니다!");
                 }
+                this.isJoined = true;
+            },
+            exitParty(){
+                // 모임 나가기
+                this.isJoined = false;
             }
         }
     }
 </script>
 
 <style scoped>
-    #js-party-join-btn {
+    /* #js-party-join-btn {
         position: absolute;
         right: 10px;
         bottom: 10px;
-    }
+    } */
 
     /* #js-join-list {
         position: absolute;
@@ -385,7 +399,7 @@
         font-size: smaller;
     }
 
-    .hostBtnGroup {
+    .hostBtnGroup, .guestBtnGroup {
         text-align: right;
     }
 
