@@ -73,7 +73,7 @@
 
             <div class="rankingGroup">
                 <b-card-group>
-                    <div  v-for="item in rankingList" :key="item.id">
+                    <div  v-for="item in rankingList" :key="item._id">
                         <b-card :title="item.title"
                         :img-src="item.images[0]"
                         img-alt="Image"
@@ -84,14 +84,14 @@
                         <p class="card-text">
                             {{item.location}}
                         </p>
-                        <router-link :to= "{name: 'detailParty' , params: {id: item.id}}" tag="b-button" variant="primary">자세히 보기</router-link>
+                        <router-link :to= "{name: 'detailParty' , params: {id: item._id}}" class="btn-info" tag="b-button">자세히 보기</router-link>
                         </b-card>
                     </div>
                 </b-card-group>
             </div>
 
         </div>
-        
+
     </div>
 
 </template>
