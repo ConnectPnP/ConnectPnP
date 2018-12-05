@@ -66,6 +66,7 @@
 
 
         <div class="rankingArea">
+
             <div class>
                 <h2>Ranking Best 5</h2>
                 <h4>인기 모임 순위</h4>

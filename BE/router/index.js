@@ -10,7 +10,7 @@ router.use('/user', user);
 ///////////////////// (여기서 추천.. 접속하자마자 FE에서 '/' get 요청으로 받아와야함)
 router.get('/home', (req, res) => {
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({}).populate('guest').exec((err, data) => {
+    GroupInfo.find({}).populate('guest.user_id').exec((err, data) => {
         
         var rank5GroupList = [];
 
@@ -30,7 +30,7 @@ router.get('/home', (req, res) => {
             // 참여자 별점 평균 bayesian_rating
             if((guestnum) > 0){
                 for(var j=0; j<guestnum; j++){
-                    starRate += data[i].guest[j].star_rate;
+                    starRate += data[i].guest[j].user_id.star_rate;
                 }
                 starRate /= guestnum;            
             }
@@ -38,7 +38,7 @@ router.get('/home', (req, res) => {
             console.log('starRate               ' + starRate); // log
 
 
-            
+
             // 조회수 대비 신청자수 bayesian_rating
             hitsApplicantsRate = (data[i].applicants)/(data[i].hits);
             hitsApplicantsRate = ((C*m_hitapplicant) + (hitsApplicantsRate*data[i].hits)) / (C + data[i].hits);

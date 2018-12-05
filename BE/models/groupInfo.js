@@ -26,7 +26,10 @@ const GroupSchema = new Schema({
  comments : [{
      comment_id : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'}
  }],
- guest: [{type : mongoose.Schema.Types.ObjectId, ref:'User'}]
+ guest: [{
+     user_id : {type : mongoose.Schema.Types.ObjectId, ref:'User'}
+ }]
+ 
 });
 
 GroupSchema.plugin(autoIncrement.plugin, 'Group');
