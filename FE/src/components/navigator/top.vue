@@ -13,8 +13,8 @@
 
       <b-collapse  is-nav id="nav_collapse">
         <b-navbar-nav class="ml-auto">
-          <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao>로그인</button>
-          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click="loginWithKakao">회원가입</button>
+          <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao(1)>로그인</button>
+          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click=loginWithKakao(0)>회원가입</button>
 
           <b-nav-item-dropdown right v-if="loginStatus">
             <template slot="button-content">
@@ -107,8 +107,8 @@
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
 
-          //로그인
-           loginWithKakao(){
+          //로그인 파라미터 값은 클릭한 버튼(로그인:1, 회원가입:0)
+           loginWithKakao(btnClick){
 
               //카카오 인증하는 부분. 창을 띄워 이메일,비밀번호 값을 받아 토큰 반환.
                Kakao.Auth.login({
@@ -119,6 +119,7 @@
                        console.log("AuthError>>"+err);
                    }
                });
+
                 var topVuethis = this;
 
                 //카카오에서 받은 토큰으로 유저 데이터 불러오기, 유저가 등록된 회원인지 판별
@@ -140,6 +141,11 @@
 
                    //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
                    if(userResult.data.user){
+
+                       //회원가입 버튼으로 클릭했으면 알림창을 띄운후 로그인 처리
+                       if(btnClick==0){
+                           alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
+                       }
                        topVuethis.$cookie.set('loginStatus','login', 1);
                        console.log( topVuethis.$cookie.get('loginStatus'));
                        location.href="/"
