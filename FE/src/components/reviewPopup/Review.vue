@@ -85,6 +85,7 @@ export default {
   max-height: 480px;
 
   padding: 15px;
+  text-align: center;
 }
 
 .carousel {
