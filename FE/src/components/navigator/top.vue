@@ -15,7 +15,6 @@
         <b-navbar-nav class="ml-auto">
           <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao(1)>로그인</button>
           <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click=loginWithKakao(0)>회원가입</button>
-          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==true" href="/admin">관리자 페이지</button>
 
           <b-nav-item-dropdown right v-if="loginStatus">
             <template slot="button-content">
@@ -23,6 +22,7 @@
               <em>  {{userInfo[0]}}</em>
             </template>
             <b-dropdown-item href="/myPage">MyPage</b-dropdown-item>
+            <b-dropdown-item href="/admin">Administrator</b-dropdown-item>
             <b-dropdown-item  v-on:click=logoutWithKakao >Signout </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -96,7 +96,6 @@
 
               if(session_status=='login'){
                   var userInfoName=this.$session.get('userName');
-
                   var userInfoProfile = this.$session.get('profile_path');
                   return [userInfoName,userInfoProfile]
               } else{
@@ -112,7 +111,7 @@
           handleError: (err) => {
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
-          
+
 
           //로그인 파라미터 값은 클릭한 버튼(로그인:1, 회원가입:0)
            loginWithKakao(btnClick){
