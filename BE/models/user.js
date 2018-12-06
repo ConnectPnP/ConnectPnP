@@ -14,10 +14,11 @@ const UserSchema = new Schema({
   admin :{type:Boolean},
   avatar_path: {type: String },
   name: { type: String },
+  nickName: { type: String },
   age:{ type: Number},
   gender:{type: String},
   categoryList:[],
-  star_rate : {type : Number },
+  star_rate : {type : Number, default: 0},
   rating_status : [{
     status_id : {type : mongoose.Schema.Types.ObjectId, ref:'Evaluate' },
     percentage : {type : Number}
