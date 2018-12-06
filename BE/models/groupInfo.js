@@ -11,6 +11,7 @@ const Schema = mongoose.Schema;
 const GroupSchema = new Schema({
  category_id : {type : mongoose.Schema.Types.ObjectId, ref:'Category'},
  title : {type : String},
+ detail: {type: String},
  hits : {type: Number, default: 1},
  applicants : {type: Number, default: 0},
  due_date : {type: Date},
