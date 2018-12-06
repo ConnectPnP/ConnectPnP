@@ -92,22 +92,20 @@
                     <!--API이용한 map 필요-->
                     <b-input-group>
                         <b-form-input id="location"
-                                    v-model="party_form.locationText"
-                                    size="sm" 
+                                    v-model="party_form.locationText" 
                                     type="text"
                                     placeholder="장소를 검색해주세요" />
                             <b-input-group-append>
-                                <b-button variant="primary" size="sm" @click="searchPlace">장소 검색</b-button>
+                                <b-button variant="primary" @click="searchPlace">장소 검색</b-button>
                             </b-input-group-append>
                     </b-input-group>
                     <br>
                     <vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="daumMap.center"
+                                :center.sync="party_form.location"
                                 :level.sync="daumMap.level"
                                 :mapTypeId="daumMap.mapTypeId"
                                 :libraries="daumMap.libraries"
                                 @load="onLoad"
-
 
                                 style="width:500px;height:400px;"
 
@@ -151,7 +149,10 @@
                               label="Category :"
                               label-class="text-sm-right"
                               label-for="js-party-category">
-                    <b-form-select v-model="party_form.selected_category_id" :options="categoryList" class="mb-3"></b-form-select>
+                              <b-input-group>
+                    <b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3" @change="showSubCategory"></b-form-select>
+                    <b-form-select v-model="party_form.selected_subcategory_id" :options="categoryList2" class="mb-3"></b-form-select>
+                              </b-input-group>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Min&Max Number of Member :"
@@ -168,7 +169,6 @@
     </div>
 </template>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a3cfd8f8c44ef55f94f2fa1a99a18558"></script>
 <script>
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
@@ -182,23 +182,15 @@
         },
         props:[
             '_title','_number_of_member','_detail','_dateOne','_dateTwo','_date',
-            '_loactionText','_loaction','_cost','_conditions','_file','_categoryId'],
+            '_locationText','_location','_cost','_conditions','_file','_categoryId'],
         data() {
             return {
                 formData : new FormData(),
                 dateFormat: 'YYYY-MM-DD',
                 todayDate: '',
                 file: null,
-                daumMap:{
-                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    center: {lat:37.282908, lng:127.046402},
-                    level: 4,
-                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
-                    libraries: [],
-                    map: null
-                },
                 checkList: [
-                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Cost', 'Image', 'Category'
+                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image', 'Category'
                 ],
                 party_form:
                     {
@@ -209,7 +201,7 @@
                         recruitment_period_dateTwo: '',
                         date: '',
                         locationText: '',
-                        location:{},
+                        location:{lat:37.282908, lng:127.046402},
                         cost: '',
                         conditions: {
                             gender: 'none',
@@ -218,7 +210,7 @@
                         },
                         file_array: [],
                         selected_category_id:null,
-                        cost: ''
+                        selected_subcategory_id:null
                     },
                     gender: [
                         { text: '상관 없음', value: 'none' },
@@ -229,14 +221,46 @@
                         {text: '상관 없음', value: 'none'},
                         {text: '직접 설정', value: 'selectAge'}
                     ],
-                categoryList: [
-                ]
-
+                categoryList1: [{ value: null, text: '--- 대분류 ---', disabled:true}],
+                categoryList2: [],
+                subCategoryList: [],
+                // categoryList1: [
+                //     { value: null, text: '--- 대분류 ---', disabled:true},
+                //     { value: 0, text: '게임'},
+                //     { value: 1, text: '운동'},
+                // ],
+                // subCategoryList: [
+                //     [
+                //         { value: null, text: '--- 소분류 ---', disabled:true},
+                //         { value: 0, text: '오버워치'},
+                //         { value: 1, text: '배그'},
+                //         { value: 2, text: '피파'},
+                //         { value: 3, text: '닌텐도'},
+                //         { value: 4, text: '보드게임'},
+                //     ],
+                //     [
+                //         { value: null, text: '--소분류--', disabled:true},
+                //         { value: 0, text: '축구'},
+                //         { value: 1, text: '야구'},
+                //         { value: 2, text: '테니스'},
+                //         { value: 3, text: '춤'},
+                //     ],
+                // ],
+                daumMap:{
+                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
+                    // center: {lat:37.282908, lng:127.046402},
+                    level: 4,
+                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
+                    libraries: ['services'],
+                    map: null
+                }
             }
         },
         mounted(){
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
+
+            this.getCategoryList();
 
         },
         methods: {
@@ -259,19 +283,6 @@
                 }
                 return formattedDates
             },
-            getCategoryList() {
-                var vm = this
-                this.$http.get('http://localhost:3000/category/sub')
-                .then((result) => {
-                    for(var i=0; i<result.data.length; i++) {
-                        for(var j=0; j<result.data[i].sub_category.length ; j++){
-                            var categoryOption = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].value+'"}'
-                            vm.categoryList.push(JSON.parse(categoryOption))
-                        }
-                    }
-                })
-            }
-            ,
             onSubmit(evt) {
                 evt.preventDefault();
                 var boardId;
@@ -284,9 +295,10 @@
                     party.recruitment_period_dateOne,
                     party.recruitment_period_dateTwo,
                     party.date,
+                    party.locationText,
                     party.cost,
                     party.file_array,
-                    party.selected_category_id
+                    party.selected_subcategory_id
                 ];
 
                 for(var i=0;i<validationCheck.length;i++){
@@ -329,25 +341,50 @@
             },
             onLoad(map){
                 this.daumMap.map = map;
-                var bounds = map.getBounds();
-                var boundsStr = bounds.toString();
+                // var bounds = map.getBounds();
+                // var boundsStr = bounds.toString();
 
-                var iwContent = '<br><pre> 아주대학교 </pre>'
-                var iwPosition = new daum.maps.LatLng(this.daumMap.center["lat"], this.daumMap.center["lng"]);
-                var marker = new daum.maps.Marker({
-                    position: iwPosition,
-                    map: map
-                });
-                var infowindow = new daum.maps.InfoWindow({
-                    position: iwPosition,
-                    content: iwContent
-                });
-                infowindow.open(map, marker)
+                // var iwContent = '<br><pre> 아주대학교 </pre>'
+                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
+                // var marker = new daum.maps.Marker({
+                //     position: iwPosition,
+                //     map: map
+                // });
+                // var infowindow = new daum.maps.InfoWindow({
+                //     position: iwPosition,
+                //     content: iwContent
+                // });
+                // infowindow.open(map, marker)
                 
 
             },
             searchPlace(){
                 // 장소 찾기....
+                var keyword = this.party_form.locationText;
+                var ps = new daum.maps.services.Places();
+                var iwPosition = new daum.maps.LatLng(33,126);
+                var infowindow = new daum.maps.infowindow({
+                    zIndex:1
+                });
+
+                if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                    alert('키워드를 입력해주세요!');
+                }
+                else {
+                    ps.keywordSearch(keyword,
+                        (data,status,pagination)=>{
+                            if(status == daum.maps.services.Status.OK){
+                                // 마커 표출
+                                // 페이지 번호 표출
+                            }
+                            else if(status == daum.maps.services.Status.ZERO_RESULT){
+                                alert('검색 결과가 존재하지 않습니다.');
+                            }
+                            else if(status == daum.maps.services.Status.ERROR){
+                                alert('검색 중 오류가 발생했습니다.');
+                            }
+                        });
+                }
              },
             changeAgeCondition(){
                 if(this.party_form.conditions.selectAge == 'none'){
@@ -371,12 +408,36 @@
                 party.file_array = this._file;
                 party.selected_category_id = this._categoryId;
                 // alert(party.title);
+            },
+            getCategoryList() {
+                var vm = this
+                this.$http.get('http://localhost:3000/category')
+                .then((result) => {
+                    // get category list
+                    for(var i=0; i<result.data.length; i++) {
+                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                            vm.categoryList1.push(JSON.parse(categoryOption));
+
+                    }
+
+                    // get sub category list
+                    for(var i=0; i<result.data.length; i++) {
+                        var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];
+                        for(var j=0; j<result.data[i].sub_category.length ; j++){
+                            var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
+                            categoryOption.push(JSON.parse(option));
+                        }
+                        vm.subCategoryList.push(categoryOption);
+                    }
+                });
+            },
+            showSubCategory(select){
+                this.party_form.selected_subcategory_id = null;
+                this.categoryList2 = this.subCategoryList[select];
             }
-        },
-        mounted() {
-        this.getCategoryList()
+        }
     }
-    }
+
 </script>
 
 <style scoped>

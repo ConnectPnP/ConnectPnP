@@ -9,8 +9,8 @@
         :_dateOne="dateOne"
         :_dateTwo="dateTwo"
         :_date="date"
-        :_loactionText="locationText"
-        :_loaction="location"
+        :_locationText="locationText"
+        :_location="location"
         :_cost="cost"
         :_conditions="conditions"
         :_file="file"
@@ -63,7 +63,7 @@ export default {
     mounted(){
         this.editor();
         var url = window.location.pathname;
-        var boardId = url.split('/')[3]; // 이렇게 해도 되나..?
+        var boardId = url.split('/')[3];
 
         this.$http.get('http://localhost:3000/board/details/'+boardId)
             .then((result)=>{

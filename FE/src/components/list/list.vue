@@ -2,10 +2,12 @@
 
 <div id="list">
 <b-form class="marginTop center" inline>
-    <b-input-group style="width: 50%">
+    <b-input-group style="width: 70%">
         <b-input-prepend>
-            <b-form-select v-model="firstSelect" :options="select1" @change="selectOption" />
-            <b-form-select v-model="secondSelect" :options="select2" />
+            <b-form-select v-model="firstSelect" :options="select1" @change="selectOption1" />
+            <b-form-select v-if="(firstSelect==0)||(firstSelect==1)"
+                v-model="secondSelect" :options="select2" @change="selectOption2" />
+            <b-form-select v-if="(firstSelect==0)&&(secondSelect!=null)" v-model="thirdSelect" :options="select3" />
         </b-input-prepend>
         <b-form-input type="text" placeholder="Search"/>
             <b-input-group-append>
@@ -48,34 +50,31 @@ export default {
   },
   data(){
       return {
-          currentPage : 0,
-          firstSelect: null, secondSelect:null,
+          currentPage: 0,
+          firstSelect: null, secondSelect:null, thirdSelect:null,
             select1 : [
-                { value: null, text: '--대분류--', disabled:true},
-                { value: 1, text: '카테고리'},
-                { value: 2, text: '주최자'},
-                { value: 3, text: '위치'}
+                { value: null, text: '--검색--', disabled:true},
+                { value: 0, text: '카테고리'},
+                { value: 1, text: '주최자'},
+                { value: 2, text: '위치'}
             ],
-            select2: [
-                { value: null, text: '----', disabled:true}
-                ],
-            options1: [
-                { value: null, text: '--카테고리--', disabled:true},
-                { value: 11, text: '게임'},
-                { value: 12, text: '운동'},
-                { value: 13, text: '여행'},
-                { value: 14, text: '공동구매'},
-                { value: 15, text: '사진'},
-                { value: 16, text: '멍멍이'},
-            ],
-            options2: [
-                { value: null, text: '--주최자--', disabled:true},
+            select2: [ ],
+            select3: [ ],
+            hostSearchOption: [
+                { value: null, text: '--필터--', disabled:true},
                 { value: 21, text: 'ID'},
                 { value: 22, text: '닉네임'}
             ],
+            categoryList1: [ ], // 카테고리 대분류
+            categoryList2:[ ], // 카테고리 소분류
+            
           groupList : [
           ]
       }
+  },
+  mounted(){
+      this.getCategoryList();
+      this.getPostData()
   },
   methods: {
       pageChange(page) {
@@ -89,21 +88,43 @@ export default {
                vm.groupList = result.data
            })
        },
-        selectOption(select){
+        selectOption1(select){
             this.secondSelect = null;
-            if(select == 1){
-                this.select2 = this.options1;
-            } else if(select == 2){
-                this.select2 = this.options2;
-            } else if(select == 3){
-                this.select2 = [
-                { value: null, text: '----', disabled:true}
-                ];
+            if(select == 0){
+                this.select2 = this.categoryList1;
+            } else if(select == 1){
+                this.select2 = this.hostSearchOption;
+            } 
+        },
+        selectOption2(select){
+            this.thirdSelect = null;
+            if(this.firstSelect == 0){
+                if(select != null){
+                    this.select3 = this.categoryList2[select];
+                }
             }
-        }
-    },
-    mounted() {
-        this.getPostData()
+        },
+        getCategoryList() {
+                var vm = this
+                this.$http.get('http://localhost:3000/category')
+                .then((result) => {
+                    // get category list
+                    for(var i=0; i<result.data.length; i++) {
+                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                            vm.categoryList1.push(JSON.parse(categoryOption));
+                    }
+
+                    // get sub category list
+                    for(var i=0; i<result.data.length; i++) {
+                        var categoryOption = [];
+                        for(var j=0; j<result.data[i].sub_category.length ; j++){
+                            var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
+                            categoryOption.push(JSON.parse(option));
+                        }
+                        vm.categoryList2.push(categoryOption);
+                    }
+                });
+            },
     }
 }
 </script>
