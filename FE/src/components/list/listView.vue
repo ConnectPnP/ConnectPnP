@@ -6,9 +6,9 @@
                 <b-img class="cardImg" left rounded="left" :src="groupImg" />
             </td>
             <td class="cardBody">
-                    <h4>{{ groupTitle }}</h4>
-                    <h6>{{ groupLocation }}</h6>
-                    <p>{{ groupContent }}</p>
+                    <h4>{{ viewTitle }}</h4>
+                    <h6>{{ viewLocation }}</h6>
+                    <p>{{ viewDetail }}</p>
             </td>
         </table>
     </div>
@@ -32,13 +32,39 @@ export default {
             type: String,
             default() { return "Location"; }
         },
-        groupContent: {
+        groupDetail: {
             type: String,
-            default() { return "content"; }
+            default() { return "Detail"; }
         },
         groupImg: {
             type: String,
             default() { return "https://www.freeiconspng.com/uploads/no-image-icon-6.png"; }
+        },
+    },
+    computed: {
+        viewTitle: function(){
+            var str = this.groupTitle;
+            if(str.length > 8){
+                str = str.substring(0,8);
+                str += "...";
+            }
+            return str;
+        },
+        viewDetail: function (){
+            var str = this.groupDetail;
+            if(str.length > 18){
+                str = str.substring(0,18);
+                str += "...";
+            }
+            return str;
+        },
+        viewLocation: function (){
+            var str = this.groupLocation;
+            if(str.length > 13){
+                str = str.substring(0,13);
+                str += "...";
+            }
+            return str;
         },
     }
 };

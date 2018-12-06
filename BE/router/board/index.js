@@ -24,6 +24,6 @@ router.delete('/delete/:id',boardCtrl.deletePost);
 // // comment create edit delete
 router.post('/comments/:id',boardCtrl.createComment); // 게시글 id
 router.post('/comments/:id/:comment',boardCtrl.updateComment);
-router.delete('/delete/:id/:comment', boardCtrl.deleteComment);
+router.delete('/comments/:id/:comment', boardCtrl.deleteComment);
 
 module.exports = router;

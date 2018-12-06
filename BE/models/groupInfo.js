@@ -12,25 +12,24 @@ const GroupSchema = new Schema({
  category_id : {type : mongoose.Schema.Types.ObjectId, ref:'Category'},
  title : {type : String},
  detail : {type: String},
+ conditions : { gender : {type: String}, age : [{type: Number}] },
  due_date : {type: String},
  start_date : {type : String},
  meeting_date : {type : String},
  min_num : {type: Number},
  max_num : {type: Number},
  cost : {type : String},
- condition : {type : String},
- images : [{img_path : {type:String}, name : {type: String}}],
- location : {type: String},
+ images : [{type:String}],
+ locationText : {type: String},
+ location: {lat:{type: String}, lng: {type: String}},
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
- comments : [
-   {
-      member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
-      content : {type: String},
-      depth : {type: Number},
-      parentComment : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'},
-      createdAt : {type: Date, default: Date.now}
-  }
-],
+ comments : [{
+    member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
+    content : {type: String},
+    depth : {type: Number},
+    parentComment : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'},
+    createdAt : {type: Date, default: Date.now}
+ }],
  guest: [
     {type : mongoose.Schema.Types.ObjectId, ref:'User'}
  ]

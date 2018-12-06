@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const path = require('path');
 const Board  = require('../../models/groupInfo');
@@ -50,8 +51,8 @@ exports.getAllPost = (req, res) => {
 exports.uploadFile = (req, res) => {
   upload(req, res)
     .then((files) => {
-      for(var i=0; i< files.length; i++) {
-        Board.findOneAndUpdate({_id : req.params.id},  {$push : {images: `${config.serverUrl()}files/${req.files[i].postFile[0].destination.match(/[^/]+/g).pop()}/${req.files[i].postFile[0].filename}` }})
+      for(var i=0; i< req.files.postFile.length; i++) {
+        Board.findOneAndUpdate({_id : req.params.id},  {$push : {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}` }})
         .then((result) => {
           return res.json(result);
         })
@@ -119,6 +120,7 @@ exports.deletePost = (req, res) => {
 //       break;
 //   }
 // };
+
 
 //comment create edit delete
 // 댓글 생성하기
