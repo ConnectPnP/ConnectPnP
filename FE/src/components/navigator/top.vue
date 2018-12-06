@@ -15,6 +15,7 @@
         <b-navbar-nav class="ml-auto">
           <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao(1)>로그인</button>
           <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click=loginWithKakao(0)>회원가입</button>
+          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" href="/admin">관리자 페이지</button>
 
           <b-nav-item-dropdown right v-if="loginStatus">
             <template slot="button-content">
@@ -69,19 +70,21 @@
               script.id = scriptId;
               document.body.appendChild(script)
           } else this.initiate()
-
-
       },
+
       computed:{
         //현재 로그인 상태 확인. 로그인/ 로그아웃시 보여져야하는 UI 조정.
           loginStatus(){
               var cookie_status= this.$cookie.get('loginStatus');
+              var session_status= this.$session.get('loginStatus');
               console.log("loginStatus>>"+ cookie_status);
-              if(cookie_status=='login'){
-                  console.log(cookie_status=='login');
+              console.log("loginStatus_Session>>"+ session_status);
+
+              if(session_status=='login'){
+                  console.log(session_status=='login');
                   return true
               } else {
-                  console.log(cookie_status=='login');
+                  console.log(session_status=='login');
                   return false
               }
           },
@@ -89,9 +92,12 @@
           userInfo(){
               //쿠키에 저장되어 있는 유저 정보 불러오기
               var cookie_status= this.$cookie.get('loginStatus');
-              if(cookie_status=='login'){
-                  var userInfoName=this.$cookie.get('userName');
-                  var userInfoProfile = this.$cookie.get('profile_path');
+              var session_status= this.$session.get('loginStatus');
+
+              if(session_status=='login'){
+                  var userInfoName=this.$session.get('userName');
+
+                  var userInfoProfile = this.$session.get('profile_path');
                   return [userInfoName,userInfoProfile]
               } else{
                   return["",""]
@@ -135,6 +141,11 @@
                    topVuethis.$cookie.set('userName',user_name, 1);
                    topVuethis.$cookie.set('profile_path',profile_path, 1);
 
+                   topVuethis.$session.set('userID',userID);
+                   topVuethis.$session.set('userName',user_name);
+                   topVuethis.$session.set('profile_path',profile_path);
+
+
                    //유저가 이미 등록된 회원인지 판별.
                    var getURL = "http://localhost:3000/user/"+userID;
                    var userResult = await topVuethis.$http.get(getURL);
@@ -147,7 +158,7 @@
                            alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
                        }
                        topVuethis.$cookie.set('loginStatus','login', 1);
-                       console.log( topVuethis.$cookie.get('loginStatus'));
+                       topVuethis.$session.set('loginStatus','login');
                        location.href="/"
 
                    } else{  //회원이 아닌 경우 -> 회원가입 창으로
@@ -156,12 +167,6 @@
 
                 }
 
-
-
-
-
-
-              //location.href="/"
           },
 
           //로그아웃
@@ -174,7 +179,7 @@
               });
               Kakao.Auth.cleanup();
               this.$cookie.set('loginStatus','logout', 1);
-              console.log( this.$cookie.get('loginStatus'));
+              this.$session.set('loginStatus','logout');
               location.href="/"
           },
 
