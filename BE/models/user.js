@@ -11,6 +11,7 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
   user_code: { type: String, required: true },
+  admin :{type:Boolean},
   avatar_path: {type: String },
   name: { type: String },
   age:{ type: Number},
