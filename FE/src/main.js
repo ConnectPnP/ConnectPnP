@@ -8,6 +8,7 @@ import axios from 'axios'
 import VModal from 'vue-js-modal'
 import VueAxios from 'vue-axios'
 import VueSession from 'vue-session'
+import VueCookies from 'vue-cookies'
 
 
 import 'bootstrap'
@@ -33,6 +34,8 @@ const datepickerOptions = {};
 Vue.use(BootstrapVue);
 Vue.use(AirbnbStyleDatepicker, datepickerOptions);
 Vue.use(VModal, {dynamic: true});
+
+Vue.use(VueCookies);
 
 new Vue({
   el: '#app',

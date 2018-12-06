@@ -271,10 +271,15 @@
                     console.log(result)
                 })
 
-            }
+            },
+            createCookie(){
+                // cookie 만들기 this.$route.params.id
+                this.$cookies.set("recentGroup"+ this.$route.params.id, this.$route.params.id, "30s");
+            },
         },
         mounted() {
         this.getPartyDetail()
+        this.createCookie()
     }
     }
 </script>
