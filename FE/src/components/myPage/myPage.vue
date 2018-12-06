@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="mypage">
     <div>
       <b-tabs>
 
@@ -11,12 +11,14 @@
               <div class="middle">
                 <b-form-file v-model="file" accept=".jpg, .png" size="sm" class="mt-3" plain>프로필 바꾸기</b-form-file>
               </div>
+              <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold; margin-top:10px">{{ memberInfo.usrName }}</h2>
+
             </div>
 
             <div class="userData ml-3">
               <b-row>
                 <div class="col-sm-3 col-md-4 col-5">
-                  <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold">{{ memberInfo.usrName }}</h2>
+                  <!-- <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold">{{ memberInfo.usrName }}</h2> -->
                 </div>
               </b-row>
 
@@ -25,10 +27,10 @@
                   <label style="font-weight:bold;">닉네임</label>
                 </div>
                 <div class="col-md-5 col-6">
-                  <input type="text" name="nickname" :value="memberInfo.nickName">
+                  <input type="text" name="nickname" v-model="memberInfo.nickName">
                 </div>        
                 <div class="col-md-1 col-2">
-                  <a href="#" onclick="{props.handleSubmitProfile}" class="btn btn-primary ml-2">닉네임 변경</a>
+                  <b-button class="btn btn-info ml-2" @click="changeNickname">닉네임 변경</b-button>
                 </div>
               </b-row>
 
@@ -40,11 +42,11 @@
                 </div>
                 <div class="col-md-5 col-6">
                   <b-form-group>
-                    <b-form-checkbox-group v-model="memberInfo.interestedCategory" name="flavour1" :options="options"></b-form-checkbox-group>
+                    <b-form-checkbox-group v-model="memberInfo.interestedCategory" name="flavour1" :options="categoryList"></b-form-checkbox-group>
                   </b-form-group>
                 </div>
                 <div class="col-md-1 col-2">
-                  <a href="#" onclick="{props.handleSubmitProfile}" class="btn btn-primary ml-2">관심 카테고리 변경</a>
+                  <b-button  class="btn btn-info ml-2" @click="changeCategory">관심 카테고리 변경</b-button>
                 </div>
               </b-row>
             </div>
@@ -98,7 +100,7 @@ import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.css'
 
 export default {
-  name: 'app',
+  name: 'mypage',
   components: {
     StarRating,
     Chart,
@@ -106,51 +108,80 @@ export default {
   },
   data() {
     return {
-      options: [
-        {text: 'Category1', value: 'category1'},
-        {text: 'Category2', value: 'category2'},
-        {text: 'Category3', value: 'category3'},
-        {text: 'Category4', value: 'category4'},
-        {text: 'Category5', value: 'category5'},
-        {text: 'Category6', value: 'category6'},
-      ],
+      categoryList: [],
       file:'',
       memberInfo: {
-        id: 1,
-        usrName: "Kim",
-        img: "https://scontent-sea1-1.cdninstagram.com/vp/7a5265ee63e43334d660ebd242da2206/5C8240E9/t51.2885-19/s150x150/13556877_1756206201259678_2048804432_a.jpg",
-        nickName: "haha",
-        interestedCategory: ["category1", "category5"],
-        starRating: 3.4,
-        ratingStatus: [10, 8, 10],
-        events: [
-          {
-            title  : 'event1',
-            start  : '2018-11-13',
-            editable  : false,
-          },
-          {
-            title  : 'event2',
-            start  : '2018-11-05',
-            end    : '2018-11-07',
-            editable  : false,
-
-          },
-          {
-            title  : 'event3',
-            start  : '2018-11-09T12:30:00',
-            editable  : false,
-            allDay : false,
-          },
-        ]
+        id: '',
+        usrName: "",
+        img: "",
+        nickName: "",
+        interestedCategory: [],
+        starRating:0,
+        ratingStatus: [],
+        events: []
       }
     }
+  },
+  mounted(){
+    this.memberInfo.id = this.$session.get('userID');
+    this.memberInfo.usrName = this.$session.get('userName');
+    this.memberInfo.img = this.$session.get('profile_path');
+
+    this.getCategoryList();
+
+    this.$http.get('http://localhost:3000/user/details/'+this.memberInfo.id)
+      .then((result)=>{
+        // 닉네임 가져오기
+        if(result.data.nickName == null){
+          this.memberInfo.nickName = this.memberInfo.usrName;
+        } else {
+          this.memberInfo.nickName = result.data.nickName;
+        }
+
+        // 관심 카테고리 가져오기
+        var catListtemp = [];
+        for(var i=0;i<result.data.categoryList.length;i++){
+          catListtemp.push(result.data.categoryList[i]);
+        }
+        this.memberInfo.interestedCategory = catListtemp;
+
+        // 평점 가져오기
+        this.memberInfo.starRating = result.data.star_rate;
+    });
+  },methods:{
+    getCategoryList() {
+                var vm = this
+                this.$http.get('http://localhost:3000/category')
+                .then((result) => {
+                    // get category list
+                    for(var i=0; i<result.data.length; i++) {
+                            var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
+                            vm.categoryList.push(JSON.parse(categoryOption));
+                    }
+
+                });
+            },
+  changeNickname(){
+    this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
+      nickName: this.memberInfo.nickName
+    }).then(()=>{
+      alert('닉네임 변경이 완료되었습니다.');
+    });
+  },
+  changeCategory(){
+    this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
+      categoryList: this.memberInfo.interestedCategory
+    }).then(()=>{
+        alert('관심 카테고리 변경이 완료되었습니다.');
+    });
   }
+  }
+  
 }
 </script>
 
 <style>
-#app {
+#mypage {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -162,10 +193,13 @@ export default {
 }
 .image-container {
   position: relative;
-  margin: 10px;
+  margin: 15px;
+  margin-left: 40px;
+  
 }
 .userData {
     margin: 15px;
+    width: 65%;
 }
 .middle {
   transition: .5s ease;
