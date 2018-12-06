@@ -20,7 +20,7 @@ const GroupSchema = new Schema({
  max_num : {type: Number},
  cost : {type : Number},
  condition : {type : String},
- images : [{type:String}], //[{img_path : {type:String}}]
+ images : [{type:String}], 
  location : {type: String},
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
  comments : [{

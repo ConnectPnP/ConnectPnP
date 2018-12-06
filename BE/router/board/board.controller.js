@@ -1,27 +1,20 @@
 const fs = require('fs');
 const path = require('path');
-//const Board  = require('../../models/board');
+const Board  = require('../../models/groupInfo');
+const Comment  = require('../../models/comment');
 const User = require('../../models/user');
 const config = require('../../config/server.config');
-//const upload = require('../../middlewares/uploadPost');
+const upload = require('../../middlewares/uploadPost');
+var mongoose = require('mongoose');
 
-const npage = 5 ; // 페이지당 5개 게시글 불러오기
+const npage = 6 ; // 페이지당 6개 게시글 불러오기
 
 // 게시글 상세보기
 exports.getPost = (req, res) => {
-  Board.find({_id: req.params.id}, (err, board) => {
+  Board.findOne({_id: req.params.id}, (err, board) => {
     if (err) return res.status(500).send(err); // 500 error
       return res.json(board);
-  });
-};
-
-// populate : https://m.blog.naver.com/PostView.nhn?blogId=azure0777&logNo=220606306753&proxyReferer=https%3A%2F%2Fwww.google.co.kr%2F
-exports.getLog = (req, res) => {
-  var page = req.params.page;
-  Board.find({author : req.params.user_code}, function (err, result) {
-    if(err)  return res.json({result : "fail"});
-    return res.json(result);
-  }).sort({_id: -1 }).skip((page)*npage).limit(npage);
+  })
 };
 
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
@@ -33,15 +26,23 @@ exports.getMore = (req, res) => {
   }).sort({_id: -1 }).skip((page)*npage).limit(npage);
 };
 
-//post create edit delete
-// 게시글 생성하기
+// //post create edit delete
+// // 게시글 생성하기
 exports.create = (req, res) => {
-  User.find({user_code : req.body.author}, (err, user) =>{
-    if(err) return res.status(500).send(err); // 500 error
-    Board.create({title:req.body.title, content : req.body.content, author : req.body.author,createdAt : req.body.createdAt, author_name : user[0].name}, (err, result) => {
-      if (err) return res.status(500).send(err); // 500 error
-      return res.json({ "_id" : result._id});
+  console.log("create");
+  Board.create( req.body , (err, result) => {
+    if (err) return res.status(500).send(err); // 500 error
+    console.log(result.files);
+    return res.json(result);
   });
+};
+
+// 모든 게시글 상세보기
+exports.getAllPost = (req, res) => {
+  Board.find({}, (err, board) => {
+    if (err) return res.status(500).send(err); // 500 error
+    console.log(board);
+      return res.json(board);
   });
 };
 
@@ -49,14 +50,15 @@ exports.create = (req, res) => {
 exports.uploadFile = (req, res) => {
   upload(req, res)
     .then((files) => {
-      Board.where({_id : req.params.id})
-      .update({ $set : {img_path: `${config.serverUrl()}files/${req.files.postFile[0].destination.match(/[^/]+/g).pop()}/${req.files.postFile[0].filename}` }}).exec()
-      .then(() => {
-        return res.json({result : "ok"});
-      })
-      .catch((err) => {
-        return res.json({result : "fail"});
-      });
+      for(var i=0; i< req.files.postFile.length; i++) {
+        Board.findOneAndUpdate({_id : req.params.id},  {$push : {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}` }})
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch((err) => {
+          return res.json({result : "db fail"});
+        });
+      }
     })
     .catch((err) => {
       res.status(500).send('Upload middlewares error');
@@ -118,32 +120,23 @@ exports.deletePost = (req, res) => {
 //   }
 // };
 
-// 게시판 댓글에 등록된 키워드 목록을 보여줌
-exports.getBoardForAdmin = (req, res) => {
-  Board.find({$and : [{ $where : "this.comments.length>=5"}, {adminChecked : false}]},
-     function (err, result) {
-      if(err) return res.json({result : "fail"});
-      else return res.json(result);
-  });
-};
 
 //comment create edit delete
 // 댓글 생성하기
 exports.createComment = (req, res) => {
-  Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :{commenter:req.body.user_code , name : req.body.name, body : req.body.body,
-  adopted : req.body.adopted, keyword: req.body.keyword , createdAt: req.body.createdAt}}},
-  (err, result) => {
-    if(!err) {
-      return res.json({result : "ok"});
-    }
-    else return res.json({result : "fail"});
-  });
+  Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments : {content : req.body.content}}},
+    (err, board) => {
+      if(!err) {
+        return res.json({result : board});
+      }
+      else return res.json(err);
+    });
 };
 
 // 댓글 수정하기
 exports.updateComment = (req, res) => {
   Board.findOneAndUpdate({_id: req.params.id, "comments._id" : req.params.comment},
-  { $set : {"comments.$.adopted" : req.body.adopted}},(err, result) => {
+  { $set : {"comments.$.body" : req.body.body}},(err, result) => {
     if(!err) {
       return res.json({result : "ok"});
     }

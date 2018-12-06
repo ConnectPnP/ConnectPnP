@@ -2,6 +2,7 @@ const router = require('express').Router();
 const board = require('./board');
 const user = require('./user');
 const category = require('./category');
+const GroupInfo  = require('../models/groupInfo');
 
 router.use('/board', board);
 router.use('/user', user);
