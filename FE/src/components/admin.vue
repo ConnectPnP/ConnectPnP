@@ -116,7 +116,7 @@
                 addCategoryName:"",
                 addCategoryPath:"",
                 addSubCategoryName:"",
-
+                imageName:"",
                 mainCategoryList: [
                     {
                         _id: Number,
@@ -147,27 +147,46 @@
                 console.log(categoryid);
             },
             onFileChange(newFile) {
+                console.log(newFile);
                 this.file = {blob: URL.createObjectURL(newFile[0])};
+                console.log("onfilechange>>"+this.file);
+                this.imageName=newFile[0].name;
                 this.formData.append('categoryFile', newFile[0], newFile[0].name);
             },
+
             async getCategory(){
                 var categoryList  = await this.$http.get('http://localhost:3000/category');
                 console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
 
-            addCategory(){
+             async addCategory(){
                 var adminVue= this;
                 //https://picsum.photos/250/250/?image=54
                 var categoryData ={
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-                var addedData = this.$http.post('http://localhost:3000/category', categoryData);
-                addedData.then(function (result) {
-                    adminVue.mainCategoryList.push(result.data);
-                    adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+/*
+                 var addCategory = await this.$http.post('http://localhost:3000/category', categoryData)
+                 var addImage = await adminVue.$http.post('http://localhost:3000/category/files/'+addCategory.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                 console.log("addedone")
+                 console.log(addImage.data.img_path);
+                 adminVue.mainCategoryList.push(addImage.data);
+*/
+                var imgPathURL= "";
+                this.$http.post('http://localhost:3000/category', categoryData)
+                .then((result) => {
+                    imgPathURL='http://localhost:3000/files/category/';
+                    return adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                 })
+                .then((result) => {
+                    var tmpImgPath =imgPathURL+adminVue.imageName;
+                    console.log(imgPathURL+adminVue.imageName);
+                    result.data.img_path=tmpImgPath
+                    adminVue.mainCategoryList.push(result.data);
+                })
+                 
             },
             addSubCategory(){
                 var adminVue= this;
