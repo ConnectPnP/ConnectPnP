@@ -7,20 +7,12 @@ const autoIncrement = require('mongoose-auto-increment');
 // [CONFIGURE SERVER PORT]
 const port = process.env.PORT || 3000;
 
-
 // [RUN SERVER]
 const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
 
-//로그인 된 유저 id값 저장
-global.currentUser='no current userid';
-
-console.log(global.currentUser);
-mongoose.connect(config.dbUrl(), {
-  useCreateIndex: true,
-  useNewUrlParser: true
-})
+mongoose.connect(config.dbUrl());
 
 const db = mongoose.connection;
 db.on('error', console.error);
@@ -29,39 +21,14 @@ db.once('open', () => {
 });
 autoIncrement.initialize(db);
 
-
-//CORS 크로스 도메인 요청을 위한 함수..
-
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
-
-
-
-
-// [CONFIGURE APP TO USE bodyParser]
 app.use((req, res, next) =>{
   res.header("Access-Control-Allow-Origin", "*")
   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header("Access-Control-Allow-Headers", "*")
+  res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
   next()
 })
 
+// [CONFIGURE APP TO USE bodyParser]
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/',require('./router'));
