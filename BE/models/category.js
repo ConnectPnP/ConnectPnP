@@ -12,8 +12,8 @@ const CategorySchema = new Schema({
     name: { type: String },
     img_path : {type: String},
     sub_category : [ {
-        value: {type: String}, 
-        text:{type:String}}]
+        name: {type: String}, 
+        description:{type:String}}]
 });
 
 CategorySchema.plugin(autoIncrement.plugin, 'Category');
