@@ -79,19 +79,19 @@
                         categoryName: "category1"
                     },
                     {   id: 2,
-                        categoryName: "category1"
+                        categoryName: "category2"
                     },
                     {   id: 3,
-                        categoryName: "category1"
+                        categoryName: "category3"
                     },
                     {   id: 4,
-                        categoryName: "category1"
+                        categoryName: "category4"
                     },
                     {   id: 5,
-                        categoryName: "category1"
+                        categoryName: "category5"
                     },
                     {   id: 6,
-                        categoryName: "category1"
+                        categoryName: "category6"
                     },
                 ]
             }
