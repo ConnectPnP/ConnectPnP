@@ -20,8 +20,8 @@
               <em>  {{userInfo[0]}}</em>
             </template>
             <b-dropdown-item href="/myPage">MyPage</b-dropdown-item>
-            <b-dropdown-item href="/admin">Administrator</b-dropdown-item>
-            <b-dropdown-item  v-on:click=logoutWithKakao >Signout </b-dropdown-item>
+            <b-dropdown-item href="/admin" v-show="adminStatus">Administrator</b-dropdown-item>
+            <b-dropdown-item  v-on:click=logoutWithKakao>Signout </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -71,18 +71,17 @@
 
               if(session_status=='login'){
                   console.log(session_status=='login');
-                  return true
+                 return true;
               } else {
                   console.log(session_status=='login');
                   return false
               }
           },
 
-          userInfo(){
+           userInfo(){
               //쿠키에 저장되어 있는 유저 정보 불러오기
               var cookie_status= this.$cookie.get('loginStatus');
               var session_status= this.$session.get('loginStatus');
-
               if(session_status=='login'){
                   var userInfoName=this.$session.get('userName');
                   var userInfoProfile = this.$session.get('profile_path');
@@ -90,7 +89,15 @@
               } else{
                   return["",""]
               }
-          }
+          },
+
+          //세션값을 가져와 유저가 관리자인지 확인.
+           adminStatus(){
+              var isAdmin = this.$session.get('admin');
+              return isAdmin;
+          },
+
+
       },
       methods: {
           //카카오 api 사용을 위한 초기화
@@ -100,6 +107,7 @@
           handleError: (err) => {
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
+
 
 
           //로그인 파라미터 값은 클릭한 버튼(로그인:1, 회원가입:0)
@@ -130,10 +138,19 @@
                    topVuethis.$cookie.set('userName',user_name, 1);
                    topVuethis.$cookie.set('profile_path',profile_path, 1);
 
+                   //유저 이름, 프로필 이미지 세션으로 저장.
                    topVuethis.$session.set('userID',userID);
                    topVuethis.$session.set('userName',user_name);
                    topVuethis.$session.set('profile_path',profile_path);
 
+
+                   //유저 관리자 여부 확인. 관리자 정보 세션에 저장.
+                   var useradminData = await topVuethis.$http.get('http://localhost:3000/user/details/'+userID);
+                   if(useradminData.data.admin){
+                       topVuethis.$session.set('admin',true);
+                   } else {
+                       topVuethis.$session.set('admin',false);
+                   }
 
                    //유저가 이미 등록된 회원인지 판별.
                    var getURL = "http://localhost:3000/user/"+userID;
