@@ -59,39 +59,14 @@ export default {
             ],
             select2: [ ],
             select3: [ ],
-            options1: [
-                { value: null, text: '--대분류--', disabled:true},
-                { value: 0, text: '게임'},
-                { value: 1, text: '운동'},
-                { value: 2, text: '여행'},
-                { value: 3, text: '공동구매'},
-                { value: 4, text: '사진'},
-                { value: 5, text: '멍멍이'},
-            ],
-            // options3:[], // 카테고리 소분류
-            options3:[
-                [
-                    { value: null, text: '--소분류--', disabled:true},
-                    { value: 0, text: '오버워치'},
-                    { value: 1, text: '배그'},
-                    { value: 2, text: '피파'},
-                    { value: 3, text: '닌텐도'},
-                    { value: 4, text: '보드게임'},
-                ],
-                [
-                    { value: null, text: '--소분류--', disabled:true},
-                    { value: 0, text: '축구'},
-                    { value: 1, text: '야구'},
-                    { value: 2, text: '테니스'},
-                    { value: 3, text: '춤'},
-                ],
-                
-            ],
-            options2: [
+            hostSearchOption: [
                 { value: null, text: '--필터--', disabled:true},
                 { value: 21, text: 'ID'},
                 { value: 22, text: '닉네임'}
             ],
+            categoryList1: [ ], // 카테고리 대분류
+            categoryList2:[ ], // 카테고리 소분류
+            
           groupList : [
               // { id : , groupInfo: { title, location, detail, group_img } }
               {
@@ -179,6 +154,9 @@ export default {
             }
         })
   },
+  mounted(){
+      this.getCategoryList();
+  },
   methods: {
        getPostData (currentPage) {
            
@@ -186,19 +164,40 @@ export default {
         selectOption1(select){
             this.secondSelect = null;
             if(select == 0){
-                this.select2 = this.options1;
+                this.select2 = this.categoryList1;
             } else if(select == 1){
-                this.select2 = this.options2;
+                this.select2 = this.hostSearchOption;
             } 
         },
         selectOption2(select){
             this.thirdSelect = null;
             if(this.firstSelect == 0){
                 if(select != null){
-                    this.select3 = this.options3[select];
+                    this.select3 = this.categoryList2[select];
                 }
             }
         },
+        getCategoryList() {
+                var vm = this
+                this.$http.get('http://localhost:3000/category/sub')
+                .then((result) => {
+                    // get category list
+                    for(var i=0; i<result.data.length; i++) {
+                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                            vm.categoryList1.push(JSON.parse(categoryOption));
+                    }
+
+                    // get sub category list
+                    for(var i=0; i<result.data.length; i++) {
+                        var categoryOption = [];
+                        for(var j=0; j<result.data[i].sub_category.length ; j++){
+                            var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
+                            categoryOption.push(JSON.parse(option));
+                        }
+                        vm.categoryList2.push(categoryOption);
+                    }
+                });
+            },
     }
 }
 </script>
