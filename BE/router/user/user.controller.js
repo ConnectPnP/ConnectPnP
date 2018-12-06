@@ -3,8 +3,7 @@ const path = require('path');
 const User  = require('../../models/user');
 const upload = require('../../middlewares/uploadAvatar');
 const config = require('../../config/server.config');
-
-
+/*
 // 회원 생성
 exports.create = (req, res) => {
 // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
@@ -22,14 +21,70 @@ exports.create = (req, res) => {
     }
   });
 };
+*/
+
+exports.findUser= (req,res)=>{
+    var userid = req.params.id;
+    console.log(req.params.id);
+    User.findOne({user_code : userid}, function (err, user) {
+        if(err) {
+            return res.json({});}
+        else if(user == null) {
+            //회원이 아님.
+                    console.log("not found");
+                    res.send({user:false});
+            }
+        else {
+            //회원임.
+            console.log("Found!");
+
+            //서버에 현재 로그인 된 유저 아이디값 저장.
+            global.currentUser=userid;
+            console.log("현재 유저 아이디: "+global.currentUser);
+
+            res.send({user:true});
+        }
+
+    });
+};
+
+
+// 회원 생성
+exports.create = (req, res) => {
+// user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
+    var kakaoData = req.body[0];
+    var signUpData = req.body[1];
+    console.log(signUpData.gender);
+    console.log("/signUp post received>>");
+
+    // user code가 이미 서버 디비에 존재하는지 확인 : 없다면 생성, 있다면 패스
+    User.findOne({user_code : kakaoData.id}, function (err, user) {
+        if(err) return res.json({});
+        else if(user == null) {
+            User.create({user_code:kakaoData.id,avatar_path: kakaoData.properties.profile_image, name: kakaoData.properties.nickname,
+            age: signUpData.age, gender: signUpData.gender, categoryList:signUpData.categoryList}, (err, result) => {
+                if(!err) {
+                    return  res.json({result : "create"});
+
+                }
+            }); // 존재하지 않는 회원 id는 새로 생성.
+        }
+        else {
+            return res.json({result : "exist"});
+        }
+    });
+};
 
 exports.getUser = (req, res) => {
-  User.find({user_code : req.params.id}, (err, result) => {
-    if(!err) {
-      return res.json(result);
-    }
-    return res.json({result : "fail"});
-  })
+    var userid = req.params.id;
+    User.findOne({user_code : userid}, function (err, user) {
+        if(err) {
+            return res.json({});}
+        else {
+            console.log(user);
+            res.send(user);
+        }
+    });
 }
 
 exports.delete = (req, res) => {
@@ -55,6 +110,7 @@ exports.editProfile = (req, res) => {
 
 // user_code를 조회하여 해당 회원 프로필 사진 path 변경해주기
 //api/user/profile/files/id
+
 exports.uploadAvatar = (req, res) => {
   upload(req, res)
     .then((files) => {

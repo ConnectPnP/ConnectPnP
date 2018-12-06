@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-
+//const { mongoose, autoIncrement } = require('models/mongo');
 const Schema = mongoose.Schema;
 
 /**
@@ -8,11 +8,15 @@ const Schema = mongoose.Schema;
 * @description contain the details of user info
 */
 
+
 const UserSchema = new Schema({
   user_code: { type: String, required: true },
+  admin :{type:Boolean},
   avatar_path: {type: String },
   name: { type: String },
-  password : { type : String },
+  age:{ type: Number},
+  gender:{type: String},
+  categoryList:[],
   star_rate : {type : Number },
   rating_status : [{
     status_id : {type : mongoose.Schema.Types.ObjectId, ref:'Evaluate' },

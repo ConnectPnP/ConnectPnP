@@ -12,6 +12,9 @@
         </div>
     </div>
 
+
+
+
     <div class="searchArea">
         <form action="#">
             <b-input-group >
@@ -25,17 +28,17 @@
     </div>
 
         <!--  카테고리 리스트가 보여지는 부분   -->
-        <b-container class="catagoryGroup">
+        <b-container class="categoryGroup">
             <b-row>
-                <div  v-for="item in catagoryList" :key="item.id">
+                <div  v-for="item in categoryList" :key="item.id">
                     <div v-if="item.id<=btnclicked">
-                        <b-col sm class="homePageCatagory catagorySingle">
+                        <b-col sm class="homePageCategory categorySingle">
                         <input type="image"
-                               :src="item.catagoryImg"
+                               :src="item.categoryImg"
                                height="120px"
                                width="120px"/>
-                        <b-link :href="item.catagoryURL"><span></span></b-link>
-                        <p>{{item.catagoryName}}</p>
+                        <b-link :href="item.categoryURL"><span></span></b-link>
+                        <p>{{item.categoryName}}</p>
                     </b-col>
                     </div>
                 </div>
@@ -68,12 +71,28 @@
        -->
 
 
+
+
         <div class="rankingArea">
             <div class>
                 <h2>Ranking Best 5</h2>
                 <h4>인기 모임 순위</h4>
             </div>
+            <!--justify-content-md-center-->
+            <b-container fluid>
+                <b-row class="rankingGroup justify-content-md-center">
+                    <div  v-for="item in rankingList" :key="item.id">
+                        <b-col class="singleRanking">
+                            <b-img fluid :src="item.partyImg" alt="Thumbnail" />
+                            <div class="singleRankingTitile">{{item.partyName}}</div>
+                            <div class="singleRankingDescription">{{item.partyDiscription}}</div>
+                            <b-button href="#" variant="primary">이동하기</b-button>
+                        </b-col>
+                    </div>
+                </b-row>
+            </b-container>
 
+<!--
             <div class="rankingGroup">
                 <b-card-group>
                 <div  v-for="item in rankingList" :key="item.id">
@@ -92,6 +111,8 @@
                 </div>
                 </b-card-group>
             </div>
+-->
+
 
 
         </div>
@@ -112,67 +133,67 @@ import Review from './reviewPopup/Review.vue'
         data() {
             return {
                 btnclicked:5,
-                catagoryList: [
+                categoryList: [
                     {   id: 1,
-                        catagoryName: "catagory1",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                         },
                     {   id: 2,
-                        catagoryName: "catagory2",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 3,
-                        catagoryName: "catagory3",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 4,
-                        catagoryName: "catagory4",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 5,
-                        catagoryName: "catagory5",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 6,
-                        catagoryName: "catagory6",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
                     },
                     {   id: 7,
-                        catagoryName: "catagory7",
-                        catagoryImg:tempimg,
-                        catagoryURL:'http://www.naver.com'
-                    }
+                        categoryName: "category1",
+                        categoryImg:tempimg,
+                        categoryURL:'http://www.naver.com'
+                    },
                 ],
                 rankingList: [
                     {   id: 1,
                         partyName: "모임1",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyImg:"https://picsum.photos/250/250/?image=54",
                         partyDiscription:"이 모임은 영국에서 최초로 시작되어.."
                     },
                     {   id: 2,
                         partyName: "모임2",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyImg:"https://picsum.photos/250/250/?image=54",
                         partyDiscription:"모임 일시: 2018.11.19- 11.22 모임 장소: 아주대학교"
                     },
                     {   id: 3,
                         partyName: "모임3",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyImg:"https://picsum.photos/250/250/?image=54",
                         partyDiscription:"현재 참여 인원 : 86명"
                     },
                     {   id: 4,
                         partyName: "모임4",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyImg:"https://picsum.photos/250/250/?image=54",
                         partyDiscription:"카테고리: 게임 "
                     },
                     {   id: 5,
                         partyName: "모임5",
-                        partyImg:"https://picsum.photos/600/300/?image=25",
+                        partyImg:"https://picsum.photos/250/250/?image=54",
                         partyDiscription:"멋진 모임입니다!"
                     },
                 ]
@@ -229,12 +250,11 @@ import Review from './reviewPopup/Review.vue'
         padding-bottom: 50px;
     }
 
-    .catagoryGroup{
+    .categoryGroup{
         width: 1000px;
-
         position: relative;
     }
-    .catagorySingle{
+    .categorySingle{
 
         height: 160px;
         width: 160px;
@@ -250,20 +270,35 @@ import Review from './reviewPopup/Review.vue'
 
     .rankingArea{
         width: 100%;
-        height: 1000px;
-        position: relative;
+        margin-bottom: 100px;
         background-color: #d2e8ff;
         padding-top: 100pt;
         padding-bottom: 100pt;
     }
 
     .rankingGroup{
-        width:100%;
-        margin-top: 150px;
-
+        width: 100%;
+        margin-top: 60px;
     }
-
+    .singleRanking{
+        padding:10px;
+        background-color: white;
+        border:10px solid #d2e8ff;
+    }
+    .singleRankingTitile{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-size: 30px;
+    }
+    .singleRankingDescription{
+        max-width: 250px;
+        max-height: 30px;
+        overflow: hidden;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
     .rankingSingle{
+
         margin: 20px 20px;
     }
 

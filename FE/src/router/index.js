@@ -7,8 +7,30 @@ import editParty from '@/components/board/editParty'
 import partyList from '@/components/list/list'
 import myPage from '@/components/myPage/myPage'
 import signUp from '@/components/signUp'
+import admin from '@/components/admin'
+const pageAuth= require('./pageAuth');
 
-Vue.use(Router)
+Vue.use(Router);
+var thisVue = new Vue;
+
+//관리자로 등록된 유저만 들어갈 수 있도록 만듬.
+const adminRequireAuth = async (to, from, next) => {
+  //현재 로그인 중인 유저의 아이디 값으로 정보를 받아옴.
+    var userID= thisVue.$cookie.get('userID');
+    var userData = await thisVue.$http.get('http://localhost:3000/user/details/'+userID);
+    if (pageAuth.AdminPage(userData)) {
+        return next();
+    } else {
+      alert("죄송합니다. 관리자 권한이 없습니다.");
+      next('/')
+    }
+/*
+    next({
+        path: '/admin',
+        query: { redirect: to.fullPath }
+    })
+*/
+};
 
 export default new Router ({
   mode : 'history',
@@ -47,6 +69,13 @@ export default new Router ({
       path: '/signUp', 
       name: 'signUp',
       component: signUp
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin,
+      beforeEnter:adminRequireAuth
+
     },
     { 
       path: '*',

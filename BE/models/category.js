@@ -16,6 +16,7 @@ const CategorySchema = new Schema({
         description:{type:String}}]
 });
 
+
 CategorySchema.plugin(autoIncrement.plugin, 'Category');
 
 
