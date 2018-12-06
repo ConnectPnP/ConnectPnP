@@ -65,7 +65,7 @@ export default {
                 { value: 21, text: 'ID'},
                 { value: 22, text: '닉네임'}
             ],
-            categoryList1: [ ], // 카테고리 대분류
+            categoryList1: [{value:null, text:"--대분류--", disabled:true}], // 카테고리 대분류
             categoryList2:[ ], // 카테고리 소분류
             
           groupList : [
@@ -116,7 +116,7 @@ export default {
 
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
-                        var categoryOption = [];
+                        var categoryOption = [{value:null, text: "--소분류--", disabled:true}];
                         for(var j=0; j<result.data[i].sub_category.length ; j++){
                             var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
                             categoryOption.push(JSON.parse(option));
