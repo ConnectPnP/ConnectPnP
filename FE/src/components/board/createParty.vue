@@ -190,7 +190,7 @@
                 todayDate: '',
                 file: null,
                 checkList: [
-                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image', 'Category'
+                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image'
                 ],
                 party_form:
                     {
@@ -297,15 +297,23 @@
                     party.date,
                     party.locationText,
                     party.cost,
-                    party.file_array,
-                    party.selected_subcategory_id
+                    party.file_array
                 ];
 
-                for(var i=0;i<validationCheck.length;i++){
+                // 빈칸 체크
+                for(var i=0;i<validationCheck.length-1;i++){
                     if(validationCheck[i]==null||validationCheck[i]==''){
                         alertString += checkList[i] + ', ';
                     }
                 }
+
+                //카테고리 체크
+                if(party.selected_subcategory_id == null){
+                    if(this.categoryList2.length !=1){
+                        alertString += 'Category';
+                    }
+                }
+
                 if(alertString != ''){
                     alert(alertString+" 칸을 채워주세요!");
                 }
