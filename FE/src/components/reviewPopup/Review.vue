@@ -3,15 +3,17 @@
 
     <h3>모임의 후기를 작성해주세요!</h3>
 
-    <b-carousel class="carousel" indicators controls :interval="0">
+    <b-carousel class="carousel" v-model="slide" indicators controls :interval="0">
         <div v-for="member in members">
-            <reviewSlide v-bind:groupTitle=member.memberInfo.group v-bind:groupDate=member.memberInfo.date
+            <reviewSlide
+                 v-bind:groupTitle=member.memberInfo.group v-bind:groupDate=member.memberInfo.date
                 v-bind:memberNickName=member.memberInfo.nickname v-bind:memberImg=member.memberInfo.memberImg />
         </div>
     </b-carousel>
 
-    <b-form-checkbox size="sm" style="display: block">다시 보지 않기</b-form-checkbox>
-    <b-btn class="btnGroup" size="sm" variant="primary">제출</b-btn> 
+        <b-form-checkbox v-if="slide == (members.length-1)" size="sm" style="display: block">다시 보지 않기</b-form-checkbox>
+        <b-btn v-if="slide == (members.length-1)" class="btnGroup" size="sm" variant="primary">제출</b-btn> 
+
 
 </div>
 </template>
@@ -25,6 +27,7 @@ export default {
   },
   data(){
       return {
+          slide:0,
           members: [
                 {
                     id:1,
@@ -73,7 +76,7 @@ export default {
                 }
             ]
       }
-  }
+  },
 }
 </script>
 
@@ -81,8 +84,8 @@ export default {
 #review {
   background: rgb(210, 232, 255);
 
-  max-width: 500px;
-  max-height: 480px;
+  width: 500px;
+  height: 450px;
 
   padding: 15px;
   text-align: center;

@@ -189,7 +189,7 @@ import Review from './reviewPopup/Review.vue'
                 },{
                     name: 'review',
                     width: '500px',
-                    height: '440px',
+                    height: '450px',
                     draggable: true
                 });
             }
