@@ -15,7 +15,7 @@
         <b-navbar-nav class="ml-auto">
           <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao(1)>로그인</button>
           <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click=loginWithKakao(0)>회원가입</button>
-          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" href="/admin">관리자 페이지</button>
+          <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==true" href="/admin">관리자 페이지</button>
 
           <b-nav-item-dropdown right v-if="loginStatus">
             <template slot="button-content">
@@ -112,6 +112,7 @@
           handleError: (err) => {
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
+          
 
           //로그인 파라미터 값은 클릭한 버튼(로그인:1, 회원가입:0)
            loginWithKakao(btnClick){
