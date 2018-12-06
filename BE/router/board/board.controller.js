@@ -29,10 +29,8 @@ exports.getMore = (req, res) => {
 // //post create edit delete
 // // 게시글 생성하기
 exports.create = (req, res) => {
-  console.log("create");
   Board.create( req.body , (err, result) => {
     if (err) return res.status(500).send(err); // 500 error
-    console.log(result.files);
     return res.json(result);
   });
 };
@@ -41,7 +39,6 @@ exports.create = (req, res) => {
 exports.getAllPost = (req, res) => {
   Board.find({}, (err, board) => {
     if (err) return res.status(500).send(err); // 500 error
-    console.log(board);
       return res.json(board);
   });
 };

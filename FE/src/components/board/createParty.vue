@@ -313,24 +313,26 @@
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 }
                 else {
+
                 this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                 this.$http.post('http://localhost:3000/board', {
-                    title : this.party_form.title,
-                    due_date : this.party_form.recruitment_period_dateTwo,
-                    start_date : this.party_form.recruitment_period_dateOne,
-                    meeting_date : this.party_form.date,
-                    min_num : this.party_form.number_of_member[0],
-                    max_num : this.party_form.number_of_member[1],
-                    cost : this.party_form.cost,
-                    category_id : this.party_form.selected_category_id,
-                    conditions : { gender : this.party_form.conditions.gender, age : this.party_form.conditions.age},
-                    detail:this.party_form.detail,
-                    location : this.party_form.location,
-                    locationText : this.party_form.locationText,
+                    title : party.title,
+                    due_date : party.recruitment_period_dateTwo,
+                    start_date : party.recruitment_period_dateOne,
+                    meeting_date : party.date,
+                    min_num : party.number_of_member[0],
+                    max_num : party.number_of_member[1],
+                    cost : party.cost,
+                    category_id : party.selected_subcategory_id,
+                    conditions : { gender : party.conditions.gender, age : party.conditions.age},
+                    detail: party.detail,
+                    location : party.location,
+                    locationText : party.locationText,
                     // host :,
             })
             // 이미지 업로드
             .then((result) => {
+                console.log(result)
                 boardId = result.data._id
                 this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             })
