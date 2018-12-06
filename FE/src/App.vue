@@ -27,3 +27,4 @@ import top from '@/components/navigator/top'
   margin-top: 60px;
 }
 
+</style>

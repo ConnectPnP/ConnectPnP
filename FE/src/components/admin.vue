@@ -7,12 +7,11 @@
             <h3>대분류 카테고리</h3>
             <br>
 
-
         <div  v-for="item in mainCategoryList" :key="item._id">
             <table class="categoryTable">
                 <tr>
                     <th class="categoryImg"  rowspan="2">
-                        <input v-on:click="categoryClicked(item._id)" type="image" :src="item.categoryImg"
+                        <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.categoryImg"
                                height="140px" width="140px"/>
                     </th>
                     <th class="mainCategoryTitle">{{item.name}}</th>
@@ -24,6 +23,7 @@
                 </tr>
             </table>
         </div>
+
 
             <div class="createCategory">
                 <div class="inputMain">
@@ -49,36 +49,37 @@
         <article class="subCategory">
             <br>
 
-            <div class="subCategoryTitle" v-if="selectedCategory==-1">
+            <div class="subCategoryTitle" v-if="selectedCategoryID==-1">
                 <h2> 대분류 카테고리를 선택해주세요</h2>
             </div>
 
-            <b-container class="subCategoryGroup">
-                <b-row>
-                    <div  v-for="item in mainCategoryList" :key="item.id">
-                                <div v-if="selectedCategory==item._id">
-                                    <div v-for="sub in item.sub_category">
-                                        <b-col sm class="subCategorySingle">
 
-                                                <h3>{{sub.name}}</h3>
-                                                <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
+            <div class="subCategoryTitle" v-if="selectedCategoryID!=-1">
+                <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
+            </div>
 
-                                        </b-col>
-                                    </div>
-                                </div>
-                    </div>
-                </b-row>
+
+            <b-container class="subCategoryGroup" >
+                <div v-for="item in mainCategoryList" :key="item.id">
+                    <b-row v-if="selectedCategoryID==item._id">
+                        <div  v-for="sub in item.sub_category">
+                            <b-col class="subCategorySingle">
+                                <h3>{{sub.name}}</h3>
+                                <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
+                            </b-col>
+                        </div >
+                    </b-row>
+                </div>
             </b-container>
 
 
-            <div class="createCategory" v-if="selectedCategory!= -1">
+            <div class="createCategory" v-if="selectedCategoryID!= -1">
                 <div class="inputMain">
                     <label for="subCategory"> 소분류 이름: </label>  &nbsp;
                     <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
                 </div>
                 <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
             </div>
-
 
         </article>
 
@@ -91,10 +92,17 @@
 
     export default {
         name: "admin",
+        components:{
+
+        },
         props: {
-            selectedCategory:{
+            selectedCategoryID:{
                 type: Number,
                 default : -1
+            },
+            selectedCategoryName:{
+                type:String,
+                default:""
             }
         },
         data() {
@@ -110,6 +118,7 @@
                         img_path: String,
                         sub_category: [
                             {
+                                _id:String,
                                 name: String
                             }
                         ]
@@ -121,12 +130,14 @@
             }
         },
         mounted: function () {
-            this.getCategory()
+            this.getCategory(),
+            console.log(this)
 
         },
         methods:{
-            categoryClicked(categoryid){
-                this.selectedCategory=categoryid;
+            categoryClicked(categoryName, categoryid){
+                this.selectedCategoryName= categoryName;
+                this.selectedCategoryID=categoryid;
                 console.log(categoryid);
             },
 
@@ -137,31 +148,60 @@
             },
 
             addCategory(){
+                var adminVue= this;
                 //https://picsum.photos/250/250/?image=54
                 var categoryData ={
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-
-                this.$http.post('http://localhost:3000/category', categoryData);
-                location.href="/admin"
+                var addedData = this.$http.post('http://localhost:3000/category', categoryData);
+                addedData.then(function (result) {
+                    adminVue.mainCategoryList.push(result.data);
+                    console.log(result.data);
+                })
             },
             addSubCategory(){
+                var adminVue= this;
                 var subcategoryData ={
                     name:this.addSubCategoryName
                 };
-                var addsubURL='http://localhost:3000/category/'+this.selectedCategory+'/sub';
-                this.$http.post(addsubURL, subcategoryData);
-                location.href="/admin"
+                var addsubURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub';
+                var addedData= this.$http.post(addsubURL, subcategoryData);
+                addedData.then(function (result) {
+                    for(let i=0;i<adminVue.mainCategoryList.length;i++){
+                        if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
+                            adminVue.mainCategoryList[i].sub_category= result.data.sub_category
+                        }
+                    }
+                });
             },
+
             categoryDelete(id){
+
                 var deleteURL='http://localhost:3000/category/delete/'+id;
-                this.$http.delete(deleteURL);
-                //location.href="/admin"
+                var deletedData= this.$http.delete(deleteURL);
+
+                for(let i=0;i<this.mainCategoryList.length;i++){
+                    if(this.mainCategoryList[i]._id==id){
+                        console.log(this.mainCategoryList[i].name)
+                        this.mainCategoryList.splice(i,1);
+                    }
+                }
             },
             subCategoryDelete(id){
-                var subdeleteURL='http://localhost:3000/category/'+this.selectedCategory+'/sub/delete/'+id;
+                var subdeleteURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub/delete/'+id;
                 this.$http.delete(subdeleteURL);
+                for(let i=0;i<this.mainCategoryList.length;i++){
+                    if(this.mainCategoryList[i]._id==this.selectedCategoryID){
+                        for(let j=0;j<this.mainCategoryList[i].sub_category.length;j++){
+                            if(this.mainCategoryList[i].sub_category[j]._id==id){
+                                this.mainCategoryList[i].sub_category.splice(j,1);
+                            }
+                        }
+                    }
+                }
+
+
             }
         }
     }
@@ -200,8 +240,9 @@
         border-radius:10px;
         border: 5px solid #007bff;
         padding-top: 5px;
+        margin-top: 30px;
         margin-left: 20px;
-        margin-bottom: 500px;
+        margin-bottom: 100px;
     }
 
     .inputMain{
@@ -209,12 +250,12 @@
     }
 
     .plusbtn{
-        margin-top: 15px;
+        margin-top: 20px;
         width: 400px;
     }
 
     .subplusbtn{
-        margin-top: 15px;
+        margin-top: 20px;
         width: 405px;
     }
 
@@ -232,12 +273,13 @@
         text-align: center;
         margin-top: 100px;
         margin-left: 30px;
+        margin-bottom: 40px;
     }
 
     .subCategorySingle{
         background-color: white;
 
-        width: 250px;
+        width: 300px;
         border-radius:10px;
         border: 5px solid #007bff;
         padding-top: 5px;
