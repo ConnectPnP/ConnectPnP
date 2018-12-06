@@ -2,10 +2,12 @@
 
 <div id="list">
 <b-form class="marginTop center" inline>
-    <b-input-group style="width: 50%">
+    <b-input-group style="width: 70%">
         <b-input-prepend>
-            <b-form-select v-model="firstSelect" :options="select1" @change="selectOption" />
-            <b-form-select v-model="secondSelect" :options="select2" />
+            <b-form-select v-model="firstSelect" :options="select1" @change="selectOption1" />
+            <b-form-select v-if="(firstSelect==0)||(firstSelect==1)"
+                v-model="secondSelect" :options="select2" @change="selectOption2" />
+            <b-form-select v-if="(firstSelect==0)&&(secondSelect!=null)" v-model="thirdSelect" :options="select3" />
         </b-input-prepend>
         <b-form-input type="text" placeholder="Search"/>
             <b-input-group-append>
@@ -48,27 +50,45 @@ export default {
   data(){
       return {
           currentPage: 1,
-          firstSelect: null, secondSelect:null,
+          firstSelect: null, secondSelect:null, thirdSelect:null,
             select1 : [
-                { value: null, text: '--대분류--', disabled:true},
-                { value: 1, text: '카테고리'},
-                { value: 2, text: '주최자'},
-                { value: 3, text: '위치'}
+                { value: null, text: '--검색--', disabled:true},
+                { value: 0, text: '카테고리'},
+                { value: 1, text: '주최자'},
+                { value: 2, text: '위치'}
             ],
-            select2: [
-                { value: null, text: '----', disabled:true}
-                ],
+            select2: [ ],
+            select3: [ ],
             options1: [
-                { value: null, text: '--카테고리--', disabled:true},
-                { value: 11, text: '게임'},
-                { value: 12, text: '운동'},
-                { value: 13, text: '여행'},
-                { value: 14, text: '공동구매'},
-                { value: 15, text: '사진'},
-                { value: 16, text: '멍멍이'},
+                { value: null, text: '--대분류--', disabled:true},
+                { value: 0, text: '게임'},
+                { value: 1, text: '운동'},
+                { value: 2, text: '여행'},
+                { value: 3, text: '공동구매'},
+                { value: 4, text: '사진'},
+                { value: 5, text: '멍멍이'},
+            ],
+            // options3:[], // 카테고리 소분류
+            options3:[
+                [
+                    { value: null, text: '--소분류--', disabled:true},
+                    { value: 0, text: '오버워치'},
+                    { value: 1, text: '배그'},
+                    { value: 2, text: '피파'},
+                    { value: 3, text: '닌텐도'},
+                    { value: 4, text: '보드게임'},
+                ],
+                [
+                    { value: null, text: '--소분류--', disabled:true},
+                    { value: 0, text: '축구'},
+                    { value: 1, text: '야구'},
+                    { value: 2, text: '테니스'},
+                    { value: 3, text: '춤'},
+                ],
+                
             ],
             options2: [
-                { value: null, text: '--주최자--', disabled:true},
+                { value: null, text: '--필터--', disabled:true},
                 { value: 21, text: 'ID'},
                 { value: 22, text: '닉네임'}
             ],
@@ -163,18 +183,22 @@ export default {
        getPostData (currentPage) {
            
         },
-        selectOption(select){
+        selectOption1(select){
             this.secondSelect = null;
-            if(select == 1){
+            if(select == 0){
                 this.select2 = this.options1;
-            } else if(select == 2){
+            } else if(select == 1){
                 this.select2 = this.options2;
-            } else if(select == 3){
-                this.select2 = [
-                { value: null, text: '----', disabled:true}
-                ];
+            } 
+        },
+        selectOption2(select){
+            this.thirdSelect = null;
+            if(this.firstSelect == 0){
+                if(select != null){
+                    this.select3 = this.options3[select];
+                }
             }
-        }
+        },
     }
 }
 </script>
