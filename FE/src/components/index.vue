@@ -30,17 +30,14 @@
         <!--  카테고리 리스트가 보여지는 부분   -->
         <b-container class="categoryGroup">
             <b-row>
-                <div  v-for="item in categoryList" :key="item.id">
-                    <div v-if="item.id<=btnclicked">
+                <div  v-for="item in categoryList" :key="item._id" @click="goCategoryList(item._id)">
                         <b-col sm class="homePageCategory categorySingle">
                         <input type="image"
-                               :src="item.categoryImg"
+                               :src="item.img_path"
                                height="120px"
                                width="120px"/>
-                        <b-link :href="item.categoryURL"><span></span></b-link>
-                        <p>{{item.categoryName}}</p>
+                        <p>{{item.name}}</p>
                     </b-col>
-                    </div>
                 </div>
             </b-row>
         </b-container>
@@ -84,9 +81,9 @@
                 <b-row class="rankingGroup justify-content-md-center">
                     <div  v-for="item in rankingList" :key="item.id">
                         <b-col class="singleRanking">
-                            <b-img fluid :src="item.partyImg" alt="Thumbnail" />
-                            <div class="singleRankingTitile">{{item.partyName}}</div>
-                            <div class="singleRankingDescription">{{item.partyDiscription}}</div>
+                            <b-img fluid :src="item.images[0]" style="max-height: 200px;" alt="Thumbnail" />
+                            <div class="singleRankingTitile">{{item.title}}</div>
+                            <div class="singleRankingDescription">{{item.locationText}}</div>
                             <b-button href="#" variant="primary">이동하기</b-button>
                         </b-col>
                     </div>
@@ -131,57 +128,26 @@ import Review from './reviewPopup/Review.vue'
         } ,
         data() {
             return {
+                categoryPage : 0,
                 btnclicked:5,
                 categoryList: [
-                    {   id: 1,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                        },
-                    {   id: 2,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
-                    {   id: 3,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
-                    {   id: 4,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
-                    {   id: 5,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
-                    {   id: 6,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
-                    {   id: 7,
-                        categoryName: "category1",
-                        categoryImg:tempimg,
-                        categoryURL:'http://www.naver.com'
-                    },
                 ],
                 rankingList: []
             }
         },
         beforeMount() {
             this.$http.get(`http://localhost:3000/home`).then((result) => {
-                console.log(result);
                 this.rankingList = result.data;
             })
+        },
+        mounted: function() {
+            this.getCategoryList()
         },
         methods:{
            //"더보기" 버튼이 클릭되면 보여지는 카테고리 수가 5개씩 늘어나도록
             moreBtn(){
-                this.btnclicked+=5;
+                this.categoryPage ++
+                this.getCategoryList()
             },
             showReview(){
                 this.$modal.show(Review,{
@@ -192,6 +158,17 @@ import Review from './reviewPopup/Review.vue'
                     height: '450px',
                     draggable: true
                 });
+            },
+                        getCategoryList() {
+            var vm = this
+            this.$http.get('http://localhost:3000/category/list/' + this.categoryPage)
+            .then((result) => {
+                // get category list
+                console.log(result.data)
+                for(var i = 0; i < result.data.length; i++ ) {
+                    vm.categoryList.push(result.data[i])
+                }
+            })
             }
         }
     }

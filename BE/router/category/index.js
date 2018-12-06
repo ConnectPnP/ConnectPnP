@@ -12,6 +12,7 @@ router.post('/edit/:id',categoryCtrl.updateCategory);
 
 router.delete('/delete/:id',categoryCtrl.deleteCategory);
 
+router.get('/list/:page', categoryCtrl.getMoreCategory);
 
 // 소분류 카테고리 CRUD
 router.get('/sub', categoryCtrl.getAllSubCategory);

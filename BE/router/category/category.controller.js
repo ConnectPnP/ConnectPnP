@@ -2,6 +2,7 @@ const path = require('path');
 const category  = require('../../models/category');
 const config = require('../../config/server.config');
 
+const npage = 5;
 
 // 대분류
 
@@ -12,6 +13,16 @@ exports.createCategory = (req, res) => {
     return res.json(result);
   });
 };
+
+// home - 5개씩 보기
+
+exports.getMoreCategory = (req, res) => {
+  var page = req.params.page;
+  category.find({}, function (err, result) {
+    if(err)  return res.json({result : "fail"});
+    return res.json(result);
+  }).sort({_id: 1 }).skip((page)*npage).limit(npage);
+}
 
 // 모든 카테고리 보기
 exports.getAllCategory = (req, res) => {

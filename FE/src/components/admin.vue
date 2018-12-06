@@ -11,7 +11,7 @@
             <table class="categoryTable">
                 <tr>
                     <th class="categoryImg"  rowspan="2">
-                        <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.categoryImg"
+                        <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.img_path"
                                height="140px" width="140px"/>
                     </th>
                     <th class="mainCategoryTitle">{{item.name}}</th>

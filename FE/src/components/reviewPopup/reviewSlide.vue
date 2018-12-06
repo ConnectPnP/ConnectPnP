@@ -10,7 +10,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <b-img class="profileImg" rounded="circle" :src="memberImg" />
+                    <b-img class="slideProfileImg" rounded="circle" :src="memberImg" />
                 </b-col>
                 <b-col>
                     <h4>{{ memberNickName }}</h4>
@@ -76,7 +76,7 @@ export default {
     height: 350px;
 }
 
-.profileImg {
+.slideProfileImg {
     width: 100px;
     height: 100px;
 }
