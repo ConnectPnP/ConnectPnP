@@ -6,6 +6,7 @@ import Vuesax from 'vuesax'
 import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueSession from 'vue-session'
 
 
 import 'bootstrap'
@@ -25,6 +26,7 @@ Vue.use(VueCookie);
 Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
 
+Vue.use(VueSession);
 const datepickerOptions = {};
 
 Vue.use(BootstrapVue);
