@@ -1,7 +1,17 @@
 <template>
-    <div>
+    <div class="listbody">
+      <!-- <router-link :to= "{name: 'detailParty' , params: {id: groupId}}"> -->
+      <!-- {{ cookielist }} -->
+      <span v-for="cookie in cookielist.slice().reverse()" :key="cookie.id">
+        <RecentView 
+        v-bind:groupTitle=cookie.title
+        v-bind:groupId=cookie.id 
+        v-bind:groupImg=cookie.image />
+      </span>
 
-        {{ cookielist }}
+      <span v-if="cookielist.length == 0">
+        <div class="empty">최근 본 그룹이 없습니다!</div>
+      </span>
 
     </div>
 </template>
@@ -9,11 +19,12 @@
 
 
 <script>
+import RecentView from './recentView.vue'
 
 export default {
   name: 'recentGroup',
   components: {
-    
+    RecentView,
   },
   data() {
     return {
@@ -23,9 +34,13 @@ export default {
   methods: {
       getRecentGroup() {
         //getcookie 해서 받아온거로 // axios로 그룹 정보 받아와서 보여주기
-        this.cookielist = this.$cookies.keys();
-        console.log(this.cookielist);
-
+        var list = this.$cookies.keys();
+        for(var i=0; i<list.length; i++){
+          if(list[i].indexOf("recentGroup") == 0){
+            this.cookielist.push(this.$cookies.get(list[i]));////////////////////////////////////////////////
+          }
+        }
+            
       },
   },
   mounted(){
@@ -44,7 +59,7 @@ export default {
 
 .sidebar {
   width: 150px;
-  border: 1px solid rgb(150, 150, 150);
+  border: 1px solid rgb(180, 180, 180);
   border-radius:10px 10px 10px 10px;
   padding: 15px;
   margin: 5px;
@@ -52,10 +67,19 @@ export default {
 }
 
 .sidebar {
-  height: 50vh;
+  height: 450px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
+}
+
+.listbody {
+  text-align: center
+}
+
+.empty {
+    font-size: 10px;
+    color: rgb(180, 180, 180);
 }
 
 </style>

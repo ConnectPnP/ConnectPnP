@@ -33,18 +33,28 @@ router.get('/home', (req, res) => {
                     starRate += data[i].guest[j].user_id.star_rate;
                 }
                 starRate /= guestnum;            
+                starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
+            
             }
-            starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
+            else if((guestnum) == 0){
+                starRate = 0;
+            }
+
             console.log('starRate               ' + starRate); // log
 
 
 
             // 조회수 대비 신청자수 bayesian_rating
-            hitsApplicantsRate = (data[i].applicants)/(data[i].hits);
-            hitsApplicantsRate = ((C*m_hitapplicant) + (hitsApplicantsRate*data[i].hits)) / (C + data[i].hits);
+            if(data[i].applicants != 0) {
+                hitsApplicantsRate = (data[i].applicants)/(data[i].hits);
+                hitsApplicantsRate = ((C*m_hitapplicant) + (hitsApplicantsRate*data[i].hits)) / (C + data[i].hits);
+            }
+            else {
+                hitsApplicantsRate = 0;
+            }
             console.log('hitsApplicantsRate     ' + hitsApplicantsRate); // log
-            
 
+            console.log(starRate + hitsApplicantsRate);
 
             data[i].evaluationIndex = starRate + hitsApplicantsRate;
 
