@@ -102,12 +102,11 @@
                     </b-input-group>
                     <br>
                     <vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="daumMap.center"
+                                :center.sync="party_form.location"
                                 :level.sync="daumMap.level"
                                 :mapTypeId="daumMap.mapTypeId"
                                 :libraries="daumMap.libraries"
                                 @load="onLoad"
-
 
                                 style="width:500px;height:400px;"
 
@@ -168,7 +167,6 @@
     </div>
 </template>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a3cfd8f8c44ef55f94f2fa1a99a18558"></script>
 <script>
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
@@ -182,7 +180,7 @@
         },
         props:[
             '_title','_number_of_member','_detail','_dateOne','_dateTwo','_date',
-            '_loactionText','_loaction','_cost','_conditions','_file','_categoryId'],
+            '_locationText','_location','_cost','_conditions','_file','_categoryId'],
         data() {
             return {
                 dateFormat: 'YYYY-MM-DD',
@@ -200,7 +198,7 @@
                         recruitment_period_dateTwo: '',
                         date: '',
                         locationText: '',
-                        location:{},
+                        location:{lat:37.282908, lng:127.046402},
                         cost: '',
                         conditions: {
                             gender: 'none',
@@ -239,7 +237,7 @@
                 ],
                 daumMap:{
                     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    center: {lat:37.282908, lng:127.046402},
+                    // center: {lat:37.282908, lng:127.046402},
                     level: 4,
                     mapTypeId: VueDaumMap.MapTypeId.NORMAL,
                     libraries: ['services'],
@@ -326,25 +324,50 @@
             },
             onLoad(map){
                 this.daumMap.map = map;
-                var bounds = map.getBounds();
-                var boundsStr = bounds.toString();
+                // var bounds = map.getBounds();
+                // var boundsStr = bounds.toString();
 
-                var iwContent = '<br><pre> 아주대학교 </pre>'
-                var iwPosition = new daum.maps.LatLng(this.daumMap.center["lat"], this.daumMap.center["lng"]);
-                var marker = new daum.maps.Marker({
-                    position: iwPosition,
-                    map: map
-                });
-                var infowindow = new daum.maps.InfoWindow({
-                    position: iwPosition,
-                    content: iwContent
-                });
-                infowindow.open(map, marker)
+                // var iwContent = '<br><pre> 아주대학교 </pre>'
+                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
+                // var marker = new daum.maps.Marker({
+                //     position: iwPosition,
+                //     map: map
+                // });
+                // var infowindow = new daum.maps.InfoWindow({
+                //     position: iwPosition,
+                //     content: iwContent
+                // });
+                // infowindow.open(map, marker)
                 
 
             },
             searchPlace(){
                 // 장소 찾기....
+                var keyword = this.party_form.locationText;
+                var ps = new daum.maps.services.Places();
+                var iwPosition = new daum.maps.LatLng(33,126);
+                var infowindow = new daum.maps.infowindow({
+                    zIndex:1
+                });
+
+                if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                    alert('키워드를 입력해주세요!');
+                }
+                else {
+                    ps.keywordSearch(keyword,
+                        (data,status,pagination)=>{
+                            if(status == daum.maps.services.Status.OK){
+                                // 마커 표출
+                                // 페이지 번호 표출
+                            }
+                            else if(status == daum.maps.services.Status.ZERO_RESULT){
+                                alert('검색 결과가 존재하지 않습니다.');
+                            }
+                            else if(status == daum.maps.services.Status.ERROR){
+                                alert('검색 중 오류가 발생했습니다.');
+                            }
+                        });
+                }
              },
             changeAgeCondition(){
                 if(this.party_form.conditions.selectAge == 'none'){
@@ -367,7 +390,6 @@
                 party.conditions = this._conditions;
                 party.file_array = this._file;
                 party.selected_category_id = this._categoryId;
-                // alert(party.title);
             }
         }
     }
