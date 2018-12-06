@@ -39,3 +39,4 @@ config/server.config.js
 FE/src/components/subCategoryList.vue
 FE/src/components/subCatagory.vue
 FE/src/components/subCatagory.vue
+FE/src/components/navigator/top.vue
