@@ -56,7 +56,7 @@
                 <b-col>
                     <b-tabs>
                         <b-tab id="tabsInfo-detail" title="Detail" active>
-                            <br>참여하는 Guest 정보
+                            <br>{{detailPartyInfo.detail}}
                         </b-tab>
                         <b-tab title="Members">
                             <b-card-group columns>
