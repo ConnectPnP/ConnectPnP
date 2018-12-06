@@ -14,6 +14,8 @@ router.delete('/delete/:id',categoryCtrl.deleteCategory);
 
 router.get('/list/:page', categoryCtrl.getMoreCategory);
 
+router.post('/files/:id', categoryCtrl.uploadImage);
+
 // 소분류 카테고리 CRUD
 router.get('/sub', categoryCtrl.getAllSubCategory);
 
