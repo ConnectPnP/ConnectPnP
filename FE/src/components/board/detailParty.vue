@@ -16,7 +16,7 @@
                         Location : <b> {{detailPartyInfo.location}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
-                        Category : <b> {{detailPartyInfo.category}}</b><br>
+                        Category : <b> {{detailPartyInfo.category_id}}</b><br>
                         <!--숫자 슬라이더 바를 통해서 min과 max표시하고 현재 모인 멤버 수를 표현해주는 방식 생각해보기-->
                         Min number of member : <b> {{detailPartyInfo.min_num}}</b><br>
                         Max number of member : <b> {{detailPartyInfo.max_num}}</b><br>

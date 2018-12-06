@@ -10,7 +10,7 @@
           {{category.name}}
         </vs-divider>
         <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub._id' href="/party/list"> 
-          {{sub.name}}
+          {{sub.value}}
         </vs-sidebar-item>
       </div>
     </vs-sidebar>

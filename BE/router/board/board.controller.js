@@ -48,16 +48,17 @@ exports.getAllPost = (req, res) => {
 
 // 게시글에 딸린 사진 저장하기
 exports.uploadFile = (req, res) => {
-  console.log(req.files);
   upload(req, res)
     .then((files) => {
-      Board.findOneAndUpdate({_id : req.params.id},  {images: `${config.serverUrl()}files/${req.files.postFile[0].destination.match(/[^/]+/g).pop()}/${req.files.postFile[0].filename}` })
-      .then((result) => {
-        return res.json(result);
-      })
-      .catch((err) => {
-        return res.json({result : "fail"});
-      });
+      for(var i=0; i< files.length; i++) {
+        Board.findOneAndUpdate({_id : req.params.id},  {$push : {images: `${config.serverUrl()}files/${req.files[i].postFile[0].destination.match(/[^/]+/g).pop()}/${req.files[i].postFile[0].filename}` }})
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch((err) => {
+          return res.json({result : "db fail"});
+        });
+      }
     })
     .catch((err) => {
       res.status(500).send('Upload middlewares error');
