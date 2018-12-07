@@ -1,7 +1,6 @@
 <template>
     <div id="admin">
 
-
 <!--대분류 카테고리 -->
         <nav class="mainCategoryGroup">
             <h3>대분류 카테고리</h3>
