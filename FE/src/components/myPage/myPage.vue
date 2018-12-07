@@ -81,11 +81,38 @@
 
         <b-tab title="Calendar" >
 
-            <full-calendar :events="memberInfo.events" defaultView="month"></full-calendar>
+            <full-calendar :events="memberInfo.eventsDate" defaultView="month"></full-calendar>
 
 
 
         </b-tab>
+
+        <!-- <b-tab title="참여중인 모임" >
+
+          <div class="margin">
+            <div class="row" v-for="i in Math.ceil(groupList.length / 2)">
+              <span v-for="group in groupList.slice((i-1)*2,i*2)">
+                <ListView v-bind:groupTitle=group.groupInfo.title v-bind:groupLocation=group.groupInfo.location
+                v-bind:groupContent=group.groupInfo.content v-bind:groupImg=group.groupInfo.group_img />
+              </span>
+            </div>
+          </div>
+
+        </b-tab>
+        
+        <b-tab title="내가 만든 모임">
+
+          <div class="margin">
+
+            <div class="row" v-for="i in Math.ceil(groupList.length / 2)">
+              <span v-for="group in groupList.slice((i-1)*2,i*2)">
+                <ListView v-bind:groupTitle=group.groupInfo.title v-bind:groupLocation=group.groupInfo.location
+                v-bind:groupContent=group.groupInfo.content v-bind:groupImg=group.groupInfo.group_img />
+              </span>
+            </div> 
+          </div>
+        
+        </b-tab> -->
 
       </b-tabs>
     </div>
@@ -118,7 +145,8 @@ export default {
         interestedCategory: [],
         starRating:0,
         ratingStatus: [],
-        events: []
+        eventsId: [],
+        eventsDate: []
       }
     }
   },
@@ -140,14 +168,20 @@ export default {
 
         // 관심 카테고리 가져오기
         var catListtemp = [];
-        for(var i=0;i<result.data.categoryList.length;i++){
-          catListtemp.push(result.data.categoryList[i]);
+        for(var j=0;j<result.data.categoryList.length;j++){
+          catListtemp.push(result.data.categoryList[j]);
         }
         this.memberInfo.interestedCategory = catListtemp;
 
         // 평점 가져오기
         this.memberInfo.starRating = result.data.star_rate;
-    });
+
+        for(var k = 0;k<result.data.group_log.length;k++){
+          this.memberInfo.eventsId.push(result.data.group_log[k].group_id);
+          console.log("groupId : "+result.data.group_log[k].group_id);
+        }
+    }).then(()=>{ this.getGroupDate(); });
+
   },methods:{
     getCategoryList() {
                 var vm = this
@@ -174,6 +208,16 @@ export default {
     }).then(()=>{
         alert('관심 카테고리 변경이 완료되었습니다.');
     });
+  },
+  getGroupDate(){
+    for(var i=0;i<this.memberInfo.eventsId.length;i++){
+      this.$http.get('http://localhost:3000/board/details/'+this.memberInfo.eventsId[i])
+        .then((result)=>{
+          var event = '{ "title": "'+result.data.title + '", "start": "' + result.data.meeting_date + '", editable: false }';
+          this.memberInfo.eventsDate.push(JSON.parse(event));
+        });
+    }
+    
   }
   }
   
