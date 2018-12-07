@@ -159,7 +159,7 @@ import Review from './reviewPopup/Review.vue'
                     draggable: true
                 });
             },
-                        getCategoryList() {
+            getCategoryList() {
             var vm = this
             this.$http.get('http://localhost:3000/category/list/' + this.categoryPage)
             .then((result) => {
