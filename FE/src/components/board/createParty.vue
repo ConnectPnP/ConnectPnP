@@ -1,5 +1,6 @@
 <template>
     <div id="createParty">
+    <modals-container />
         <link rel="stylesheet"
               href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
@@ -91,25 +92,15 @@
                               class="mb-0">
                     <!--API이용한 map 필요-->
                     <b-input-group>
-                        <b-form-input id="location"
+                        <b-form-input readonly 
+                                    id="location"
                                     v-model="party_form.locationText" 
                                     type="text"
                                     placeholder="장소를 검색해주세요" />
                             <b-input-group-append>
-                                <b-button variant="primary" @click="searchPlace">장소 검색</b-button>
+                                <b-button variant="primary" @click="showSearchMap">장소 검색</b-button>
                             </b-input-group-append>
-                    </b-input-group>
-                    <br>
-                    <vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="party_form.location"
-                                :level.sync="daumMap.level"
-                                :mapTypeId="daumMap.mapTypeId"
-                                :libraries="daumMap.libraries"
-                                @load="onLoad"
-
-                                style="width:500px;height:400px;"
-
-                            /><br>
+                    </b-input-group><br>
 
                 </b-form-group>
                 <b-form-group horizontal
@@ -172,13 +163,13 @@
 <script>
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
-    import VueDaumMap from 'vue-daum-map';
+    import SearchMap from './searchMap.vue';
 
     export default {
         name: "createParty",
         components: {
             vueSlider,
-            VueDaumMap
+            SearchMap
         },
         props:[
             '_title','_number_of_member','_detail','_dateOne','_dateTwo','_date',
@@ -246,14 +237,16 @@
                 //         { value: 3, text: '춤'},
                 //     ],
                 // ],
-                daumMap:{
-                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    // center: {lat:37.282908, lng:127.046402},
-                    level: 4,
-                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
-                    libraries: ['services'],
-                    map: null
-                }
+                // daumMap:{
+                //     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
+                //     // center: {lat:37.282908, lng:127.046402},
+                //     level: 4,
+                //     mapTypeId: VueDaumMap.MapTypeId.NORMAL,
+                //     libraries: ['services'],
+                //     map: null,
+                //     markers:[],
+                //     placeList:[]
+                // }
             }
         },
         mounted(){
@@ -341,53 +334,6 @@
             })
                 }
             },
-            onLoad(map){
-                this.daumMap.map = map;
-                // var bounds = map.getBounds();
-                // var boundsStr = bounds.toString();
-
-                // var iwContent = '<br><pre> 아주대학교 </pre>'
-                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
-                // var marker = new daum.maps.Marker({
-                //     position: iwPosition,
-                //     map: map
-                // });
-                // var infowindow = new daum.maps.InfoWindow({
-                //     position: iwPosition,
-                //     content: iwContent
-                // });
-                // infowindow.open(map, marker)
-                
-
-            },
-            searchPlace(){
-                // 장소 찾기....
-                var keyword = this.party_form.locationText;
-                var ps = new daum.maps.services.Places();
-                var iwPosition = new daum.maps.LatLng(33,126);
-                var infowindow = new daum.maps.infowindow({
-                    zIndex:1
-                });
-
-                if (!keyword.replace(/^\s+|\s+$/g, '')) {
-                    alert('키워드를 입력해주세요!');
-                }
-                else {
-                    ps.keywordSearch(keyword,
-                        (data,status,pagination)=>{
-                            if(status == daum.maps.services.Status.OK){
-                                // 마커 표출
-                                // 페이지 번호 표출
-                            }
-                            else if(status == daum.maps.services.Status.ZERO_RESULT){
-                                alert('검색 결과가 존재하지 않습니다.');
-                            }
-                            else if(status == daum.maps.services.Status.ERROR){
-                                alert('검색 중 오류가 발생했습니다.');
-                            }
-                        });
-                }
-             },
             changeAgeCondition(){
                 if(this.party_form.conditions.selectAge == 'none'){
                     this.party_form.conditions.age = [20,30];
@@ -416,26 +362,34 @@
                 this.$http.get('http://localhost:3000/category')
                 .then((result) => {
                     // get category list
-                    for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                    for(var k=0; k<result.data.length; k++) {
+                            var categoryOption = '{"value" : "' + k + '", "text" : "'+ result.data[k].name+'"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
 
                     }
 
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
-                        var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];
+                        var categoryOption2 = [{ value: null, text: '--- 소분류 ---', disabled:true}];
                         for(var j=0; j<result.data[i].sub_category.length ; j++){
                             var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
-                            categoryOption.push(JSON.parse(option));
+                            categoryOption2.push(JSON.parse(option));
                         }
-                        vm.subCategoryList.push(categoryOption);
+                        vm.subCategoryList.push(categoryOption2);
                     }
                 });
             },
             showSubCategory(select){
                 this.party_form.selected_subcategory_id = null;
                 this.categoryList2 = this.subCategoryList[select];
+            },
+            showSearchMap(){
+                this.$modal.show(SearchMap,{},{
+                        name: 'searchMap',
+                        width : '1000px',
+                        height : '600px',
+                        draggable: false,
+                })
             }
         }
     }
