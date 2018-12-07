@@ -30,11 +30,15 @@
                     <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
                     <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
+                <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
+                                placeholder="Choose a file..."
+                                @change="onFileChange($event.target.files)"></b-form-file>
+                <b-row>
+                    <div class="preview" >
+                        <b-img v-if="file" :src="file.blob"/>
+                    </div>
+                </b-row>
 
-                <div class="inputMain">
-                    <label for="imgURL"> 이미지 URL: </label>  &nbsp;
-                    <input id="imgURL" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryPath"></input>
-                </div>
                 <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
             </div>
 
@@ -107,6 +111,8 @@
         },
         data() {
             return {
+                file : null,
+                formData : new FormData(),
                 addCategoryName:"",
                 addCategoryPath:"",
                 addSubCategoryName:"",
@@ -140,7 +146,10 @@
                 this.selectedCategoryID=categoryid;
                 console.log(categoryid);
             },
-
+            onFileChange(newFile) {
+                this.file = {blob: URL.createObjectURL(newFile[0])};
+                this.formData.append('categoryFile', newFile[0], newFile[0].name);
+            },
             async getCategory(){
                 var categoryList  = await this.$http.get('http://localhost:3000/category');
                 console.log(categoryList.data);
@@ -157,7 +166,7 @@
                 var addedData = this.$http.post('http://localhost:3000/category', categoryData);
                 addedData.then(function (result) {
                     adminVue.mainCategoryList.push(result.data);
-                    console.log(result.data);
+                    adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                 })
             },
             addSubCategory(){

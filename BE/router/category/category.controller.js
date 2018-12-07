@@ -1,7 +1,7 @@
 const path = require('path');
 const category  = require('../../models/category');
 const config = require('../../config/server.config');
-
+const upload = require('../../middlewares/uploadCategory');
 const npage = 5;
 
 // 대분류
@@ -22,6 +22,22 @@ exports.getMoreCategory = (req, res) => {
     if(err)  return res.json({result : "fail"});
     return res.json(result);
   }).sort({_id: 1 }).skip((page)*npage).limit(npage);
+}
+
+exports.uploadImage = (req, res) => {
+  upload(req, res)
+  .then((files) => {
+    category.findOneAndUpdate({_id : req.params.id}, {img_path : `${config.serverUrl()}files/${req.files.categoryFile[0].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[0].filename}`})
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch((err) => {
+      return res.json({result : "db fail"});
+    });
+  })
+  .catch((err) => {
+    res.status(500).send('Upload middlewares error');
+  });
 }
 
 // 모든 카테고리 보기

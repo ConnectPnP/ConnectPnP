@@ -24,7 +24,7 @@
 <div class="margin">
     <div class="row" v-for="i in Math.ceil(groupList.length / 2)">
     <span v-for="group in groupList.slice((i-1)*2,i*2)">
-        <ListView v-bind:groupTitle=group.title v-bind:groupLocation=group.location
+        <ListView v-bind:groupTitle=group.title v-bind:groupLocation=group.locationText
         v-bind:groupId=group._id
             v-bind:groupDetail=group.detail v-bind:groupImg=group.images[0] />
     </span>
