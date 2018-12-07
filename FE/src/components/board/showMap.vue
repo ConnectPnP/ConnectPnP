@@ -37,7 +37,7 @@ export default {
         onLoad(map){
                 this.daumMap.map = map;
 
-                var iwContent = '<div><pre>' + this.location.title+ ' </pre></div>'
+                var iwContent = '<div><pre class="infoText">' + this.location.title+ ' </pre></div>'
                 var iwPosition = new daum.maps.LatLng(this.location.latlng.lat, this.location.latlng.lng);
                 var marker = new daum.maps.Marker({
                     position: iwPosition,
@@ -48,8 +48,17 @@ export default {
                     content: iwContent
                 });
                 infowindow.open(this.daumMap.map, marker);
+                this.daumMap.map.layout();
             },
     }
 }
 </script>
 
+<style>
+
+.infoText {
+    padding: 6px;
+    font-size: 13px;
+}
+
+</style>

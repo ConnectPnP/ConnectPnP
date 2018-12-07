@@ -67,10 +67,10 @@
                                                      :member="member" :index="index"></memberSimpleProfile>
                             </b-card-group>
                         </b-tab>
-                        <b-tab id="tabsInfo-locationMap" title="Location Map">
+                        <b-tab id="tabsInfo-locationMap" title="Location Map" @click="showMap" >
                             <div>
                                 <br><a :href="detailPartyInfo.location.url">{{detailPartyInfo.location.title}}</a>
-                                <ShowMap 
+                                <ShowMap v-if="isMapTab"
                                     :location="detailPartyInfo.location" />
                             </div>
                         </b-tab>
@@ -122,6 +122,7 @@
             commentContent: "";
             return {
                 detailPartyInfo : {},
+                isMapTab:false,
                 isHost: false, // host인지 guest인지 
                 isJoined:true, // 이 모임에 참여중인지
                 currentUserEx:{
@@ -215,6 +216,9 @@
                     console.log(result)
                 })
 
+            },
+            showMap(){
+                this.isMapTab = true;
             }
         },
         mounted() {
