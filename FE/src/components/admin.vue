@@ -7,6 +7,8 @@
             <h3>대분류 카테고리</h3>
             <br>
 
+
+            <!--대분류카테고리 추가-->
             <div class="createCategory">
                 <br>
                 <h4>카테고리 추가하기</h4>
@@ -14,18 +16,31 @@
                     <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
                     <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
-                <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
-                             placeholder="Choose a file..."
-                             @change="onFileChange($event.target.files)"></b-form-file>
-                <b-row>
-                    <div class="preview" >
-                        <b-img v-if="file" :src="file.blob"/>
-                    </div>
-                </b-row>
 
+                <b-form-group horizontal>
+                    <b-form-radio-group
+                            v-model="condition.imgUpload"
+                            :options="uploadMethod"
+                            @change="changeUploadMethod">
+                    </b-form-radio-group>
+                </b-form-group>
+
+
+
+                <div class="imgUpload">
+                    <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
+                                 placeholder="Choose a file..."
+                                 @change="onFileChange($event.target.files)"></b-form-file>
+                    <b-row>
+                        <div class="preview" >
+                            <b-img v-if="file" :src="file.blob"/>
+                        </div>
+                    </b-row>
+                </div>
                 <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
             </div>
 
+        <!--대분류카테고리 리스트-->
 
         <div  v-for="item in mainCategoryList" :key="item._id">
             <table class="categoryTable">
@@ -67,6 +82,7 @@
                 <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
             </div>
 
+    <!--소분류 카테고리 추가-->
             <div class="createCategory" v-if="selectedCategoryID!= -1">
                 <div class="inputMain">
                     <label for="subCategory"> 소분류 이름: </label>  &nbsp;
@@ -77,6 +93,8 @@
 
             <b-container class="subCategoryGroup" >
 
+
+    <!--소분류 카테고리 리스트-->
                 <div v-for="item in mainCategoryList" :key="item.id">
                     <b-row v-if="selectedCategoryID==item._id">
                         <div  v-for="sub in item.sub_category">
@@ -124,6 +142,13 @@
                 addCategoryPath:"",
                 addSubCategoryName:"",
                 imageName:"",
+                condition:{
+                  imgUpload: "methodFile"
+                },
+                uploadMethod: [
+                    {text: '컴퓨터에서 찾기', value: 'methodFile'},
+                    {text: 'URL', value: 'methodURL'}
+                ],
                 mainCategoryList: [
                     {
                         _id: Number,
@@ -148,6 +173,9 @@
 
         },
         methods:{
+            changeUploadMethod(){
+
+            },
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
                 this.selectedCategoryID=categoryid;
