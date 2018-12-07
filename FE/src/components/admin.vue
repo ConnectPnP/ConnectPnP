@@ -16,8 +16,7 @@
                     <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
                     <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
-
-                <b-form-group horizontal>
+                <b-form-group>
                     <b-form-radio-group
                             v-model="condition.imgUpload"
                             :options="uploadMethod"
@@ -26,8 +25,8 @@
                 </b-form-group>
 
 
-
-                <div class="imgUpload">
+                <!--파일 업로드 형식-->
+                <div class="imgUpload" v-if="condition.imgUpload=='methodFile'">
                     <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
                                  placeholder="Choose a file..."
                                  @change="onFileChange($event.target.files)"></b-form-file>
@@ -37,12 +36,19 @@
                         </div>
                     </b-row>
                 </div>
+
+
+                <!--URL 업로드 형식-->
+                <div class="imgUpload" v-if="condition.imgUpload=='methodURL'">
+                    <input id="imgURL" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryPath"></input>
+                </div>
+
                 <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
             </div>
 
         <!--대분류카테고리 리스트-->
 
-        <div  v-for="item in mainCategoryList" :key="item._id">
+        <div  v-for="item in mainCategoryList.slice().reverse()" :key="item._id">
             <table class="categoryTable">
                 <tr>
                     <th class="categoryImg"  rowspan="2">
@@ -201,6 +207,21 @@
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
+
+                 var categoryDataUpload = await this.$http.post('http://localhost:3000/category', categoryData)
+                 if(this.condition.imgUpload=='methodFile'){
+                     var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                     adminVue.mainCategoryList.push(imgFileUpload.data);
+                 } else {
+                     adminVue.mainCategoryList.push(categoryDataUpload.data);
+                 }
+
+
+
+
+
+
+                 /*
                 this.$http.post('http://localhost:3000/category', categoryData)
                 .then((result) => {
                     console.log(adminVue.formData.keys())
@@ -210,7 +231,7 @@
                     //result.data.img_path=tmpImgPath
                     adminVue.mainCategoryList.push(result.data);
                 })
-
+*/
             },
             addSubCategory(){
                 var adminVue= this;
