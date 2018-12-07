@@ -1,17 +1,22 @@
 <template>
     <div class="listbody">
-      <!-- <router-link :to= "{name: 'detailParty' , params: {id: groupId}}"> -->
-      <!-- {{ cookielist }} -->
-      <span v-for="cookie in cookielist.slice().reverse()" :key="cookie.id">
-        <RecentView 
-        v-bind:groupTitle=cookie.title
-        v-bind:groupId=cookie.id 
-        v-bind:groupImg=cookie.image />
+
+      <span v-if="cookielist.length != 0">
+        <div class="nonempty">최근 본 그룹</div>
       </span>
 
       <span v-if="cookielist.length == 0">
         <div class="empty">최근 본 그룹이 없습니다!</div>
       </span>
+
+      <span v-for="cookie in cookielist.reverse().slice(0,3)" :key="cookie.id">
+        <RecentView 
+        v-bind:groupTitle = cookie.title
+        v-bind:groupId = cookie.id 
+        v-bind:groupImg = cookie.image />
+      </span>
+
+      
 
     </div>
 </template>
@@ -37,10 +42,11 @@ export default {
         var list = this.$cookies.keys();
         for(var i=0; i<list.length; i++){
           if(list[i].indexOf("recentGroup") == 0){
-            this.cookielist.push(this.$cookies.get(list[i]));////////////////////////////////////////////////
+            this.cookielist.push(this.$cookies.get(list[i]));
           }
         }
-            
+        // this.cookielist.reverse().slice(0,3);
+        // console.log(this.cookielist.reverse().slice(0,3))
       },
   },
   mounted(){
@@ -67,7 +73,7 @@ export default {
 }
 
 .sidebar {
-  height: 450px;
+  height: 420px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -78,8 +84,13 @@ export default {
 }
 
 .empty {
-    font-size: 10px;
-    color: rgb(180, 180, 180);
+  font-size: 10px;
+  color: rgb(180, 180, 180);
+}
+
+.nonempty {
+  font-size: 12px;
+  color: rgb(120, 120, 120);
 }
 
 </style>

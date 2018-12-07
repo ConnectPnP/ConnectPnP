@@ -130,15 +130,21 @@ import Review from './reviewPopup/Review.vue'
             return {
                 categoryPage : 0,
                 btnclicked:5,
-                categoryList: [
-                ],
-                rankingList: []
+                categoryList: [],
+                rankingList: [],
+                id: String,
+                usrName: String,
+                img: String,
+                userInterestedCategory: [],
             }
         },
         beforeMount() {
-            this.$http.get(`http://localhost:3000/home`).then((result) => {
-                this.rankingList = result.data;
-            })
+            this.id = this.$session.get('userID');
+
+            console.log(this.id);
+
+            this.getGroupRanking();
+            this.getRecommendGroup();
         },
         mounted: function() {
             this.getCategoryList()
@@ -148,6 +154,11 @@ import Review from './reviewPopup/Review.vue'
             moreBtn(){
                 this.categoryPage ++
                 this.getCategoryList()
+            },
+            getGroupRanking(){
+                this.$http.get(`http://localhost:3000/home`).then((result) => {
+                    this.rankingList = result.data.slice(0,5);
+                })
             },
             showReview(){
                 this.$modal.show(Review,{

@@ -10,7 +10,9 @@ router.use('/category', category);
 
 router.get('/home', (req, res) => {
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({}).populate('guest.user_id').exec((err, data) => {
+    GroupInfo.find({}).populate('guest', 'star_rate').exec((err, data) => {  //guest.user_id
+        
+        console.log(data);
         
         var rank5GroupList = [];
 
@@ -26,11 +28,12 @@ router.get('/home', (req, res) => {
             var m_hitapplicant = 0.5;
 
             var guestnum = data[i].guest.length;
+            console.log(guestnum);
             
             // 참여자 별점 평균 bayesian_rating
             if((guestnum) > 0){
                 for(var j=0; j<guestnum; j++){
-                    starRate += data[i].guest[j].user_id.star_rate;
+                    starRate += data[i].guest[j].star_rate;  //data[i].guest[j].user_id.star_rate;
                 }
                 starRate /= guestnum;            
                 starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
@@ -63,9 +66,10 @@ router.get('/home', (req, res) => {
         rank5GroupList.sort(function(a, b) { // 내림차순 정렬
             return a.evaluationIndex > b.evaluationIndex ? -1 : a.evaluationIndex < b.evaluationIndex ? 1 : 0;
         });
-        console.log(rank5GroupList.slice(0,5));
-        res.json(rank5GroupList.slice(0,5));
+        console.log(rank5GroupList);
+        res.json(rank5GroupList);
     });
 });
+
 
 module.exports = router;

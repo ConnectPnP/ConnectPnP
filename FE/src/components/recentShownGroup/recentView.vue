@@ -17,7 +17,7 @@ export default {
     name: 'recentView',
     props: {
         groupId : {
-            type : String,
+            type : String, ///// String or Number??
             default() { return "Id"; }
         },
         groupTitle: {
