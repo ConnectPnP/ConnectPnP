@@ -36,7 +36,7 @@
         <b-row>
             <b-col>
                 <b-form-input readonly
-                            v-model="result.text" 
+                            v-model="result.title" 
                             type="text" />
             </b-col>
             <b-col>
@@ -65,11 +65,12 @@ export default {
         return {
             keyword: '',
             result: {
-                text: '',
-                location: {
+                title: '',
+                latlng: {
                     lat: 0,
                     lng: 0
-                }
+                },
+                url: ''
             },
             totalPage: 0,
             currentPage: 1,
@@ -196,9 +197,10 @@ export default {
                 this.daumMap.map.setLevel(3);
                 this.daumMap.infowindow.open(this.daumMap.map,this.daumMap.markers[id-1]);
 
-                this.result.text = place.title;
-                this.result.location.lat = place.location["lat"];
-                this.result.location.lng = place.location["lng"];
+                this.result.title = place.title;
+                this.result.latlng.lat = place.location["lat"];
+                this.result.latlng.lng = place.location["lng"];
+                this.result.url = place.url;
             },
             getResult(){
                 this.$emit('getResult', this.result);

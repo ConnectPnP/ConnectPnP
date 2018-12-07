@@ -94,7 +94,7 @@
                     <b-input-group>
                         <b-form-input readonly 
                                     id="location"
-                                    v-model="party_form.locationText" 
+                                    v-model="party_form.location.title" 
                                     type="text"
                                     placeholder="장소를 검색해주세요" />
                             <b-input-group-append>
@@ -191,8 +191,7 @@
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
                         date: '',
-                        locationText: '',
-                        location:{lat:37.282908, lng:127.046402},
+                        location: {},
                         cost: '',
                         conditions: {
                             gender: 'none',
@@ -215,38 +214,6 @@
                 categoryList1: [{ value: null, text: '--- 대분류 ---', disabled:true}],
                 categoryList2: [],
                 subCategoryList: [],
-                // categoryList1: [
-                //     { value: null, text: '--- 대분류 ---', disabled:true},
-                //     { value: 0, text: '게임'},
-                //     { value: 1, text: '운동'},
-                // ],
-                // subCategoryList: [
-                //     [
-                //         { value: null, text: '--- 소분류 ---', disabled:true},
-                //         { value: 0, text: '오버워치'},
-                //         { value: 1, text: '배그'},
-                //         { value: 2, text: '피파'},
-                //         { value: 3, text: '닌텐도'},
-                //         { value: 4, text: '보드게임'},
-                //     ],
-                //     [
-                //         { value: null, text: '--소분류--', disabled:true},
-                //         { value: 0, text: '축구'},
-                //         { value: 1, text: '야구'},
-                //         { value: 2, text: '테니스'},
-                //         { value: 3, text: '춤'},
-                //     ],
-                // ],
-                // daumMap:{
-                //     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                //     // center: {lat:37.282908, lng:127.046402},
-                //     level: 4,
-                //     mapTypeId: VueDaumMap.MapTypeId.NORMAL,
-                //     libraries: ['services'],
-                //     map: null,
-                //     markers:[],
-                //     placeList:[]
-                // }
             }
         },
         mounted(){
@@ -288,7 +255,7 @@
                     party.recruitment_period_dateOne,
                     party.recruitment_period_dateTwo,
                     party.date,
-                    party.locationText,
+                    party.location.title,
                     party.cost,
                     party.file_array,
                     party.selected_subcategory_id
@@ -320,7 +287,6 @@
                     conditions : { gender : party.conditions.gender, age : party.conditions.age},
                     detail: party.detail,
                     location : party.location,
-                    locationText : party.locationText,
                     // host :,
             })
             // 이미지 업로드
@@ -349,7 +315,6 @@
                 party.recruitment_period_dateOne = this._dateOne;
                 party.recruitment_period_dateTwo = this._dateTwo;
                 party.date = this._date;
-                party.locationText = this._locationText;
                 party.location = this._location;
                 party.cost = this._cost;
                 party.conditions = this._conditions;
@@ -393,9 +358,7 @@
                 },);
             },
             getResult(result){
-                this.party_form.locationText = result.text;
-                this.party_form.location.lat = result.location["lat"];
-                this.party_form.location.lng = result.location["lng"];
+                this.party_form.location = result;
             }
         }
     }
