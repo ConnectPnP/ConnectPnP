@@ -176,6 +176,7 @@
                 var subcategoryData ={
                     name:this.addSubCategoryName
                 };
+
                 var addsubURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub';
                 var addedData= this.$http.post(addsubURL, subcategoryData);
                 addedData.then(function (result) {
@@ -211,8 +212,6 @@
                         }
                     }
                 }
-
-
             }
         }
     }

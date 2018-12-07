@@ -114,7 +114,8 @@
                         this.onSubmit({
                             author: this.$cookie.get('userID'),
                             type: 'file',
-                            data: {text, file},
+                            content:text,
+                            file:file,
                             dest: this.current_dest_id
                         })
                         this.file = null
@@ -123,7 +124,7 @@
                         this.onSubmit({
                             author: this.$cookie.get('userID'),
                             type: 'file',
-                            data: {file},
+                            file: file,
                             dest: this.current_dest_id
                         })
                         this.file = null
@@ -134,7 +135,7 @@
                             author: this.$cookie.get('userID'),
                             type: 'text',
                             command: 'groupchat',
-                            data: {text},
+                            content: text,
                             dest: this.current_dest_id
                         })
                         this.$refs.userInput.innerHTML = ''
@@ -145,7 +146,7 @@
                 this.onSubmit({
                     author: this.$cookie.get('userID'),
                     type: 'emoji',
-                    data: {emoji}
+                    emoji: emoji
                 })
             },
             _handleFileSubmit(file) {
