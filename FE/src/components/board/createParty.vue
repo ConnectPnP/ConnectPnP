@@ -1,6 +1,6 @@
 <template>
     <div id="createParty">
-    <modals-container />
+    <modals-container @getResult="getResult" />
         <link rel="stylesheet"
               href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
@@ -386,10 +386,16 @@
             showSearchMap(){
                 this.$modal.show(SearchMap,{},{
                         name: 'searchMap',
-                        width : '1000px',
-                        height : '600px',
+                        width : '950px',
+                        height : 'auto',
                         draggable: false,
-                })
+                        clickToClose: false
+                },);
+            },
+            getResult(result){
+                this.party_form.locationText = result.text;
+                this.party_form.location.lat = result.location["lat"];
+                this.party_form.location.lng = result.location["lng"];
             }
         }
     }

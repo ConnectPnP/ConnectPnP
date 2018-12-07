@@ -10,7 +10,7 @@
                     :mapTypeId="daumMap.mapTypeId"
                     :libraries="daumMap.libraries"
                     @load="onLoad"
-                    style="width:500px;height:400px;"
+                    style="width:500px;height:410px;"
                 /> <br>
             </b-col>
             <b-col>
@@ -25,7 +25,7 @@
                 </b-input-group><br>
                 <b-list-group id="placeList">
                     <b-list-group-item v-for="place in daumMap.placeList">
-                        <p> <span id="placeText" @click="showPlace(place.title,place.location)"> {{place.id}} : {{ place.title }} </span> <br>
+                        <p> <span id="placeText" @click="showPlace(place.id)"> {{place.id}} : {{ place.title }} </span> <br>
                             <span id="placeAddress">{{place.road_address}}</span>
                         </p>
                     </b-list-group-item>
@@ -36,18 +36,18 @@
         <b-row>
             <b-col>
                 <b-form-input readonly
-                            v-model="result" 
+                            v-model="result.text" 
                             type="text" />
             </b-col>
             <b-col>
-                <b-pagination align="center" :total-rows=totalPage :per-page="1">
+                <b-pagination align="center" v-model="currentPage" :total-rows=totalPage :per-page="1">
                 </b-pagination>
             </b-col>
         </b-row>
     </b-container>
     <b-button-group class="mapBtn">
-        <b-button class="btn btn-info">취소</b-button>
-        <b-button class="btn btn-info">확인</b-button>
+        <b-button class="btn btn-info" @click="$emit('close')">취소</b-button>
+        <b-button class="btn btn-info" @click="getResult">확인</b-button>
     </b-button-group>
 </div>
     
@@ -64,8 +64,15 @@ export default {
     data(){
         return {
             keyword: '',
-            result: '',
+            result: {
+                text: '',
+                location: {
+                    lat: 0,
+                    lng: 0
+                }
+            },
             totalPage: 0,
+            currentPage: 1,
             daumMap:{
                     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
                     center: {lat:37.282908, lng:127.046402},
@@ -74,41 +81,27 @@ export default {
                     libraries: ['services'],
                     map: null,
                     markers:[],
-                    placeList:[]
+                    placeList:[],
+                    page:null,
+                    infowindow:null
             }
         }
+    },
+    watch: {
+        currentPage: 'changePage'
     },
     methods:{
         onLoad(map){
                 this.daumMap.map = map;
-                // var bounds = map.getBounds();
-                // var boundsStr = bounds.toString();
-
-                // var iwContent = '<br><pre> 아주대학교 </pre>'
-                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
-                // var marker = new daum.maps.Marker({
-                //     position: iwPosition,
-                //     map: map
-                // });
-                // var infowindow = new daum.maps.InfoWindow({
-                //     position: iwPosition,
-                //     content: iwContent
-                // });
-                // infowindow.open(map, marker)
-                
-
             },
             searchPlace(){
-                // 장소 찾기....
+                if(this.daumMap.infowindow != null)
+                    this.daumMap.infowindow.close();
                 this.removeMarker();
                 this.daumMap.placeList = [];
 
                 var keyword = this.keyword;
                 var ps = new daum.maps.services.Places();
-                // var iwPosition = new daum.maps.LatLng(33,126);
-                // var infowindow = new daum.maps.infowindow({
-                //     zIndex:1
-                // });
 
                 if (!keyword.replace(/^\s+|\s+$/g, '')) {
                     alert('키워드를 입력해주세요!');
@@ -120,7 +113,8 @@ export default {
                                 // 마커 표출
                                 this.displayPlaces(result);
                                 // 페이지 번호 표출
-                                this.displayPagination(pagination);
+                                this.totalPage = pagination.last;
+                                this.daumMap.page = pagination;
                             }
                             else if(status == daum.maps.services.Status.ZERO_RESULT){
                                 alert('검색 결과가 존재하지 않습니다.');
@@ -133,12 +127,8 @@ export default {
              },
              displayPlaces(places){
                  var bounds = new daum.maps.LatLngBounds();
-                //  var infowindow = new daum.maps.InfoWindow({
-                //     zIndex:1
-                // });
 
                  for(var i=0;i<places.length;i++){
-                    console.log("place "+i+" : "+places[i].place_name);
                     var placePosition = new daum.maps.LatLng(places[i].y, places[i].x);
                     var marker = this.addMarker(placePosition, i);
 
@@ -154,8 +144,6 @@ export default {
                             lng: places[i].x
                         }
                     });
-                    
-                    // this.controlInfowindow(marker, places[i].place_name);
                  }
                  this.daumMap.map.setBounds(bounds);
             },
@@ -178,35 +166,43 @@ export default {
 
                 return marker;
             },
-            // controlInfowindow(marker, title) {
-            //     var infowindow = new daum.maps.InfoWindow();
-            //     daum.maps.event.addListener(marker, 'mouseover', 
-            //         this.displayInfowindow(infowindow,marker,title)
-            //     );
-            //     daum.maps.event.addListener(marker, 'mouseout', function() {
-            //         infowindow.close();
-            //     });
-            // },
-            // displayInfowindow(infowindow, marker, title){
-            //     var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
-            //     infowindow.setContent(content);
-            //     infowindow.open(this.daumMap.map, marker);
-            //     console.log('mouseover');
-            // },
             removeMarker(){
                 for ( var i = 0; i < this.daumMap.markers.length; i++ ) {
                     this.daumMap.markers[i].setMap(null);
                 }   
                 this.daumMap.markers = [];
             },
-            displayPagination(pagination){
-                this.totalPage = pagination.last;
-                 for (var i=1; i<=pagination.last; i++){
-                     console.log(i + " : "+pagination)
-                 }
+            changePage(){
+                if(this.daumMap.infowindow != null)
+                    this.daumMap.infowindow.close();
+                
+                this.daumMap.markers = [];
+                this.daumMap.placeList = [];
+                this.daumMap.page.gotoPage(this.currentPage);
             },
-            showPlace(title,location){
-                this.result = title;
+            showPlace(id){
+                if(this.daumMap.infowindow != null)
+                    this.daumMap.infowindow.close();
+
+                var place = this.daumMap.placeList[id-1];
+                var iwContent = '<div><pre id="infoText">' + place.title + ' </pre></div>'
+                var iwPosition = new daum.maps.LatLng(place.location["lat"], place.location["lng"]);
+                this.daumMap.infowindow = new daum.maps.InfoWindow({
+                    position: iwPosition,
+                    content: iwContent
+                });
+
+                this.daumMap.map.setCenter(iwPosition);
+                this.daumMap.map.setLevel(3);
+                this.daumMap.infowindow.open(this.daumMap.map,this.daumMap.markers[id-1]);
+
+                this.result.text = place.title;
+                this.result.location.lat = place.location["lat"];
+                this.result.location.lng = place.location["lng"];
+            },
+            getResult(){
+                this.$emit('getResult', this.result);
+                this.$emit('close');
             }
     }
 }
@@ -229,6 +225,11 @@ export default {
 
 #placeAddress {
     color: rgb(126, 126, 126);
+}
+
+#infoText {
+    padding: 6px;
+    font-size: 13px;
 }
 
 .mapBtn {
