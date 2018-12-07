@@ -14,7 +14,7 @@
 
                         <hr>
                         Host : <b> {{detailPartyInfo.host}} </b> <br>
-                        Location : <b> {{detailPartyInfo.locationText}}</b><br>
+                        Location : <b> {{detailPartyInfo.location.title}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
                         Category : <b> {{detailPartyInfo.category_id}}</b><br>
@@ -42,7 +42,10 @@
                     <!-- <div class="guestBtnGroup"> -->
                     <div class="guestBtnGroup" v-if="!isHost">
                         <b-button v-if="!isJoined" class="btn btn-info" @click="joinParty">참여</b-button>
-                        <b-button v-if="isJoined" class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
+                        <b-button-group v-if="isJoined">
+                            <b-button class="btn btn-info">채팅 참여</b-button>
+                            <b-button class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
+                        </b-button-group>
                         
                         <b-modal id="exitParty" @ok="exitParty" title="모임 나가기">
                             <p>정말 나가시겠습니까?</p>
@@ -56,7 +59,7 @@
                 <b-col>
                     <b-tabs>
                         <b-tab id="tabsInfo-detail" title="Detail" active>
-                            <br>참여하는 Guest 정보
+                            <br>{{detailPartyInfo.detail}}
                         </b-tab>
                         <b-tab title="Members">
                             <b-card-group columns>
@@ -65,16 +68,11 @@
                             </b-card-group>
                         </b-tab>
                         <b-tab id="tabsInfo-locationMap" title="Location Map">
-                            <!-- Here will be with location map -->
-                            <br><vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="detailPartyInfo.location"
-                                :level.sync="daumMap.level"
-                                :mapTypeId="daumMap.mapTypeId"
-                                :libraries="daumMap.libraries"
-                                @load="onLoad"
-
-                                style="width:500px;height:400px;"
-                            />
+                            <div>
+                                <br><a :href="detailPartyInfo.location.url">{{detailPartyInfo.location.title}}</a>
+                                <ShowMap 
+                                    :location="detailPartyInfo.location" />
+                            </div>
                         </b-tab>
                     </b-tabs>
                 </b-col>
@@ -100,16 +98,16 @@
             <br>
 
         </b-container>
+        <!-- <ShowMap :location="detailPartyInfo.location" /> -->
     </div>
 </template>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a3cfd8f8c44ef55f94f2fa1a99a18558"></script>
 <script>
     import coverflow from 'vue-coverflow'
     import memberSimpleProfile from './memberSimpleProfile.vue'
     import commentTemplate from './comment.vue'
-    import VueDaumMap from 'vue-daum-map';
     import JoinList from '../joinListPopup/joinList.vue'
+    import ShowMap from './showMap.vue'
 
     export default {
         name: "detailParty",
@@ -117,8 +115,8 @@
             coverflow,
             memberSimpleProfile,
             commentTemplate,
-            VueDaumMap,
-            JoinList
+            JoinList,
+            ShowMap
         },
         data() {
             commentContent: "";
@@ -133,45 +131,7 @@
                     gender: 'female',
                     profile_img: 'http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg'
                 },
-                daumMap:{
-                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    center: {lat:37.282908, lng:127.046402},
-                    level: 4,
-                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
-                    libraries: [],
-                    map: null
-                },
                 coverList: [],
-                // commentList: [
-                //     {
-                //         id: 1,
-                //         member: {
-                //             id: 1,
-                //             name: "seo",
-                //             age: "23",
-                //             sex: "F",
-                //             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
-                //         },
-                //         content: "This will be fun and " +
-                //             "This is the loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Sentence for the check the layout ",
-                //         depth: 0,
-                //         parentComment: null
-                //     },
-                //     {
-                //         id: 2,
-                //         member: {
-                //             id: 1,
-                //             name: "ko",
-                //             age: "24",
-                //             sex: "F",
-                //             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
-                //         },
-                //         content: "Yes it will be cool",
-                //         depth: 1,
-                //         parentComment: 1
-                //     }
-                // ],
-
             }
         },
         computed:{
@@ -200,22 +160,6 @@
                 .then((result) => {
                     window.location.href = "http://localhost:8080/party/list"
                 })
-            },
-             onLoad(map){
-                var bounds = map.getBounds();
-
-                var iwContent = '<br><pre> 아주대학교 </pre>'
-                var iwPosition = new daum.maps.LatLng(this.detailPartyInfo.location["lat"], this.detailPartyInfo.location["lng"]);
-                var marker = new daum.maps.Marker({
-                    position: iwPosition,
-                    map: map
-                });
-                var infowindow = new daum.maps.InfoWindow({
-                    position: iwPosition,
-                    content: iwContent
-                });
-                infowindow.open(map, marker)
-                
             },
             joinParty(){
                 // 이미 신청 or 가입 되어있는지 확인해야 함
