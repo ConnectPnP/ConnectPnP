@@ -8,7 +8,7 @@ const npage = 5;
 
 // 대분류 카테고리 생성 
 exports.createCategory = (req, res) => {
-  category.create( req.body , (err, result) => {
+  category.create( req.body ,(err, result) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(result);
   });
@@ -27,8 +27,10 @@ exports.getMoreCategory = (req, res) => {
 exports.uploadImage = (req, res) => {
   upload(req, res)
   .then((files) => {
-    category.findOneAndUpdate({_id : req.params.id}, {img_path : `${config.serverUrl()}files/${req.files.categoryFile[0].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[0].filename}`})
+    console.log(req.files.categoryFile[req.files.categoryFile.length-1]);
+    category.findOneAndUpdate({_id : req.params.id}, {img_path : `${config.serverUrl()}files/${req.files.categoryFile[req.files.categoryFile.length-1].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[req.files.categoryFile.length-1].filename}`},{new:true} )
     .then((result) => {
+      console.log(result)
       return res.json(result);
     })
     .catch((err) => {
@@ -74,7 +76,7 @@ exports.deleteCategory = (req, res) => {
 
 // 소분류 카테고리 생성 
 exports.createSubCategory = (req, res) => {
-  category.findOneAndUpdate( {_id: req.params.cat} ,{ $push : { sub_category: {name : req.body.name, description : req.body.description}}} ,(err, result) => {
+  category.findOneAndUpdate( {_id: req.params.cat} ,{ $push : { sub_category: {name : req.body.name, description : req.body.description}}}, {new: true} ,(err, result) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(result);
   });
@@ -84,7 +86,6 @@ exports.createSubCategory = (req, res) => {
 exports.getAllSubCategory = (req, res) => {
   category.find({},{ "sub_category": 1,"_id": 0 }, (err, category) => {
     if (err) return res.status(500).send(err); // 500 error
-    console.log(category)
       return res.json(category);
   });
 };
@@ -92,7 +93,7 @@ exports.getAllSubCategory = (req, res) => {
 // 소분류 카테고리 수정
 exports.updateSubCategory = (req, res) => {
   category.findOneAndUpdate(
-    { 'sub_category.id': req.params.id, _id: req.params.cat}, { $set:{'sub_category.$': req.body} }, (err, result) => {
+    { 'sub_category.id': req.params.id, _id: req.params.cat}, { $set:{'sub_category.$': req.body} }, { upsert: true }, (err, result) => {
       if(!err) {
         return res.json({result : "ok"});
       }

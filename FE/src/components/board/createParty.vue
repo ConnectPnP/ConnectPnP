@@ -140,6 +140,7 @@
                                     @change="changeAgeCondition">
                             </b-form-radio-group>
                 </b-form-group>
+
                 <b-form-group horizontal
                               v-if="party_form.conditions.selectAge =='selectAge'"
                               style="padding-top: 10px">

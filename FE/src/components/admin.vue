@@ -7,6 +7,26 @@
             <h3>대분류 카테고리</h3>
             <br>
 
+            <div class="createCategory">
+                <br>
+                <h4>카테고리 추가하기</h4>
+                <div class="inputMain">
+                    <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
+                    <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
+                </div>
+                <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
+                             placeholder="Choose a file..."
+                             @change="onFileChange($event.target.files)"></b-form-file>
+                <b-row>
+                    <div class="preview" >
+                        <b-img v-if="file" :src="file.blob"/>
+                    </div>
+                </b-row>
+
+                <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
+            </div>
+
+
         <div  v-for="item in mainCategoryList" :key="item._id">
             <table class="categoryTable">
                 <tr>
@@ -25,22 +45,7 @@
         </div>
 
 
-            <div class="createCategory">
-                <div class="inputMain">
-                    <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
-                    <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
-                </div>
-                <b-form-file class="file_input " v-model="file" accept=".jpg, .png" :state="Boolean(file)"
-                                placeholder="Choose a file..."
-                                @change="onFileChange($event.target.files)"></b-form-file>
-                <b-row>
-                    <div class="preview" >
-                        <b-img v-if="file" :src="file.blob"/>
-                    </div>
-                </b-row>
 
-                <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
-            </div>
 
         </nav>
 
@@ -62,8 +67,16 @@
                 <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
             </div>
 
+            <div class="createCategory" v-if="selectedCategoryID!= -1">
+                <div class="inputMain">
+                    <label for="subCategory"> 소분류 이름: </label>  &nbsp;
+                    <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
+                </div>
+                <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
+            </div>
 
             <b-container class="subCategoryGroup" >
+
                 <div v-for="item in mainCategoryList" :key="item.id">
                     <b-row v-if="selectedCategoryID==item._id">
                         <div  v-for="sub in item.sub_category">
@@ -77,13 +90,7 @@
             </b-container>
 
 
-            <div class="createCategory" v-if="selectedCategoryID!= -1">
-                <div class="inputMain">
-                    <label for="subCategory"> 소분류 이름: </label>  &nbsp;
-                    <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
-                </div>
-                <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
-            </div>
+
 
         </article>
 
@@ -149,8 +156,7 @@
             onFileChange(newFile) {
                 console.log(newFile);
                 this.file = {blob: URL.createObjectURL(newFile[0])};
-                console.log("onfilechange>>"+this.file);
-                this.imageName=newFile[0].name;
+                //this.imageName=newFile[0].name;
                 this.formData.append('categoryFile', newFile[0], newFile[0].name);
             },
 
@@ -167,26 +173,16 @@
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-/*
-                 var addCategory = await this.$http.post('http://localhost:3000/category', categoryData)
-                 var addImage = await adminVue.$http.post('http://localhost:3000/category/files/'+addCategory.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
-                 console.log("addedone")
-                 console.log(addImage.data.img_path);
-                 adminVue.mainCategoryList.push(addImage.data);
-*/
-                var imgPathURL= "";
                 this.$http.post('http://localhost:3000/category', categoryData)
                 .then((result) => {
-                    imgPathURL='http://localhost:3000/files/category/';
+                    console.log(adminVue.formData.keys())
                     return adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                 })
                 .then((result) => {
-                    var tmpImgPath =imgPathURL+adminVue.imageName;
-                    console.log(imgPathURL+adminVue.imageName);
-                    result.data.img_path=tmpImgPath
+                    //result.data.img_path=tmpImgPath
                     adminVue.mainCategoryList.push(result.data);
                 })
-                 
+
             },
             addSubCategory(){
                 var adminVue= this;
@@ -198,6 +194,7 @@
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
                         if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
+                            console.log(result.data.sub_category)
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
@@ -218,7 +215,7 @@
             },
             subCategoryDelete(id){
                 var subdeleteURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub/delete/'+id;
-                this.$http.delete(subdeleteURL);
+                this.$http.post(subdeleteURL);
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==this.selectedCategoryID){
                         for(let j=0;j<this.mainCategoryList[i].sub_category.length;j++){
@@ -228,9 +225,8 @@
                         }
                     }
                 }
-
-
             }
+
         }
     }
 </script>
@@ -244,7 +240,7 @@
     }
 
     .mainCategoryTitle{
-        font-size: 30px;
+        font-size: 20px;
     }
 
     .categoryTable{
@@ -268,9 +264,9 @@
         border-radius:10px;
         border: 5px solid #007bff;
         padding-top: 5px;
-        margin-top: 30px;
+        margin-top: 10px;
         margin-left: 20px;
-        margin-bottom: 100px;
+        margin-bottom: 30px;
     }
 
     .inputMain{
@@ -278,12 +274,12 @@
     }
 
     .plusbtn{
-        margin-top: 20px;
+        margin-top: 30px;
         width: 400px;
     }
 
     .subplusbtn{
-        margin-top: 20px;
+        margin-top: 25px;
         width: 405px;
     }
 
