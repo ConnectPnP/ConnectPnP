@@ -20,7 +20,15 @@ exports.getPost = (req, res) => {
   .populate('comments')
   .populate({
     path: 'comments',
-    populate: { path: 'member', select: '_id  name avatar_path' },
+    populate: { path: 'member', select: '_id  name avatar_path createdAt' },
+  })
+  .populate({
+    path: 'comments',
+    populate: {
+        path: 'childComment', select: 'member _id content createdAt depth',
+        populate: {path : 'member', select : '_id name avatar_path'
+      }
+    },
   })
   .populate({
     path: 'category',
@@ -146,19 +154,24 @@ exports.createComment = (req, res) => {
   var newComment = new Comment({
     member: req.body.user_id,
     content : req.body.content,
-    depth : req.body.depth,
-    parentComment : req.body.parentComment,
+    depth : 0,
   });
   newComment.save(function (err) {
     if (err) return res.json(err);
-    Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :  newComment._id}},
+    Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :  newComment._id}}, {new: true},
       (err, board) => {
         if(!err) {
           return res.json(board);
         }
         else return res.json(err);
-      });
+      })
+      .populate('comments')
+      .populate({
+        path: 'comments',
+        populate: { path: 'member', select: '_id  name avatar_path' },
+      })
   });
+    window.location.reload()
 };
 
 exports.getAllComment = (req, res) => {
@@ -172,19 +185,59 @@ exports.getAllComment = (req, res) => {
 
 // 댓글 수정하기
 exports.updateComment = (req, res) => {
-    Board.findOneAndUpdate({_id: req.params.id, "comments._id": req.params.comment},
-        {$set: {"comments.$.body": req.body.body}}, (err, result) => {
-            if (!err) {
-                return res.json({result: "ok"});
-            } else return res.json({result: "fail"});
-        });
+  Comment.findOneAndUpdate({_id: req.params.comment},
+  { content : req.body.content },(err, result) => {
+    if(!err) {
+      return res.json({result : "ok"});
+    }
+    else return res.json({result : "fail"});
+  });
 };
 
 // 댓글 삭제하기
 exports.deleteComment = (req, res) => {
-    Board.findOneAndUpdate({_id: req.params.id}, {$pull: {comments: {_id: req.params.comment}}}, {multi: true}, (err, result) => {
-        if (!err) {
-            return res.json({result: "ok"});
-        } else return res.json({result: "fail"});
+    Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : req.params.comment}}, {new:true}, (err, result) => {
+      if(!err) {
+        Comment.findOneAndRemove({_id: req.params.comment}, (err, result) => {
+          if(!err && result) {
+          return res.json(result);
+        };
+      })
+    }
+      else return res.json({result : "fail"});
     });
 };
+
+exports.createCommentReply = (req, res) => {
+  var newComment = new Comment({
+    member: req.body.user_id,
+    content : req.body.content,
+    depth : 1,
+  });
+  newComment.save(function (err) {
+    if (err) return res.json(err);
+    Comment.findOneAndUpdate({_id : req.params.id}, {$push : {childComment : newComment._id}}, {new:true}, (err, result) => {
+      if(!err) {
+        console.log(result)
+        return res.json(result);
+      }
+      else return res.json({result : "fail"});
+    });
+  });
+
+}
+
+exports.deleteCommentReply = (req, res) => {
+
+  Comment.findOneAndUpdate({_id : req.params.comment}, {$pull : {childParent : req.params.reply}}, {new:true}, (err, result) => {
+    if(!err) {
+      Comment.findOneAndRemove({_id: req.params.reply}, (err, result) => {
+        if(!err && result) {
+        return res.json(result);
+      };
+    })
+  }
+    else return res.json({result : "fail"});
+  });
+}
+

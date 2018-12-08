@@ -27,4 +27,8 @@ router.post('/comments/:id',boardCtrl.createComment); // 게시글 id
 router.post('/comments/:id/:comment',boardCtrl.updateComment);
 router.delete('/comments/:id/:comment', boardCtrl.deleteComment);
 
+// comment's reply
+router.post('/reply/:id', boardCtrl.createCommentReply);
+router.delete('/reply/:comment/:reply', boardCtrl.deleteCommentReply);
+
 module.exports = router;

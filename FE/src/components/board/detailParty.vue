@@ -46,7 +46,6 @@
                             <b-button class="btn btn-info">채팅 참여</b-button>
                             <b-button class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
                         </b-button-group>
-
                         <b-modal id="exitParty" @ok="exitParty" title="모임 나가기">
                             <p>정말 나가시겠습니까?</p>
                         </b-modal>
@@ -89,10 +88,14 @@
                 </b-input-group>
             </b-row>
             <b-row>
-                <div>
+                <div v-for="comment in detailPartyInfo.comments" :key="comment._id">
                     <commentTemplate
-                            v-for="comment in detailPartyInfo.comments" :key="comment._id"
-                            :comment="comment"></commentTemplate>
+                            :comment="comment" :currentUser="currentUser">
+                    </commentTemplate>
+                    <commentTemplate style="padding-left:50px;"
+                            v-for="reply in comment.childComment" :key="reply._id"
+                            :comment="reply" :currentUser="currentUser" :parentComment="comment._id">
+                    </commentTemplate>
                 </div>
             </b-row>
             <br>
@@ -173,6 +176,22 @@
                         window.location.href = "http://localhost:8080/party/list"
                     })
             },
+            onLoad(map) {
+                var bounds = map.getBounds();
+
+                var iwContent = '<br><pre> 아주대학교 </pre>'
+                var iwPosition = new daum.maps.LatLng(this.detailPartyInfo.location["lat"], this.detailPartyInfo.location["lng"]);
+                var marker = new daum.maps.Marker({
+                    position: iwPosition,
+                    map: map
+                });
+                var infowindow = new daum.maps.InfoWindow({
+                    position: iwPosition,
+                    content: iwContent
+                });
+                infowindow.open(map, marker)
+
+            },
             joinParty() {
                 // 이미 신청 or 가입 되어있는지 확인해야 함
 
@@ -209,14 +228,16 @@
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
                     .then((result) => {
                         vm.detailPartyInfo = result.data.board
-                        console.log(result.data.board)
                         vm.host = result.data.host
                         for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
                             this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
                         }
+
                         this.createCookie();
                     })
                     .then((result) => {
+                        console.log(vm.currentUser)
+                        console.log(vm.host)
                         if (vm.currentUser.user_id == vm.host.user_code) vm.isHost = true;
                     })
             },
@@ -231,7 +252,6 @@
                         depth: 0,
                     })
                     .then((result) => {
-                        console.log(result)
                     })
 
             },
@@ -255,6 +275,7 @@
             },
             showMap() {
                 this.isMapTab = true;
+                        
             }
         },
         mounted() {

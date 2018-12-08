@@ -43,7 +43,7 @@
 
                             <div  v-for="item in categoryList" :key="item.value">
                                 <div class="custom-control custom-checkbox custom-control-inline singleCategoryCheck">
-                                    <input type="checkbox" class="custom-control-input" :id="item.value"  :value="item.text" v-model="checkedCategory">
+                                    <input type="checkbox" class="custom-control-input" :id="item.value"  :value="item.value" v-model="checkedCategory">
                                     <label class="custom-control-label" :for="item.value">{{item.text}}</label>
                                 </div>
                             </div>
@@ -72,8 +72,6 @@
                 userAge:Number,
                 userGender:String,
                 checkedCategory: [],
-
-
                 categoryList: [
                 ]
             }
@@ -95,14 +93,12 @@
                 var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
                 console.log(kakaoData);
 
-                //id, nickname, profile_img
-                console.log(this.userGender);
-
                 var userData ={
                     age: this.userAge,
                     gender: this.userGender,
                     categoryList: this.checkedCategory
                 }
+                console.log(userData.categoryList)
 
                 var userFindRes = await this.$http.post('http://localhost:3000/user', [kakaoData,userData]);
                 console.log(userFindRes.data.result);

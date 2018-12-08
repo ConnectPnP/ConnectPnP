@@ -120,10 +120,6 @@ import Review from './reviewPopup/Review.vue'
         },
         beforeMount() {
             this.id = this.$session.get('userID');
-
-            console.log(this.id);
-
-
         },
         mounted: function() {
             this.getCategoryList();
@@ -141,36 +137,27 @@ import Review from './reviewPopup/Review.vue'
                 this.$http.get(`http://localhost:3000/home`)
                 .then((result) => {
                     this.rankingList = result.data.slice(0,5);
-                    console.log(result);
-                    console.log(this.rankingList);
 
                     // 나의 관심카테고리 중에 top 5
                     this.$http.get('http://localhost:3000/user/details/'+this.id)
                     .then((userInfo) => {
 
                     // 관심 카테고리 가져오기
-                    console.log(userInfo);
                     var catListtemp = [];
                     for(var j=0; j<userInfo.data.categoryList.length; j++){
                         catListtemp.push(userInfo.data.categoryList[j]);
-                        console.log(userInfo.data.categoryList[j]);
                     }
                     this.userInterestedCategory = catListtemp;
-                    console.log(catListtemp);
 
                     var num = 0;
 
                     for(var i=0; i<result.data.length; i++){
-                        console.log(result.data[i].category);
                         if(num == 5) break;
                         if(catListtemp.indexOf(result.data[i].category) != -1){
                             this.recommendedList.push(result.data[i]);
                             num++;
                         }
                     }
-
-                    console.log(this.recommendedList);
-
                     });
                 })
             },
@@ -209,7 +196,6 @@ import Review from './reviewPopup/Review.vue'
             this.$http.get('http://localhost:3000/category/list/' + this.categoryPage)
             .then((result) => {
                 // get category list
-                console.log(result.data)
                 for(var i = 0; i < result.data.length; i++ ) {
                     vm.categoryList.push(result.data[i])
                 }

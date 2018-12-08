@@ -18,17 +18,17 @@
                 <b-btn class="btn-info btnGroup" href="/party/create">모임 생성</b-btn>
                 <b-btn class="btn-info btnGroup" variant="primary" href="">내 모임</b-btn>
                 </b-button-group>
-    
+
 </b-form>
 
 <div class="margin">
     <div class="row" v-for="i in Math.ceil(groupList.length / 2)">
     <span v-for="group in groupList.slice((i-1)*2,i*2)">
-        <ListView 
-            :groupTitle=group.title 
+        <ListView
+            :groupTitle=group.title
             :groupLocation=group.location.title
             :groupId=group._id
-            :groupDetail=group.detail 
+            :groupDetail=group.detail
             :groupImg=group.images[0] />
     </span>
 </div>
@@ -96,7 +96,7 @@ export default {
                 this.select2 = this.categoryList1;
             } else if(select == 1){
                 this.select2 = this.hostSearchOption;
-            } 
+            }
         },
         selectOption2(select){
             this.thirdSelect = null;
@@ -112,12 +112,11 @@ export default {
                 this.$http.get('http://localhost:3000/category')
                 .then((result) => {
                     // get category list
-                    console.log(result.data)
                     for(var i=0; i<result.data.length; i++) {
                             var categoryOption = '{"value" : { "index": "'+i+'", "id": "' + result.data[i]._id + '"}, "text" : "'+ result.data[i].name+'"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
                     }
-                    
+
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
                         var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];

@@ -198,7 +198,6 @@
 
             async getCategory(){
                 var categoryList  = await this.$http.get('http://localhost:3000/category');
-                console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
 
@@ -244,7 +243,6 @@
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
                         if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
-                            console.log(result.data.sub_category);
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }

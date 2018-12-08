@@ -300,7 +300,6 @@
                     })
                     // 이미지 업로드
                         .then((result) => {
-                            console.log(result)
                             boardId = result.data._id
                             this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
                         })
@@ -353,13 +352,11 @@
                 this.$http.get('http://localhost:3000/category')
                     .then((result) => {
                         // get category list
-                        console.log(result.data)
                         for (var i = 0; i < result.data.length; i++) {
                             var categoryOption = '{"value" : { "index": "' + i + '", "id": "' + result.data[i]._id + '"}, "text" : "' + result.data[i].name + '"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
                         }
 
-                        console.log(vm.categoryList1)
                         // get sub category list
                         for (var i = 0; i < result.data.length; i++) {
                             var categoryOption = [{value: null, text: '--- 소분류 ---', disabled: true}];
@@ -369,7 +366,6 @@
                             }
                             vm.subCategoryList.push(categoryOption);
                         }
-                        console.log(vm.subCategoryList);
                     });
             },
             showSubCategory(select) {

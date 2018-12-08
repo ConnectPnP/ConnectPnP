@@ -12,7 +12,7 @@ const CommentSchema = new Schema({
     member : {type : Number, ref: 'User'},
     content : {type: String},
     depth : {type: Number},
-    parentComment : {type : Number, ref: 'Comment'},
+    childComment : [{type : Number, ref: 'Comment'}],
     createdAt : {type: Date, default: Date.now}
 });
 

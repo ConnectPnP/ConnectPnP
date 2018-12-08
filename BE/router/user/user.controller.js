@@ -63,6 +63,9 @@ exports.create = (req, res) => {
                     return  res.json({result : "create"});
 
                 }
+                else{
+                    console.log(err)
+                }
             }); // 존재하지 않는 회원 id는 새로 생성.
         }
         else {

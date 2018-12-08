@@ -16,6 +16,11 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useNewUrlParser', true);
 
+// [CONFIGURE MONGOOSE]
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
+
 mongoose.connect(config.dbUrl());
 
 const db = mongoose.connection;
