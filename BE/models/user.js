@@ -16,7 +16,7 @@ const UserSchema = new Schema({
   name: { type: String },
   age:{ type: Number},
   gender:{type: String},
-  categoryList:[],
+  categoryList:[{type : Number, ref:'Category'}],
   star_rate : {type : Number },
   rating_status : [{
     status_id : {type : mongoose.Schema.Types.ObjectId, ref:'Evaluate' },

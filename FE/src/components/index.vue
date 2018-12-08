@@ -73,7 +73,7 @@
         <div class="rankingArea">
 
             <div class>
-                <h2>Ranking Best 5</h2>
+                <h2>Group Ranking Best 5</h2>
                 <h4>인기 모임 순위</h4>
             </div>
             <!--justify-content-md-center-->
@@ -90,6 +90,25 @@
                 </b-row>
             </b-container>
 
+<br><br><br>
+
+            <div class>
+                <h2>Recommended Group 5</h2>
+                <h4>추천 모임 순위</h4>
+            </div>
+            <!--justify-content-md-center-->
+            <b-container fluid>
+                <b-row class="rankingGroup justify-content-md-center">
+                    <div  v-for="item in recommendedList" :key="item.id">
+                        <b-col class="singleRanking">
+                            <b-img fluid :src="item.images[0]" style="max-height: 200px;" alt="Thumbnail" />
+                            <div class="singleRankingTitile">{{item.title}}</div>
+                            <div class="singleRankingDescription">{{item.locationText}}</div>
+                            <router-link :to= "{name: 'detailParty' , params: {id: item._id}}" class="btn-info" tag="b-button">자세히 보기</router-link>
+                        </b-col>
+                    </div>
+                </b-row>
+            </b-container>
 <!--
             <div class="rankingGroup">
                 <b-card-group>
@@ -132,6 +151,7 @@ import Review from './reviewPopup/Review.vue'
                 btnclicked:5,
                 categoryList: [],
                 rankingList: [],
+                recommendedList: [],
                 id: String,
                 usrName: String,
                 img: String,
@@ -143,11 +163,12 @@ import Review from './reviewPopup/Review.vue'
 
             console.log(this.id);
 
-            this.getGroupRanking();
-            this.getRecommendGroup();
+            
         },
         mounted: function() {
-            this.getCategoryList()
+            this.getCategoryList();
+            this.getGroupRanking();
+            //this.getRecommendGroup();
         },
         methods:{
            //"더보기" 버튼이 클릭되면 보여지는 카테고리 수가 5개씩 늘어나도록
@@ -156,10 +177,66 @@ import Review from './reviewPopup/Review.vue'
                 this.getCategoryList()
             },
             getGroupRanking(){
-                this.$http.get(`http://localhost:3000/home`).then((result) => {
+                // 모든 그룹 중에 top 5
+                this.$http.get(`http://localhost:3000/home`)
+                .then((result) => {
                     this.rankingList = result.data.slice(0,5);
+                    console.log(result);
+                    console.log(this.rankingList);
+
+                    // 나의 관심카테고리 중에 top 5
+                    this.$http.get('http://localhost:3000/user/details/'+this.id)
+                    .then((userInfo) => {
+
+                    // 관심 카테고리 가져오기
+                    console.log(userInfo);
+                    var catListtemp = [];
+                    for(var j=0; j<userInfo.data.categoryList.length; j++){
+                        catListtemp.push(userInfo.data.categoryList[j]);
+                        console.log(userInfo.data.categoryList[j]);
+                    }
+                    this.userInterestedCategory = catListtemp;
+                    console.log(catListtemp);
+
+                    var num = 0;
+
+                    for(var i=0; i<result.data.length; i++){
+                        console.log(result.data[i].category);
+                        if(num == 5) break;
+                        if(catListtemp.indexOf(result.data[i].category) != -1){
+                            this.recommendedList.push(result.data[i]);
+                            num++;
+                        }
+                    }
+                    
+                    console.log(this.recommendedList);
+
+
+
+
+                    });
                 })
             },
+            // getRecommendGroup(){ /////////////////
+            //     this.$http.get('http://localhost:3000/user/details/'+this.id).then((result) => {
+            //         // 관심 카테고리 가져오기
+            //         console.log(result);
+            //         var catListtemp = [];
+            //         for(var j=0; j<result.data.categoryList.length; j++){
+            //             catListtemp.push(result.data.categoryList[j]);
+            //             console.log(result.data.categoryList[j]);
+            //         }
+            //         this.userInterestedCategory = catListtemp;
+            //         console.log(catListtemp);
+                    
+                    
+
+
+
+
+
+            //     });
+            // },
             showReview(){
                 this.$modal.show(Review,{
                     // 주최자 정보

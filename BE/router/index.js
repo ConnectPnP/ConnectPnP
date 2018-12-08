@@ -10,16 +10,36 @@ router.use('/category', category);
 
 router.get('/home', (req, res) => {
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({}).populate('guest', 'star_rate').exec((err, data) => {  //guest.user_id
+    GroupInfo.find({}).populate('guest', 'star_rate').exec((err, data) => {  
         
-        console.log(data);
+        // console.log(data);
         
         var rank5GroupList = [];
+        
+        // 오늘 날짜 가져오기 -> 날짜 지난 모임은 랭킹에서 제외
+        var today = new Date();
 
+        var year = today.getFullYear();                               
+
+        var month = (1 + today.getMonth());                  
+        month = month >= 10 ? month : '0' + month;     
+
+        var day = today.getDate();                                  
+        day = day >= 10 ? day : '0' + day;                          
+    
+        var changeDateFormat = year+'-'+month+'-'+day;
+        console.log(changeDateFormat);
+
+        // 모임 랭킹 평가 지수 = 참가자 수 대비 별점 평균 + 조회수 대비 신청자수
         for(var i=0; i<data.length; i++){
+
+            // 날짜 지난 모임은 제외
+            if(data[i].due_date <= changeDateFormat) {
+                continue;
+            }
+
             var hitsApplicantsRate = 0;
             var starRate = 0;
-            
             
             var C = 5;   // C 가 클수록 원래 값에서 멀어짐
             // star rate
@@ -28,6 +48,12 @@ router.get('/home', (req, res) => {
             var m_hitapplicant = 0.5;
 
             var guestnum = data[i].guest.length;
+
+            var dueDate = data[i].due_date;
+
+            console.log();
+            console.log('due date           '+dueDate);
+            console.log(data[i].title);
             console.log(guestnum);
             
             // 참여자 별점 평균 bayesian_rating
@@ -37,7 +63,7 @@ router.get('/home', (req, res) => {
                 }
                 starRate /= guestnum;            
                 starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
-            
+                starRate /= 10;
             }
             else if((guestnum) == 0){
                 starRate = 0;
