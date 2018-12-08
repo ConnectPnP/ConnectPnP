@@ -85,7 +85,9 @@ export default {
       },
        getPostData () {
            var vm = this
-           this.$http.get('http://localhost:3000/board/list/' + this.currentPage)
+           console.log("session!!!")
+           console.log(this.$session.get('category'))
+           this.$http.get('http://localhost:3000/board/list/' + this.currentPage + '/' + this.$session.get('category'))
            .then((result) => {
                vm.groupList = result.data
            })

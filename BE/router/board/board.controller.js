@@ -45,7 +45,7 @@ exports.getPost = (req, res) => {
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
 exports.getMore = (req, res) => {
     var page = req.params.page;
-    Board.find({}, function (err, result) {
+    Board.find({subCategory : req.params.category}, function (err, result) {
         if (err) return res.json({result: "fail"});
         return res.json(result);
     }).sort({_id: -1}).skip((page) * npage).limit(npage);

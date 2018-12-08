@@ -9,7 +9,7 @@
           {{category.name}}
         </vs-divider>
 
-        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub.id' :key="index" href="/party/list">
+        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub._id' :key="index" @click="goToList(sub._id)">
           {{sub.name}}
         </vs-sidebar-item>
       </div>
@@ -35,6 +35,10 @@ export default {
            .then((result) => {
                vm.categoryList = result.data
            })
+        },
+        goToList(subId) {
+          this.$session.set('category',subId);
+          window.location.href="http://localhost:8080/party/list"
         }
     },
     mounted() {

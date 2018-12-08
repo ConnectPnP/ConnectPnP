@@ -7,7 +7,7 @@ const boardCtrl = require('./board.controller');
 router.get('/details/:id',boardCtrl.getPost);
 
 // 게시판 보기
-router.get('/list/:page',boardCtrl.getMore);
+router.get('/list/:page/:category',boardCtrl.getMore);
 
 // // 게시판 검색
 // router.post('/search/:type',boardCtrl.searchPost);
