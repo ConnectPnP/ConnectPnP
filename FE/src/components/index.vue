@@ -45,27 +45,7 @@
         <div>
             <button v-on:click='moreBtn' type="button" class="btn btn-outline-primary moreButton">더보기</button>
         </div>
-
-
-
-        <!--
-       랭킹5 정렬을 위한 v-for 함수
-
-          <div  v-for="item in rankingList" :key="item.id">
-            <b-card title={{item.party_name}}
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 20rem;"
-                    class="mb-2 rankingSingle">
-                <p class="card-text">
-                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                </p>
-                <b-button href="#" variant="primary">Go somewhere</b-button>
-            </b-card>
-        </div>
-       -->
+\
 
 
 
@@ -90,7 +70,8 @@
                 </b-row>
             </b-container>
 
-<br><br><br>
+
+
 
             <div class>
                 <h2>Recommended Group 5</h2>
@@ -109,27 +90,6 @@
                     </div>
                 </b-row>
             </b-container>
-<!--
-            <div class="rankingGroup">
-                <b-card-group>
-                    <div  v-for="item in rankingList" :key="item._id">
-                        <b-card :title="item.title"
-                        :img-src="item.images[0]"
-                        img-alt="Image"
-                        img-top
-                        tag="article"
-                        style="max-width: 260px;"
-                        class="mb-2 rankingSingle">
-                        <p class="card-text">
-                            {{item.location}}
-                        </p>
-                        <router-link :to= "{name: 'detailParty' , params: {id: item._id}}" class="btn-info" tag="b-button">자세히 보기</router-link>
-                        </b-card>
-                    </div>
-                </b-card-group>
-            </div>
--->
-
 
         </div>
 
@@ -210,9 +170,6 @@ import Review from './reviewPopup/Review.vue'
                     }
                     
                     console.log(this.recommendedList);
-
-
-
 
                     });
                 })

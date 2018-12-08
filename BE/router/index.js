@@ -9,27 +9,28 @@ router.use('/user', user);
 router.use('/category', category);
 
 router.get('/home', (req, res) => {
+
+    // 오늘 날짜 가져오기 -> 날짜 지난 모임은 랭킹에서 제외
+    var today = new Date();
+
+    var year = today.getFullYear();                               
+
+    var month = (1 + today.getMonth());                  
+    month = month >= 10 ? month : '0' + month;     
+
+    var day = today.getDate();                                  
+    day = day >= 10 ? day : '0' + day;                          
+
+    var changeDateFormat = year+'-'+month+'-'+day;
+    console.log(changeDateFormat);
+
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({}).populate('guest', 'star_rate').exec((err, data) => {  
+    GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').exec((err, data) => {  
         
         // console.log(data);
         
         var rank5GroupList = [];
         
-        // 오늘 날짜 가져오기 -> 날짜 지난 모임은 랭킹에서 제외
-        var today = new Date();
-
-        var year = today.getFullYear();                               
-
-        var month = (1 + today.getMonth());                  
-        month = month >= 10 ? month : '0' + month;     
-
-        var day = today.getDate();                                  
-        day = day >= 10 ? day : '0' + day;                          
-    
-        var changeDateFormat = year+'-'+month+'-'+day;
-        console.log(changeDateFormat);
-
         // 모임 랭킹 평가 지수 = 참가자 수 대비 별점 평균 + 조회수 대비 신청자수
         for(var i=0; i<data.length; i++){
 
