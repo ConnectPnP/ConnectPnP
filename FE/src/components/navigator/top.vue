@@ -170,36 +170,35 @@
                    } else{  //회원이 아닌 경우 -> 회원가입 창으로
                        location.href="/signUp"
                    }
-
                 }
+            },
 
-          },
+            //로그아웃
+            logoutWithKakao() {
+                Kakao.Auth.logout(function () {
+                    setTimeout(function () {
+                        location.href = "/"
+                    }, 1000);//로그아웃 처리되는 타임을 임시적으로 1000설정
+                    location.href = "/"
+                });
+                Kakao.Auth.cleanup();
+                this.$cookie.set('loginStatus', 'logout', 1);
+                this.$session.set('loginStatus', 'logout');
+                location.href = "/"
+            }
 
-          //로그아웃
-          logoutWithKakao(){
-              Kakao.Auth.logout(function() {
-                  setTimeout(function(){
-                      location.href="/"
-                  },1000);//로그아웃 처리되는 타임을 임시적으로 1000설정
-                  location.href="/"
-              });
-              Kakao.Auth.cleanup();
-              this.$cookie.set('loginStatus','logout', 1);
-              this.$session.set('loginStatus','logout');
-              location.href="/"
-          },
+        }
+    }
 
-      }
-  }
 
-  
 </script>
 
 <style scoped>
-  .top {
-    padding-bottom : 30px;
-  }
-  .navbtn{
-    margin: 5px;
-  }
+    .top {
+        padding-bottom: 30px;
+    }
+
+    .navbtn {
+        margin: 5px;
+    }
 </style>

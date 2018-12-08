@@ -1,4 +1,3 @@
-
 <template>
 
   <div id="parentx">
@@ -9,7 +8,8 @@
         <vs-divider position="left" >
           {{category.name}}
         </vs-divider>
-        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub._id' href="/party/list"> 
+
+        <vs-sidebar-item v-for="(sub,index) in category.sub_category" :index='sub.id' :key="index" href="/party/list">
           {{sub.name}}
         </vs-sidebar-item>
       </div>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-// pary/list/:category 
+// pary/list/:category
 // parameter 추가 필요
 
 export default {

@@ -10,7 +10,6 @@ import VueAxios from 'vue-axios'
 import VueSession from 'vue-session'
 import VueCookies from 'vue-cookies'
 
-
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'

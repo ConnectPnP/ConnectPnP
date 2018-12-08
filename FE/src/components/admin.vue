@@ -85,6 +85,7 @@
             </div>
 
 
+
             <div class="subCategoryTitle" v-if="selectedCategoryID!=-1">
                 <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
             </div>
@@ -117,9 +118,6 @@
                     </b-row>
                 </div>
             </b-container>
-
-
-
 
         </article>
 
@@ -238,6 +236,7 @@
                 var subcategoryData ={
                     name:this.addSubCategoryName
                 };
+
                 var addsubURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub';
                 var addedData= this.$http.post(addsubURL, subcategoryData);
                 addedData.then(function (result) {
