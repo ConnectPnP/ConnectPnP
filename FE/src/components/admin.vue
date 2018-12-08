@@ -109,7 +109,8 @@
                     <b-row v-if="selectedCategoryID==item._id">
                         <div  v-for="sub in item.sub_category.slice().reverse()">
                             <b-col class="subCategorySingle">
-                                <h3>{{sub.name}}</h3>
+                                <input class="mainCategoryTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
+                                <button class="btn btn-primary" v-on:click="subcategoryUpdate(item)">수정</button>
                                 <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
                             </b-col>
                         </div >
@@ -162,6 +163,7 @@
                 mainCategoryList: [
                     {
                         _id: Number,
+                        depth:Number,
                         name: String,
                         img_path: String,
                         sub_category: [
@@ -216,8 +218,8 @@
                  } else {
                      adminVue.mainCategoryList.push(categoryDataUpload.data);
                  }
-                 this.addCategoryName=""
-                 this.addCategoryPath=""
+                 this.addCategoryName="";
+                 this.addCategoryPath="";
 
 
                  /*
@@ -246,6 +248,9 @@
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
+                    //adminVue.mainCategoryList.sub_category=result.data.sub_category;
+                   console.log(result.data);
+
                 });
                 this.addSubCategoryName=""
 
@@ -256,22 +261,26 @@
                 var updatedCategory = this.$http.post(updateURL,data);
             },
 
+            subcategoryUpdate(data){
+                var updateURL='http://localhost:3000/category/edit/'+data._id;
+                var updatedCategory = this.$http.post(updateURL,data);
+            },
+
 
             categoryDelete(id){
-
                 var deleteURL='http://localhost:3000/category/delete/'+id;
                 var deletedData= this.$http.delete(deleteURL);
 
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==id){
-                        console.log(this.mainCategoryList[i].name)
                         this.mainCategoryList.splice(i,1);
                     }
                 }
             },
             subCategoryDelete(id){
                 var subdeleteURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub/delete/'+id;
-                this.$http.post(subdeleteURL);
+                var deleteResult = this.$http.post(subdeleteURL);
+
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==this.selectedCategoryID){
                         for(let j=0;j<this.mainCategoryList[i].sub_category.length;j++){
