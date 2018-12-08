@@ -21,12 +21,18 @@ router.get('/', boardCtrl.getAllPost);
 router.post('/edit/:id',boardCtrl.updatePost);
 router.delete('/delete/:id',boardCtrl.deletePost);
 
+
+router.post('/wait', boardCtrl.waitGroup);
+router.post('/join', boardCtrl.joinGroup);
+router.post('/cancel', boardCtrl.cancelGroup);
+router.post('/exit', boardCtrl.exitGroup);
+router.post('/check', boardCtrl.checkState);
+
 // // comment create edit delete
 router.get('/comments', boardCtrl.getAllComment);
 router.post('/comments/:id',boardCtrl.createComment); // 게시글 id
 router.post('/comments/:id/:comment',boardCtrl.updateComment);
 router.delete('/comments/:id/:comment', boardCtrl.deleteComment);
-
 // comment's reply
 router.post('/reply/:id', boardCtrl.createCommentReply);
 router.delete('/reply/:comment/:reply', boardCtrl.deleteCommentReply);

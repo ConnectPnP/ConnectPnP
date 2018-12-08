@@ -28,12 +28,15 @@ const GroupSchema = new Schema({
         latlng: {lat: {type: String}, lng: {type: String}},
         url: {type: String}
     },
-    host: {type: String},
+    host: {type: Number, ref:'User'},
     comments: [
         {type: Number, ref: 'Comment'}
     ],
     guest: [
         {type: Number, ref: 'User'}
+    ],
+    waiting : [
+        {type : Number, ref: 'User'}
     ]
 });
 
