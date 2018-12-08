@@ -210,7 +210,7 @@
                             age: [0,100],
                         },
                         file_array: [],
-                        selected_category_id:null,
+                        selected_category_id:{},
                         selected_subcategory_id:null
                     },
                     gender: [
@@ -222,7 +222,7 @@
                         {text: '상관 없음', value: 'none'},
                         {text: '직접 설정', value: 'selectAge'}
                     ],
-                categoryList1: [{ value: null, text: '--- 대분류 ---', disabled:true}],
+                categoryList1: [{ value: {}, text: '--- 대분류 ---', disabled:true}],
                 categoryList2: [],
                 subCategoryList: [],
                 // categoryList1: [
@@ -315,7 +315,7 @@
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 }
                 else {
-                console.log("userId : " + this.currentUser)
+                    console.log("category Id : "+party.selected_category_id.id);
                 this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                 this.$http.post('http://localhost:3000/board', {
                     title : party.title,
@@ -325,7 +325,7 @@
                     min_num : party.number_of_member[0],
                     max_num : party.number_of_member[1],
                     cost : party.cost,
-                    category : party.selected_category_id,
+                    category : party.selected_category_id.id,
                     subCategory : party.selected_subcategory_id,
                     conditions : { gender : party.conditions.gender, age : party.conditions.age},
                     detail: party.detail,
@@ -336,12 +336,12 @@
             // 이미지 업로드
             .then((result) => {
                 console.log(result)
-                // boardId = result.data._id
-                // this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                boardId = result.data._id
+                this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             })
-            // .then(()=> {
-            //     window.location.href = "http://localhost:8080/party/detail/" + boardId
-            // })
+            .then(()=> {
+                window.location.href = "http://localhost:8080/party/detail/" + boardId
+            })
                 }
             },
             onLoad(map){
@@ -411,7 +411,7 @@
                 party.cost = this._cost;
                 party.conditions = this._conditions;
                 party.file_array = this._file;
-                party.selected_category_id = this._categoryId;
+                party.selected_category_id.id = this._categoryId;
                 // alert(party.title);
             },
             getCategoryList() {
@@ -419,10 +419,13 @@
                 this.$http.get('http://localhost:3000/category')
                 .then((result) => {
                     // get category list
+                    console.log(result.data)
                     for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
+                            var categoryOption = '{"value" : { "index": "'+i+'", "id": "' + result.data[i]._id + '"}, "text" : "'+ result.data[i].name+'"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
                     }
+
+                    console.log(vm.categoryList1)
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
                         var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];
@@ -432,11 +435,13 @@
                         }
                         vm.subCategoryList.push(categoryOption);
                     }
+                    console.log(vm.subCategoryList);
                 });
             },
             showSubCategory(select){
                 this.party_form.selected_subcategory_id = null;
-                this.categoryList2 = this.subCategoryList[select];
+                // this.party_form.selected_category_id = select.id;
+                this.categoryList2 = this.subCategoryList[select.index];
             }
         }
     }
