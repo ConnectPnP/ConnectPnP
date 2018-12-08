@@ -20,7 +20,15 @@ exports.getPost = (req, res) => {
   .populate('comments')
   .populate({
     path: 'comments',
-    populate: { path: 'member', select: '_id  name avatar_path' },
+    populate: { path: 'member', select: '_id  name avatar_path createdAt' },
+  })
+  .populate({
+    path: 'comments',
+    populate: { 
+        path: 'childParent', select: 'member _id content createdAt', 
+        populate: {path : 'member', select : '_id name avatar_path'
+      } 
+    },
   })
   .exec(function(error, comments) {
     console.log(comments.comments)
@@ -136,8 +144,7 @@ exports.createComment = (req, res) => {
   var newComment = new Comment({
     member: req.body.user_id,
     content : req.body.content,
-    depth : req.body.depth,
-    parentComment : req.body.parentComment,
+    depth : 0,
   });
   newComment.save(function (err) {
     if (err) return res.json(err);
@@ -167,7 +174,6 @@ exports.getAllComment = (req, res) => {
 
 // 댓글 수정하기
 exports.updateComment = (req, res) => {
-  console.log(req.body.content)
   Comment.findOneAndUpdate({_id: req.params.comment},
   { content : req.body.content },(err, result) => {
     if(!err) {
@@ -181,8 +187,40 @@ exports.updateComment = (req, res) => {
 exports.deleteComment = (req, res) => {
     Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : req.params.comment}}, {new:true}, (err, result) => {
       if(!err) {
-        return res.json({result : "ok"});
-      }
+        Comment.findOneAndRemove({_id: req.params.comment}, (err, result) => {
+          if(!err && result) { 
+          return res.json(result);
+        };
+      })
+    }
       else return res.json({result : "fail"});
     });
 };
+
+exports.createCommentReply = (req, res) => {
+  var newComment = new Comment({
+    member: req.body.user_id,
+    content : req.body.content,
+    depth : 1,
+  });
+  Comment.findOneAndUpdate({_id : req.params.id}, {$push : {childParent : newComment._id}}, {new:true}, (err, result) => {
+    if(!err) {
+      return res.json(result);
+    }
+    else return res.json({result : "fail"});
+  });
+}
+
+exports.deleteCommentReply = (req, res) => {
+  
+  Comment.findOneAndUpdate({_id : req.params.comment}, {$pull : {childParent : newComment._id}}, {new:true}, (err, result) => {
+    if(!err) {
+      Comment.findOneAndRemove({_id: req.params.reply}, (err, result) => {
+        if(!err && result) { 
+        return res.json(result);
+      };
+    })
+  }
+    else return res.json({result : "fail"});
+  });
+}

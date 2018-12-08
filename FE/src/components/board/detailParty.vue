@@ -94,7 +94,12 @@
                 <div>
                     <commentTemplate
                             v-for="comment in detailPartyInfo.comments" :key="comment._id"
-                            :comment="comment"></commentTemplate>
+                            :comment="comment">
+                          <commentTemplate style="margin-left:30px"
+                            v-for="comment in detailPartyInfo.comments.childParent" :key="comment.childParent._id"
+                            :comment="comment" />
+                            </commentTemplate>
+                            
                 </div>
             </b-row>
             <br>
@@ -144,36 +149,6 @@
                     map: null
                 },
                 coverList: [],
-                // commentList: [
-                //     {
-                //         id: 1,
-                //         member: {
-                //             id: 1,
-                //             name: "seo",
-                //             age: "23",
-                //             sex: "F",
-                //             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
-                //         },
-                //         content: "This will be fun and " +
-                //             "This is the loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong Sentence for the check the layout ",
-                //         depth: 0,
-                //         parentComment: null
-                //     },
-                //     {
-                //         id: 2,
-                //         member: {
-                //             id: 1,
-                //             name: "ko",
-                //             age: "24",
-                //             sex: "F",
-                //             profile_img: "http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg"
-                //         },
-                //         content: "Yes it will be cool",
-                //         depth: 1,
-                //         parentComment: 1
-                //     }
-                // ],
-
             }
         },
         computed:{
