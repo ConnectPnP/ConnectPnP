@@ -6,7 +6,6 @@
             <h3>대분류 카테고리</h3>
             <br>
 
-
             <!--대분류카테고리 추가-->
             <div class="createCategory">
                 <br>
@@ -15,11 +14,12 @@
                     <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
                     <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
+
                 <b-form-group>
+                    이미지 업로드 방식:
                     <b-form-radio-group
                             v-model="condition.imgUpload"
-                            :options="uploadMethod"
-                            @change="changeUploadMethod">
+                            :options="uploadMethod">
                     </b-form-radio-group>
                 </b-form-group>
 
@@ -47,30 +47,27 @@
 
         <!--대분류카테고리 리스트-->
 
-        <div  v-for="item in mainCategoryList.slice().reverse()" :key="item._id">
-            <table class="categoryTable">
-                <tr>
-                    <th class="categoryImg"  rowspan="2">
-                        <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.img_path"
-                               height="140px" width="140px"/>
-                    </th>
-                    <th class="mainCategoryTitle">{{item.name}}</th>
-                </tr>
-                <tr>
-                    <td class="tg-0lax">
-                        <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-
-
+            <div  v-for="item in mainCategoryList.slice().reverse()" :key="item._id">
+                <table class="categoryTable">
+                    <tr>
+                        <th class="categoryImg"  rowspan="2">
+                            <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.img_path"
+                                   height="140px" width="140px"/>
+                        </th>
+                        <th class="mainCategoryTitle">
+                            <input class="mainCategoryTitle" name="mainCategoryTitleInput"  type="text" v-model="item.name">
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="tg-0lax">
+                            <button class="btn btn-primary" v-on:click="categoryUpdate(item)">수정</button>
+                            <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
         </nav>
-
-
-
 
 
 
@@ -102,7 +99,7 @@
     <!--소분류 카테고리 리스트-->
                 <div v-for="item in mainCategoryList" :key="item.id">
                     <b-row v-if="selectedCategoryID==item._id">
-                        <div  v-for="sub in item.sub_category">
+                        <div  v-for="sub in item.sub_category.slice().reverse()">
                             <b-col class="subCategorySingle">
                                 <h3>{{sub.name}}</h3>
                                 <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
@@ -178,9 +175,7 @@
 
         },
         methods:{
-            changeUploadMethod(){
 
-            },
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
                 this.selectedCategoryID=categoryid;
@@ -215,11 +210,6 @@
                      adminVue.mainCategoryList.push(categoryDataUpload.data);
                  }
 
-
-
-
-
-
                  /*
                 this.$http.post('http://localhost:3000/category', categoryData)
                 .then((result) => {
@@ -242,12 +232,18 @@
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
                         if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
-                            console.log(result.data.sub_category)
+                            console.log(result.data.sub_category);
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
                 });
             },
+
+            categoryUpdate(data){
+                var updateURL='http://localhost:3000/category/edit/'+data._id;
+                var updatedCategory = this.$http.post(updateURL,data);
+            },
+
 
             categoryDelete(id){
 
@@ -283,24 +279,28 @@
 
     .mainCategoryGroup{
         padding-right:15px;
+        background-color: #d2e8ff;
         border-right: 5px solid #d2e8ff;
         float:left;
     }
 
     .mainCategoryTitle{
         font-size: 20px;
+        width: 200px;
     }
 
     .categoryTable{
         margin-left: 20px;
         margin-bottom: 15px;
+        background-color: white;
 
-        border: 5px solid #007bff;
+    border: 5px solid #007bff;
+
     }
 
     .categoryImg{
         width: 160px;
-        background-color: #007bff;
+        background-color: white;
         margin: 20px 20px;
         text-align: center;
         color:white;
@@ -319,6 +319,7 @@
 
     .inputMain{
         margin-top: 15px;
+        margin-bottom: 15px;
     }
 
     .plusbtn{
@@ -327,7 +328,7 @@
     }
 
     .subplusbtn{
-        margin-top: 25px;
+        margin-top: 30px;
         width: 405px;
     }
 
