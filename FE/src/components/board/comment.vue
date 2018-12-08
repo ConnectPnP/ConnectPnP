@@ -64,7 +64,7 @@
                     this.isModify = false;
                     this.$http.post("http://localhost:3000/board/comments/" + this.$route.params.id+ "/"+  this.comment._id, 
                     {
-                        content : comment.content,
+                        content : this.comment.content,
                     })
                     .then((result) => {
                         window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id

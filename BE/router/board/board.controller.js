@@ -162,7 +162,8 @@ exports.getAllComment = (req, res) => {
 
 // 댓글 수정하기
 exports.updateComment = (req, res) => {
-  comment.findOneAndUpdate({_id: req.params.id},
+  console.log(req.body.content)
+  Comment.findOneAndUpdate({_id: req.params.comment},
   { content : req.body.content },(err, result) => {
     if(!err) {
       return res.json({result : "ok"});
