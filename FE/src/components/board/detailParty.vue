@@ -233,7 +233,13 @@
                 })
             },
             showJoinList() {
-                this.$modal.show(JoinList, {members : this.detailPartyInfo.waiting, group : {groupId : this.detailPartyInfo._id, groupTitle : this.detailPartyInfo.title, groupDate : this.detailPartyInfo.meeting_date}}, {
+                this.$modal.show(JoinList, 
+                {
+                    members : this.detailPartyInfo.waiting, 
+                    group : {
+                        groupId : this.detailPartyInfo._id, 
+                        groupTitle : this.detailPartyInfo.title, 
+                        groupDate : this.detailPartyInfo.meeting_date}}, {
                     name: 'joinList',
                     width: '500px',
                     height: '440px',
