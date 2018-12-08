@@ -11,6 +11,10 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
+// [CONFIGURE MONGOOSE]
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
 
 mongoose.connect(config.dbUrl());
 
