@@ -80,7 +80,7 @@
                     }
                 },
                 socket: io.connect('http://localhost:3000', {'forceNew': true}),
-                //현재 chat 참여 리스트 (id, name, imgpath 필요)
+                //현재 chat 참여 리스트 (userId, name, imgpath 필요)
                 participants: [],
                 groups: [],
                 titleImageUrl: 'http://poooo.ml/data/editor/1810/aa7462a202b36ecf40db2f8e44d4f594_1539011087_018.gif',
@@ -97,9 +97,9 @@
             }
         },
         created() {
-            this.setColor('blue');
+            this.setColor('red');
             this.getSocket();
-            this.socket.emit('group',{command:"group",user:this.$cookie.get('userID')})
+            this.socket.emit('group',{command:"group",type:"group",userId:this.$session.get('id')})
         },
         methods: {
             sendMessage(text) {
