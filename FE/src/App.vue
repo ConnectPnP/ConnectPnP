@@ -1,11 +1,15 @@
 <template>
     <div id="app">
-        <top :login_status="loginStatus"/>
-        <router-view></router-view>
-        <chatLauncher class="chat" v-if="loginStatus"></chatLauncher>
-        <div>
-            <recentGroup class="sidebar"></recentGroup>
+        <top/>
+        <div class="wrapper">
+            <div style="width: 90%">
+                <router-view></router-view>
+            </div>
+            <div>
+                <recentGroup class="sidebar"></recentGroup>
+            </div>
         </div>
+        <chatLauncher class="chat" v-if="loginStatus"></chatLauncher>
     </div>
 </template>
 
