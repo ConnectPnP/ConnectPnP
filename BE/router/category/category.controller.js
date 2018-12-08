@@ -10,6 +10,7 @@ const npage = 5;
 exports.createCategory = (req, res) => {
     var newCategory = new Category ({
         name : req.body.name,
+        img_path:req.body.img_path,
         depth : 0
     });
     newCategory.save(function (err) {
