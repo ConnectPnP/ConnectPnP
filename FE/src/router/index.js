@@ -16,7 +16,7 @@ var thisVue = new Vue;
 //관리자로 등록된 유저만 들어갈 수 있도록 만듬.
 const adminRequireAuth = async (to, from, next) => {
   //현재 로그인 중인 유저의 아이디 값으로 정보를 받아옴.
-    var userID= thisVue.$cookie.get('userID');
+    var userID= thisVue.$session.get('userID');
     var userData = await thisVue.$http.get('http://localhost:3000/user/details/'+userID);
     if (pageAuth.AdminPage(userData)) {
         return next();

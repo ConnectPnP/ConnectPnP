@@ -21,8 +21,6 @@ router.get('/sub', categoryCtrl.getAllSubCategory);
 
 router.post('/:cat/sub', categoryCtrl.createSubCategory);
 
-router.post('/:cat/sub/edit/:id',categoryCtrl.updateSubCategory);
-
 router.post('/:cat/sub/delete/:id',categoryCtrl.deleteSubCategory);
 
 module.exports = router;

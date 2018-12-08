@@ -11,9 +11,8 @@ const Schema = mongoose.Schema;
 const CategorySchema = new Schema({
     name: { type: String },
     img_path : {type: String},
-    sub_category : [ {
-        name: {type: String}, 
-        description:{type:String}}]
+    sub_category : [ {type: Number, ref: 'Category'} ],
+    depth : {type : Number, default: 0}
 });
 
 

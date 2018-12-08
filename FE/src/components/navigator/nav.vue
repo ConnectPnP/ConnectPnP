@@ -39,6 +39,11 @@ export default {
     },
     mounted() {
         this.getCategory()
+    },
+    watch:{
+        active :function() {
+            this.getCategory()
+        }
     }
 }
 </script>
