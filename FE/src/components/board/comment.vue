@@ -7,31 +7,56 @@
                        :src="comment.member.avatar_path"
                        rounded="circle" width="75" height="75"
                 />
-                <b>{{comment.member.name}} </b> 
+                <b>{{comment.member.name}} </b>
             </b-col>
             <b-col class="comment-content">
                 <b-form-textarea id="commentModify"
-                                class="content"
-                                     v-if="isModify"
-                                     v-model="comment.content"
-                                     :rows="2">
-                    </b-form-textarea>
+                                 class="content"
+                                 v-if="isModify"
+                                 v-model="comment.content"
+                                 :rows="2">
+                </b-form-textarea>
                 <p v-if="!isModify" class="content">{{comment.content}}</p>
             </b-col>
             <b-col class="btn">
                 <b-btn size="sm" class="btn" variant="secondary"
-                                 @click="replyComment">답글</b-btn>
+                       @click="replyComment">답글
+                </b-btn>
                 <b-btn size="sm" class="btn" variant="secondary"
-                                 @click="modifyComment">수정</b-btn>
+                       @click="modifyComment">수정
+                </b-btn>
                 <b-btn size="sm" class="btn" variant="secondary"
-                                 v-if="!isModify" @click="deleteComment">삭제</b-btn>
+                       v-if="!isModify" @click="deleteComment">삭제
+                </b-btn>
             </b-col>
+            <div v-show="show">
+                <b-col class="comment-content">
+                    <b-form-textarea id="commentModify"
+                                     class="content"
+                                     v-if="isModify"
+                                     v-model="comment.content"
+                                     :rows="2">
+                    </b-form-textarea>
+                    <p v-if="!isModify" class="content">{{comment.content}}</p>
+                </b-col>
+                <b-col class="btn">
+                    <b-btn size="sm" class="btn" variant="secondary"
+                           @click="replyComment">답글
+                    </b-btn>
+                    <b-btn size="sm" class="btn" variant="secondary"
+                           @click="modifyComment">수정
+                    </b-btn>
+                    <b-btn size="sm" class="btn" variant="secondary"
+                           v-if="!isModify" @click="deleteComment">삭제
+                    </b-btn>
+                </b-col>
+            </div>
         </b-row>
     </div>
 </template>
 
 <script>
-/* eslint-disable */
+    /* eslint-disable */
     export default {
         name: "comment",
         props: {
@@ -42,47 +67,59 @@
                     _id: String,
                     name: {
                         type: String,
-                        default() { return "noName";}
+                        default() {
+                            return "noName";
+                        }
                     },
                     age: Number,
                     sex: String,
                     avatar_path: {
                         type: String,
-                        default() { return "http://www.cchannel.com/images/noimg.gif"; }
+                        default() {
+                            return "http://www.cchannel.com/images/noimg.gif";
+                        }
                     },
                     gender: String,
                 },
                 content: String,
                 depth: Number,
                 parentComment: Number,
-                createdAt : String
+                createdAt: String
             }
         },
-        methods: {
-            modifyComment(){
-                if(this.isModify){ // 댓글 수정, 댓글 내용 업데이트
-                    this.isModify = false;
-                    this.$http.post("http://localhost:3000/board/comments/" + this.$route.params.id+ "/"+  this.comment._id, 
-                    {
-                        content : this.comment.content,
-                    })
-                    .then((result) => {
-                        window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
-                    })
-                } else { // 댓글 수정기능 활성화
-                    this.isModify = true;
-                }
-            },
-            deleteComment(){
-                this.$http.delete('http://localhost:3000/board/comments/' + this.$route.params.id+'/'+  this.comment._id)
-                .then((result) => {
-                    window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
-                })
-            },
-            replyComment(){
-                
+        data() {
+            return {
+                show: false
             }
-        }
+        },
+        methods:
+            {
+                modifyComment() {
+                    if (this.isModify) { // 댓글 수정, 댓글 내용 업데이트
+                        this.isModify = false;
+                        this.$http.post("http://localhost:3000/board/comments/" + this.$route.params.id + "/" + this.comment._id,
+                            {
+                                content: this.comment.content,
+                            })
+                            .then((result) => {
+                                window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
+                            })
+                    } else { // 댓글 수정기능 활성화
+                        this.isModify = true;
+                    }
+                }
+                ,
+                deleteComment() {
+                    this.$http.delete('http://localhost:3000/board/comments/' + this.$route.params.id + '/' + this.comment._id)
+                        .then((result) => {
+                            window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
+                        })
+                }
+                ,
+                replyComment() {
+                    this.show = true
+                }
+            }
     }
 </script>
 
@@ -97,7 +134,7 @@
         width: 80%;
     }
 
-    b{
+    b {
         text-align: center;
     }
 
@@ -108,7 +145,6 @@
     .content {
         width: 800px;
     }
-
 
 
 </style>

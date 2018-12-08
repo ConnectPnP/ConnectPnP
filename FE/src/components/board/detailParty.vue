@@ -1,6 +1,6 @@
 <template>
     <div id="dev-detailParty">
-        <modals-container />
+        <modals-container/>
         <b-container>
             <b-row>
                 <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="2"></coverflow>
@@ -27,23 +27,23 @@
                 </b-col>
                 <b-col>
                     <div class="hostBtnGroup" v-if="isHost">
-                            <b-button-group>
-                                <b-button class="btn btn-info" id="js-join-list" href="/party/edit">
-                                    수정
-                                </b-button>
-                                <b-button class="btn btn-info" id="js-edit" @click="deletePost">
-                                    삭제
-                                </b-button>
-                                <b-button class="btn btn-info" id="js-delete" @click="showJoinList">
-                                    신청 리스트
-                                </b-button>
-                            </b-button-group>
+                        <b-button-group>
+                            <b-button class="btn btn-info" id="js-join-list" href="/party/edit">
+                                수정
+                            </b-button>
+                            <b-button class="btn btn-info" id="js-edit" @click="deletePost">
+                                삭제
+                            </b-button>
+                            <b-button class="btn btn-info" id="js-delete" @click="showJoinList">
+                                신청 리스트
+                            </b-button>
+                        </b-button-group>
                     </div>
                     <!-- <div class="guestBtnGroup"> -->
                     <div class="guestBtnGroup" v-if="!isHost">
                         <b-button v-if="!isJoined" class="btn btn-info" @click="joinParty">참여</b-button>
                         <b-button v-if="isJoined" class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
-                        
+
                         <b-modal id="exitParty" @ok="exitParty" title="모임 나가기">
                             <p>정말 나가시겠습니까?</p>
                         </b-modal>
@@ -52,7 +52,7 @@
                 </b-col>
             </b-row>
             <b-row>
-                
+
                 <b-col>
                     <b-tabs>
                         <b-tab id="tabsInfo-detail" title="Detail" active>
@@ -66,14 +66,15 @@
                         </b-tab>
                         <b-tab id="tabsInfo-locationMap" title="Location Map">
                             <!-- Here will be with location map -->
-                            <br><vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="detailPartyInfo.location"
-                                :level.sync="daumMap.level"
-                                :mapTypeId="daumMap.mapTypeId"
-                                :libraries="daumMap.libraries"
-                                @load="onLoad"
+                            <br>
+                            <vue-daum-map :appKey="daumMap.appKey"
+                                          :center.sync="detailPartyInfo.location"
+                                          :level.sync="daumMap.level"
+                                          :mapTypeId="daumMap.mapTypeId"
+                                          :libraries="daumMap.libraries"
+                                          @load="onLoad"
 
-                                style="width:500px;height:400px;"
+                                          style="width:500px;height:400px;"
                             />
                         </b-tab>
                     </b-tabs>
@@ -95,11 +96,12 @@
                     <commentTemplate
                             v-for="comment in detailPartyInfo.comments" :key="comment._id"
                             :comment="comment">
-                          <commentTemplate style="margin-left:30px"
-                            v-for="comment in detailPartyInfo.comments.childParent" :key="comment.childParent._id"
-                            :comment="comment" />
-                            </commentTemplate>
-                            
+                        <commentTemplate style="margin-left:30px"
+                                         v-for="comment in detailPartyInfo.comments.childParent"
+                                         :key="comment.childParent._id"
+                                         :comment="comment"/>
+                    </commentTemplate>
+
                 </div>
             </b-row>
             <br>
@@ -128,11 +130,11 @@
         data() {
             commentContent: "";
             return {
-                detailPartyInfo : {},
-                isHost: false, // host인지 guest인지 
-                isJoined:true, // 이 모임에 참여중인지
-                host : null,
-                currentUser:{
+                detailPartyInfo: {},
+                isHost: false, // host인지 guest인지
+                isJoined: true, // 이 모임에 참여중인지
+                host: null,
+                currentUser: {
                     id: '',
                     user_id: '',
                     nickName: '',
@@ -140,9 +142,9 @@
                     gender: 'female',
                     profile_img: ''
                 },
-                daumMap:{
+                daumMap: {
                     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    center: {lat:37.282908, lng:127.046402},
+                    center: {lat: 37.282908, lng: 127.046402},
                     level: 4,
                     mapTypeId: VueDaumMap.MapTypeId.NORMAL,
                     libraries: [],
@@ -151,22 +153,22 @@
                 coverList: [],
             }
         },
-        computed:{
-            showConditions(){
+        computed: {
+            showConditions() {
                 var condition = '';
                 var gender = this.detailPartyInfo.conditions.gender;
                 var age = this.detailPartyInfo.conditions.age;
-                if(gender == 'none'){
+                if (gender == 'none') {
                     condition += '성별 무관, ';
-                } else if(gender == 'female'){
+                } else if (gender == 'female') {
                     condition += '성별 : 여성, ';
                 } else {
                     condition += '성별 : 남성, ';
                 }
-                if(age[0] == 0 && age[1] == 100){
+                if (age[0] == 0 && age[1] == 100) {
                     condition += '나이 무관';
                 } else {
-                    condition += '나이 : '+ age[0] +'세 이상 ' + age[1]+'세 이하';
+                    condition += '나이 : ' + age[0] + '세 이상 ' + age[1] + '세 이하';
                 }
                 return condition;
             }
@@ -182,12 +184,12 @@
 
             },
             deletePost() {
-                this.$http.delete('http://localhost:3000/board/delete/' +  this.$route.params.id)
-                .then((result) => {
-                    window.location.href = "http://localhost:8080/party/list"
-                })
+                this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)
+                    .then((result) => {
+                        window.location.href = "http://localhost:8080/party/list"
+                    })
             },
-             onLoad(map){
+            onLoad(map) {
                 var bounds = map.getBounds();
 
                 var iwContent = '<br><pre> 아주대학교 </pre>'
@@ -201,71 +203,74 @@
                     content: iwContent
                 });
                 infowindow.open(map, marker)
-                
+
             },
-            joinParty(){
+            joinParty() {
                 // 이미 신청 or 가입 되어있는지 확인해야 함
 
                 var condition = this.detailPartyInfo.conditions;
-                if(((condition.gender == 'none')||(condition.gender == this.currentUser.gender))
-                    &&((this.currentUser.age >= condition.age[0])&&(this.currentUser.age <= condition.age[1]))){
-                        //참여 신청 보내기
-                        this.$http.post('http://localhost:3000/board/join',{
-                            id: this.boardId, // 모임 Id
-                            // user 정보
-                        })
-                        alert("신청 완료 되었습니다.");
+                if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
+                    && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
+                    //참여 신청 보내기
+                    this.$http.post('http://localhost:3000/board/join', {
+                        id: this.boardId, // 모임 Id
+                        // user 정보
+                    })
+                    alert("신청 완료 되었습니다.");
                 } else {
                     alert("조건에 맞지 않아 참여할 수 없습니다!");
                 }
                 this.isJoined = true;
             },
-            exitParty(){
+            exitParty() {
                 // 모임 나가기
                 this.isJoined = false;
             },
-            showJoinList(){
-                this.$modal.show(JoinList,{
+            showJoinList() {
+                this.$modal.show(JoinList, {
                     // 주최자 정보
-                },{
+                }, {
                     name: 'joinList',
                     width: '500px',
                     height: '440px',
                     draggable: true
                 })
             },
-            getPartyDetail () {
+            getPartyDetail() {
                 var vm = this
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
-                .then((result) => {
-                    vm.detailPartyInfo = result.data.board
-                    vm.host = result.data.host
-                    for(var i=0; i < vm.detailPartyInfo.images.length; i++ ) {
-                        this.coverList.push({"cover" : vm.detailPartyInfo.images[i]})
-                    }
-                })
-                .then((result) => {
-                    if(vm.currentUser.user_id == vm.host.user_code) vm.isHost = true;
-                })
+                    .then((result) => {
+                        vm.detailPartyInfo = result.data.board
+                        console.log("result"+result.data.host)
+                        vm.host = result.data.host
+                        for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
+                            this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
+                        }
+                    })
+                    .then((result) => {
+                        console.log(vm.currentUser)
+                        console.log(vm.host)
+                        if (vm.currentUser.user_id == vm.host.user_code) vm.isHost = true;
+                    })
             },
-            createComment (content) {
+            createComment(content) {
                 var vm = this
                 this.$http.defaults.headers.post['Content-Type'] = 'application/json'
                 console.log(vm.currentUser.id)
                 this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
-                {
-                    user_id : vm.currentUser.id,
-                    content : content,
-                    depth : 0,
-                })
-                .then((result) => {
-                    vm.detailPartyInfo = result.data
-                })
+                    {
+                        user_id: vm.currentUser.id,
+                        content: content,
+                        depth: 0,
+                    })
+                    .then((result) => {
+                        vm.detailPartyInfo = result.data
+                    })
             }
         },
         mounted() {
-        this.getUser()
-    }
+            this.getUser()
+        }
     }
 </script>
 
@@ -282,17 +287,17 @@
         bottom: 10px;
     } */
 
-    #tabsInfo-detail
-    {
+    #tabsInfo-detail {
         text-align: left;
         padding-left: 10px;
     }
-    #tabsInfo-locationMap
-    {
+
+    #tabsInfo-locationMap {
         text-align: left;
         padding-left: 10px;
     }
-    .comment-info{
+
+    .comment-info {
         font-size: smaller;
     }
 
