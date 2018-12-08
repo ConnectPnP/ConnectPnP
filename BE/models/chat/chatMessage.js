@@ -9,7 +9,7 @@ const Schema = mongoose.Schema;
  */
 
 const chatMessageSchema = new Schema({
-    author: {type: String, required: true},
+    author: {type: Number, required: true, ref:'User'},
     content: {type: String, required: true},
     dest: {type: String,required:true},
     group: {type: Boolean},

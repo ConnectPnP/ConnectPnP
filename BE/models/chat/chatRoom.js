@@ -9,9 +9,10 @@ const Schema = mongoose.Schema;
  */
 
 const chatRoomSchema = new Schema({
-   name:{type:String},
-    host:{type:String},
-    participants:{type:[String]},
+    name:{type:String},
+    host:{type:Number,ref:'User'},
+    img_path:{type:String},
+    participants:{type:[Number],ref:'User'},
     createdDate:{type:Date,default:Date.now()},
     newMessageReceivedDate: {type:Date,default: Date.now()}
 });
