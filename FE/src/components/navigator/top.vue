@@ -125,42 +125,41 @@
                 var topVuethis = this;
 
                 //카카오에서 받은 토큰으로 유저 데이터 불러오기, 유저가 등록된 회원인지 판별
-                async function afterAuth() {
-                    //유저 데이터 불러오기
-                    var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
-                    var userID = kakaoData.id;
-                    var user_name = kakaoData.properties.nickname.toString();
-                    var profile_path = kakaoData.properties.profile_image.toString();
+               async function  afterAuth (){
+                   //유저 데이터 불러오기
+                   var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
+                   var userID= kakaoData.id;
+                   var user_name = kakaoData.properties.nickname.toString();
+                   var profile_path = kakaoData.properties.profile_image.toString();
 
-                    //유저 이름, 프로필 이미지 쿠키로 저장.
-                    topVuethis.$cookie.set('userID', userID, 1);
-                    topVuethis.$cookie.set('userName', user_name, 1);
-                    topVuethis.$cookie.set('profile_path', profile_path, 1);
+                   //유저 이름, 프로필 이미지 쿠키로 저장.
+                   topVuethis.$cookie.set('userID',userID, 1);
+                   topVuethis.$cookie.set('userName',user_name, 1);
+                   topVuethis.$cookie.set('profile_path',profile_path, 1);
 
-                    topVuethis.$session.set('userID', userID);
-                    topVuethis.$session.set('userName', user_name);
-                    topVuethis.$session.set('profile_path', profile_path);
+                   topVuethis.$session.set('userID',userID);
+                   topVuethis.$session.set('userName',user_name);
+                   topVuethis.$session.set('profile_path',profile_path);
 
 
-                    //유저가 이미 등록된 회원인지 판별.
-                    var getURL = "http://localhost:3000/user/" + userID;
-                    var userResult = await topVuethis.$http.get(getURL);
-                    
+                   //유저가 이미 등록된 회원인지 판별.
+                   var getURL = "http://localhost:3000/user/"+userID;
+                   var userResult = await topVuethis.$http.get(getURL);
 
-                    //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
-                    if (userResult.data.user) {
+                   //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
+                   if(userResult.data.user){
+                       //회원가입 버튼으로 클릭했으면 알림창을 띄운후 로그인 처리
+                       if(btnClick==0){
+                           alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
+                       }
+                       topVuethis.$cookie.set('loginStatus','login', 1);
+                       topVuethis.$session.set('loginStatus','login');
+                       topVuethis.$session.set('id', userResult.data._id);
+                       location.href="/"
 
-                        //회원가입 버튼으로 클릭했으면 알림창을 띄운후 로그인 처리
-                        if (btnClick == 0) {
-                            alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
-                        }
-                        topVuethis.$cookie.set('loginStatus', 'login', 1);
-                        topVuethis.$session.set('loginStatus', 'login');
-                        location.href = "/"
-
-                    } else {  //회원이 아닌 경우 -> 회원가입 창으로
-                        location.href = "/signUp"
-                    }
+                   } else{  //회원이 아닌 경우 -> 회원가입 창으로
+                       location.href="/signUp"
+                   }
                 }
             },
 
