@@ -171,7 +171,6 @@ exports.createComment = (req, res) => {
         populate: { path: 'member', select: '_id  name avatar_path' },
       })
   });
-    window.location.reload()
 };
 
 exports.getAllComment = (req, res) => {

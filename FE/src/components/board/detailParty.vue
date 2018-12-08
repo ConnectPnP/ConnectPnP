@@ -252,6 +252,7 @@
                         depth: 0,
                     })
                     .then((result) => {
+                        window.location.reload()
                     })
 
             },
