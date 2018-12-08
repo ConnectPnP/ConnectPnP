@@ -11,10 +11,27 @@ const npage = 6; // 페이지당 6개 게시글 불러오기
 
 // 게시글 상세보기
 exports.getPost = (req, res) => {
-    Board.findOne({_id: req.params.id}, (err, board) => {
-        if (err) return res.status(500).send(err); // 500 error
-        return res.json(board);
+  Board.findOne({_id: req.params.id}, (err, board) => {
+    if (err) return res.status(500).send(err); // 500 error
+    User.findOne({user_code : board.host}, (err, user) => {
+      return res.json({ "board" : board, "host" : user});
     })
+  })
+  .populate('comments')
+  .populate({
+    path: 'comments',
+    populate: { path: 'member', select: '_id  name avatar_path' },
+  })
+  .populate({
+    path: 'category',
+    select: 'name',
+  })
+  .populate({
+    path: 'subCategory',
+    select: 'name',
+  })
+  .exec(function(error, comments) {
+  });
 };
 
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
@@ -29,11 +46,13 @@ exports.getMore = (req, res) => {
 // //post create edit delete
 // // 게시글 생성하기
 exports.create = (req, res) => {
-    console.log(req.body)
-    Board.create(req.body, (err, result) => {
-        if (err) return res.status(500).send(err); // 500 error
-        return res.json(result);
-    });
+  console.log(req.body)
+  Board.create( req.body , (err, result) => {
+    if (err) {
+      console.log(err)
+      return res.status(500).send(err); }// 500 error
+    return res.json(result);
+  });
 };
 
 // 모든 게시글 상세보기
@@ -124,12 +143,31 @@ exports.deletePost = (req, res) => {
 //comment create edit delete
 // 댓글 생성하기
 exports.createComment = (req, res) => {
-    Board.findOneAndUpdate({_id: req.params.id}, {$push: {comments: {content: req.body.content}}},
-        (err, board) => {
-            if (!err) {
-                return res.json({result: board});
-            } else return res.json(err);
-        });
+  var newComment = new Comment({
+    member: req.body.user_id,
+    content : req.body.content,
+    depth : req.body.depth,
+    parentComment : req.body.parentComment,
+  });
+  newComment.save(function (err) {
+    if (err) return res.json(err);
+    Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :  newComment._id}},
+      (err, board) => {
+        if(!err) {
+          return res.json(board);
+        }
+        else return res.json(err);
+      });
+  });
+};
+
+exports.getAllComment = (req, res) => {
+  Comment.find({},(err, result) => {
+    if(!err) {
+      return res.json(result);
+    }
+    else return res.json({result : "fail"});
+  });
 };
 
 // 댓글 수정하기

@@ -180,6 +180,7 @@
             '_locationText', '_location', '_cost', '_conditions', '_file', '_categoryId'],
         data() {
             return {
+                currentUser: '',
                 formData: new FormData(),
                 dateFormat: 'YYYY-MM-DD',
                 todayDate: '',
@@ -203,7 +204,7 @@
                             age: [0, 100],
                         },
                         file_array: [],
-                        selected_category_id: null,
+                        selected_category_id: {},
                         selected_subcategory_id: null
                     },
                 gender: [
@@ -215,12 +216,14 @@
                     {text: '상관 없음', value: 'none'},
                     {text: '직접 설정', value: 'selectAge'}
                 ],
-                categoryList1: [{value: null, text: '--- 대분류 ---', disabled: true}],
+                categoryList1: [{value: {}, text: '--- 대분류 ---', disabled: true}],
                 categoryList2: [],
                 subCategoryList: [],
             }
         },
         mounted() {
+            this.currentUser = this.$session.get('userID');
+
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
 
@@ -277,6 +280,7 @@
                 } else if (party.file_array.length < 3) {
                     alert("최소 3장의 사진을 올려주세요!");
                 } else {
+                    console.log("category Id : " + party.selected_category_id.id);
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                     this.$http.post('http://localhost:3000/board', {
                         title: party.title,
@@ -286,21 +290,41 @@
                         min_num: party.number_of_member[0],
                         max_num: party.number_of_member[1],
                         cost: party.cost,
-                        category_id: party.selected_subcategory_id,
+                        category: party.selected_category_id.id,
+                        subCategory: party.selected_subcategory_id,
                         conditions: {gender: party.conditions.gender, age: party.conditions.age},
                         detail: party.detail,
                         location: party.location,
-                        // host :,
+                        locationText: party.locationText,
+                        host: this.currentUser
                     })
                     // 이미지 업로드
                         .then((result) => {
+                            console.log(result)
                             boardId = result.data._id
-                            this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                            this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
                         })
-                        .then(()=> {
+                        .then(() => {
                             window.location.href = "http://localhost:8080/party/detail/" + boardId
                         })
                 }
+            },
+            onLoad(map) {
+                this.daumMap.map = map;
+                // var bounds = map.getBounds();
+                // var boundsStr = bounds.toString();
+
+                // var iwContent = '<br><pre> 아주대학교 </pre>'
+                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
+                // var marker = new daum.maps.Marker({
+                //     position: iwPosition,
+                //     map: map
+                // });
+                // var infowindow = new daum.maps.InfoWindow({
+                //     position: iwPosition,
+                //     content: iwContent
+                // });
+                // infowindow.open(map, marker)
             },
             changeAgeCondition() {
                 if (this.party_form.conditions.selectAge == 'none') {
@@ -321,7 +345,7 @@
                 party.cost = this._cost;
                 party.conditions = this._conditions;
                 party.file_array = this._file;
-                party.selected_category_id = this._categoryId;
+                party.selected_category_id.id = this._categoryId;
                 // alert(party.title);
             },
             getCategoryList() {
@@ -329,26 +353,29 @@
                 this.$http.get('http://localhost:3000/category')
                     .then((result) => {
                         // get category list
-                        for (var k = 0; k < result.data.length; k++) {
-                            var categoryOption = '{"value" : "' + k + '", "text" : "' + result.data[k].name + '"}';
+                        console.log(result.data)
+                        for (var i = 0; i < result.data.length; i++) {
+                            var categoryOption = '{"value" : { "index": "' + i + '", "id": "' + result.data[i]._id + '"}, "text" : "' + result.data[i].name + '"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
-
                         }
 
+                        console.log(vm.categoryList1)
                         // get sub category list
                         for (var i = 0; i < result.data.length; i++) {
-                            var categoryOption2 = [{value: null, text: '--- 소분류 ---', disabled: true}];
+                            var categoryOption = [{value: null, text: '--- 소분류 ---', disabled: true}];
                             for (var j = 0; j < result.data[i].sub_category.length; j++) {
                                 var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "' + result.data[i].sub_category[j].name + '"}';
-                                categoryOption2.push(JSON.parse(option));
+                                categoryOption.push(JSON.parse(option));
                             }
-                            vm.subCategoryList.push(categoryOption2);
+                            vm.subCategoryList.push(categoryOption);
                         }
+                        console.log(vm.subCategoryList);
                     });
             },
             showSubCategory(select) {
                 this.party_form.selected_subcategory_id = null;
-                this.categoryList2 = this.subCategoryList[select];
+                // this.party_form.selected_category_id = select.id;
+                this.categoryList2 = this.subCategoryList[select.index];
             },
             showSearchMap() {
                 this.$modal.show(SearchMap, {}, {

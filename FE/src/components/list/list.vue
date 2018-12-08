@@ -7,7 +7,7 @@
             <b-form-select v-model="firstSelect" :options="select1" @change="selectOption1" />
             <b-form-select v-if="(firstSelect==0)||(firstSelect==1)"
                 v-model="secondSelect" :options="select2" @change="selectOption2" />
-            <b-form-select v-if="(firstSelect==0)&&(secondSelect!=null)" v-model="thirdSelect" :options="select3" />
+            <b-form-select v-if="(firstSelect==0)&&(secondSelect!=null)" v-model="selected_subcategory_id" :options="select3" />
         </b-input-prepend>
         <b-form-input type="text" placeholder="Search"/>
             <b-input-group-append>
@@ -54,7 +54,8 @@ export default {
   data(){
       return {
           currentPage: 0,
-          firstSelect: null, secondSelect:null, thirdSelect:null,
+          firstSelect: null, secondSelect:{},
+          selected_category_id: null, selected_subcategory_id: null,
             select1 : [
                 { value: null, text: '--검색--', disabled:true},
                 { value: 0, text: '카테고리'},
@@ -64,15 +65,13 @@ export default {
             select2: [ ],
             select3: [ ],
             hostSearchOption: [
-                { value: null, text: '--필터--', disabled:true},
+                { value: {}, text: '--필터--', disabled:true},
                 { value: 21, text: 'ID'},
                 { value: 22, text: '닉네임'}
             ],
-            categoryList1: [ ], // 카테고리 대분류
+            categoryList1: [{ value: {}, text: '--- 대분류 ---', disabled:true}], // 카테고리 대분류
             categoryList2:[ ], // 카테고리 소분류
-            
-          groupList : [
-          ]
+          groupList : []
       }
   },
   mounted(){
@@ -103,7 +102,8 @@ export default {
             this.thirdSelect = null;
             if(this.firstSelect == 0){
                 if(select != null){
-                    this.select3 = this.categoryList2[select];
+                    this.select3 = this.categoryList2[select.index];
+                    this.selected_category_id = select.id;
                 }
             }
         },
@@ -112,14 +112,15 @@ export default {
                 this.$http.get('http://localhost:3000/category')
                 .then((result) => {
                     // get category list
+                    console.log(result.data)
                     for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                            var categoryOption = '{"value" : { "index": "'+i+'", "id": "' + result.data[i]._id + '"}, "text" : "'+ result.data[i].name+'"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
                     }
-
+                    
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
-                        var categoryOption = [];
+                        var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];
                         for(var j=0; j<result.data[i].sub_category.length ; j++){
                             var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
                             categoryOption.push(JSON.parse(option));
