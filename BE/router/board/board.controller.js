@@ -116,37 +116,21 @@ exports.deletePost = (req, res) => {
 };
 
 
-// exports.searchPost = (req, res) => {
-//   var type = req.params.type;
-//   switch(type)
-//   {
-//     case "0" : // 전체
-//       Board.find({$or : [{"title" : req.body.query}, {"author_name" :req.body.query}]}, (err,result) => {
-//         if(err) return res.json({ result : "fail"});
-//         else return res.json(result);
-//       });
-//       break;
+exports.searchPost = (req, res) => {
+  var page = req.params.page
+  Board.find(req.body, (err,result) => {
+    if(err) return res.json({ result : "fail"});
+    else return res.json(result);
+  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
+};
 
-//     case "1" : // author name
-//       Board.find({author_name : req.body.query}, (err, result) => {
-//         if(err) return res.json({ result : "fail"});
-//         else return res.json(result);
-//       });
-//       break;
-
-//     case "2" : // title
-//     Board.find({title : req.body.query}, (err, result) => {
-//       if(err) return res.json({ result : "fail"});
-//       else return res.json(result);
-//     });
-//       break;
-
-//     default : // error
-//       return res.json({ result : "fail"});
-//       break;
-//   }
-// };
-
+exports.searchUser = (req, res) => {
+  User.find(req.body, (err, result) => {
+    if(!err) {
+      return res.json({_id : result._id})
+    } else return res.json({result: "fail"});
+  })
+}
 
 //comment create edit delete
 // 댓글 생성하기

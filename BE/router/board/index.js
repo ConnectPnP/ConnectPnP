@@ -9,8 +9,9 @@ router.get('/details/:id',boardCtrl.getPost);
 // 게시판 보기
 router.get('/list/:page/:category',boardCtrl.getMore);
 
-// // 게시판 검색
-// router.post('/search/:type',boardCtrl.searchPost);
+// 게시판 검색
+router.post('/search/:page',boardCtrl.searchPost);
+router.post('/searchUser', boardCtrl.searchUser);
 
 // // post create edit delete
 router.post('/', boardCtrl.create);
