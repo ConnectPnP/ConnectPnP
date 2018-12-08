@@ -48,7 +48,8 @@
         data() {
             return {
                 user_name: String,
-                profile_path: String
+                profile_path: String,
+                socket:''
             }
         },
         created: function () {
@@ -144,8 +145,7 @@
                     //유저가 이미 등록된 회원인지 판별.
                     var getURL = "http://localhost:3000/user/" + userID;
                     var userResult = await topVuethis.$http.get(getURL);
-
-                    this.socket.emit('group', {command: 'group', user: userID})
+                    
 
                     //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
                     if (userResult.data.user) {

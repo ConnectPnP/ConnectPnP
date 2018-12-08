@@ -8,6 +8,7 @@
 
 <script>
     import top from '@/components/navigator/top'
+    import chatLauncher from '@/components/chat/content/Launcher'
 
     export default {
         name: 'app',
