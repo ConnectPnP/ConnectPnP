@@ -272,6 +272,9 @@
                 else if(party.date < party.recruitment_period_dateTwo){
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 }
+                else if(party.file_array.length<3){
+                    alert("최소 3장의 사진을 올려주세요!");
+                }
                 else {
 
                 this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
