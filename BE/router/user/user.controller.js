@@ -41,8 +41,7 @@ exports.findUser= (req,res)=>{
             //서버에 현재 로그인 된 유저 아이디값 저장.
             global.currentUser=userid;
             console.log("현재 유저 아이디: "+global.currentUser);
-
-            res.send({user:true});
+            res.send({user:true, _id : user._id});
         }
 
     });

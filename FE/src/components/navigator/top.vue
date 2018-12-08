@@ -141,13 +141,13 @@
 
                    //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료
                    if(userResult.data.user){
-
                        //회원가입 버튼으로 클릭했으면 알림창을 띄운후 로그인 처리
                        if(btnClick==0){
                            alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
                        }
                        topVuethis.$cookie.set('loginStatus','login', 1);
                        topVuethis.$session.set('loginStatus','login');
+                       topVuethis.$session.set('id', userResult.data._id);
                        location.href="/"
 
                    } else{  //회원이 아닌 경우 -> 회원가입 창으로
