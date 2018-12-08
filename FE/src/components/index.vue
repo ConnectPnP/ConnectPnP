@@ -45,7 +45,7 @@
         <div>
             <button v-on:click='moreBtn' type="button" class="btn btn-outline-primary moreButton">더보기</button>
         </div>
-\
+
 
 
 
@@ -123,7 +123,7 @@ import Review from './reviewPopup/Review.vue'
 
             console.log(this.id);
 
-            
+
         },
         mounted: function() {
             this.getCategoryList();
@@ -168,7 +168,7 @@ import Review from './reviewPopup/Review.vue'
                             num++;
                         }
                     }
-                    
+
                     console.log(this.recommendedList);
 
                     });
@@ -185,8 +185,8 @@ import Review from './reviewPopup/Review.vue'
             //         }
             //         this.userInterestedCategory = catListtemp;
             //         console.log(catListtemp);
-                    
-                    
+
+
 
 
 
