@@ -13,7 +13,7 @@
                         <h1>{{detailPartyInfo.title}}</h1>
 
                         <hr>
-                        Host : <b> {{detailPartyInfo.host}} </b> <br>
+                        Host : <b> {{host.name}} </b> <br>
                         Location : <b> {{detailPartyInfo.locationText}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
@@ -82,7 +82,7 @@
             <hr>
             <!--<p class="comment-info" style="text-align: left;padding-left: 30px">댓글 수 : {{detailPartyInfo.comments.length}} 조회수 : 0</p>-->
             <b-row>
-                <b-input-group :prepend=currentUserEx.name
+                <b-input-group :prepend=currentUser.nickName
                                style="padding-top: 2px;padding-left: 30px; padding-right: 10px; width: 90%">
                     <b-form-input v-model="content"></b-form-input>
                     <b-input-group-append>
@@ -126,12 +126,14 @@
                 detailPartyInfo : {},
                 isHost: false, // host인지 guest인지 
                 isJoined:true, // 이 모임에 참여중인지
-                currentUserEx:{
-                    user_code: 'abcd',
-                    name: 'wow',
-                    age: 12,
+                host : null,
+                currentUser:{
+                    id: '',
+                    user_id: '',
+                    nickName: '',
+                    age: 14,
                     gender: 'female',
-                    profile_img: 'http://image.chosun.com/sitedata/image/201809/20/2018092000716_0.jpg'
+                    profile_img: ''
                 },
                 daumMap:{
                     appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
@@ -195,6 +197,15 @@
             }
         },
         methods: {
+            getUser() {
+                this.currentUser.user_id = this.$session.get('userID');
+                this.currentUser.nickName = this.$session.get('userName');
+                this.currentUser.profile_img = this.$session.get('profile_path');
+                this.currentUser.id = this.$session.get('id');
+                console.log("current User :" + this.currentUser.id)
+                this.getPartyDetail();
+
+            },
             deletePost() {
                 this.$http.delete('http://localhost:3000/board/delete/' +  this.$route.params.id)
                 .then((result) => {
@@ -221,8 +232,8 @@
                 // 이미 신청 or 가입 되어있는지 확인해야 함
 
                 var condition = this.detailPartyInfo.conditions;
-                if(((condition.gender == 'none')||(condition.gender == this.currentUserEx.gender))
-                    &&((this.currentUserEx.age >= condition.age[0])&&(this.currentUserEx.age <= condition.age[1]))){
+                if(((condition.gender == 'none')||(condition.gender == this.currentUser.gender))
+                    &&((this.currentUser.age >= condition.age[0])&&(this.currentUser.age <= condition.age[1]))){
                         //참여 신청 보내기
                         this.$http.post('http://localhost:3000/board/join',{
                             id: this.boardId, // 모임 Id
@@ -252,20 +263,25 @@
                 var vm = this
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
                 .then((result) => {
-                    // console.log(result)
-                    vm.detailPartyInfo = result.data
+                    vm.detailPartyInfo = result.data.board
+                    vm.host = result.data.host
                     for(var i=0; i < vm.detailPartyInfo.images.length; i++ ) {
                         this.coverList.push({"cover" : vm.detailPartyInfo.images[i]})
                     }
+                })
+                .then((result) => {
+                    if(vm.currentUser.user_id == vm.host.user_code) vm.isHost = true;
                 })
             },
             createComment (content) {
                 var vm = this
                 this.$http.defaults.headers.post['Content-Type'] = 'application/json'
+                console.log(vm.currentUser.id)
                 this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
                 {
-                    // 추가 post data 입력
-                    content : content
+                    user_id : vm.currentUser.id,
+                    content : content,
+                    depth : 0,
                 })
                 .then((result) => {
                     console.log(result)
@@ -274,7 +290,7 @@
             }
         },
         mounted() {
-        this.getPartyDetail()
+        this.getUser()
     }
     }
 </script>

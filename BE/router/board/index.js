@@ -22,6 +22,7 @@ router.post('/edit/:id',boardCtrl.updatePost);
 router.delete('/delete/:id',boardCtrl.deletePost);
 
 // // comment create edit delete
+router.get('/comments', boardCtrl.getAllComment);
 router.post('/comments/:id',boardCtrl.createComment); // 게시글 id
 router.post('/comments/:id/:comment',boardCtrl.updateComment);
 router.delete('/comments/:id/:comment', boardCtrl.deleteComment);

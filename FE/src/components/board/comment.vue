@@ -3,11 +3,11 @@
     <div>
         <b-row class="comment">
             <b-col cols="1" class="comment-profile">
-                <!--<b-img left
-                       :src="comment.member.profile_img"
+                <b-img left
+                       :src="comment.member.avatar_path"
                        rounded="circle" width="75" height="75"
                 />
-                <b>{{comment.member.name}} </b> -->
+                <b>{{comment.member.name}} </b> 
             </b-col>
             <b-col class="comment-content">
                 <b-form-textarea id="commentModify"
@@ -46,7 +46,7 @@
                     },
                     age: Number,
                     sex: String,
-                    profile_img: {
+                    avatar_path: {
                         type: String,
                         default() { return "http://www.cchannel.com/images/noimg.gif"; }
                     },

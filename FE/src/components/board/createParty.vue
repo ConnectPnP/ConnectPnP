@@ -185,6 +185,7 @@
             '_locationText','_location','_cost','_conditions','_file','_categoryId'],
         data() {
             return {
+                currentUser : '',
                 formData : new FormData(),
                 dateFormat: 'YYYY-MM-DD',
                 todayDate: '',
@@ -257,6 +258,7 @@
             }
         },
         mounted(){
+            this.currentUser = this.$session.get('userID');
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
 
@@ -313,7 +315,7 @@
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 }
                 else {
-
+                console.log("userId : " + this.currentUser)
                 this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                 this.$http.post('http://localhost:3000/board', {
                     title : party.title,
@@ -328,7 +330,7 @@
                     detail: party.detail,
                     location : party.location,
                     locationText : party.locationText,
-                    // host :,
+                    host : this.currentUser
             })
             // 이미지 업로드
             .then((result) => {

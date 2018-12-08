@@ -9,7 +9,7 @@ const Schema = mongoose.Schema;
 */
 
 const GroupSchema = new Schema({
- category_id : {type : mongoose.Schema.Types.ObjectId, ref:'Category'},
+ category_id : {type : String, ref:'Category'},
  title : {type : String},
  detail : {type: String},
  conditions : { gender : {type: String}, age : [{type: Number}] },
@@ -24,16 +24,12 @@ const GroupSchema = new Schema({
  images : [{type:String}],
  locationText : {type: String},
  location: {lat:{type: String}, lng: {type: String}},
- host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
- comments : [{
-    member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
-    content : {type: String},
-    depth : {type: Number},
-    parentComment : {type : mongoose.Schema.Types.ObjectId, ref:'Comment'},
-    createdAt : {type: Date, default: Date.now}
- }],
+ host : {type : String},
+ comments : [
+    {type : Number, ref:'Comment'}
+ ],
  guest: [
-    {type : mongoose.Schema.Types.ObjectId, ref:'User'}
+    {type : Number, ref:'User'}
  ]
 });
 
