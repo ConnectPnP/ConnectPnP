@@ -28,7 +28,7 @@ router.post('/comments/:id/:comment',boardCtrl.updateComment);
 router.delete('/comments/:id/:comment', boardCtrl.deleteComment);
 
 // comment's reply
-router.post('/reply', boardCtrl.createCommentReply);
+router.post('/reply/:id', boardCtrl.createCommentReply);
 router.delete('/reply/:comment/:reply', boardCtrl.deleteCommentReply);
 
 module.exports = router;

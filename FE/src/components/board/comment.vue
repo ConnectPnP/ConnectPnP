@@ -5,9 +5,9 @@
             <b-col cols="1" class="comment-profile">
                 <b-img left
                        :src="comment.member.avatar_path"
-                       rounded="circle" width="75" height="75"
+                       rounded="circle" width="50px" height="50px"
                 />
-                <b>{{comment.member.name}} </b>
+                <p>{{comment.member.name}} </p>
             </b-col>
             <b-col class="comment-content">
                 <b-form-textarea id="commentModify"
@@ -19,39 +19,27 @@
                 <p v-if="!isModify" class="content">{{comment.content}}</p>
             </b-col>
             <b-col class="btn">
-                <b-btn size="sm" class="btn" variant="secondary"
+                <b-btn size="sm" class="btn" variant="secondary" v-if="!show && comment.depth == 0"
                        @click="replyComment">답글
                 </b-btn>
-                <b-btn size="sm" class="btn" variant="secondary"
+                <b-btn size="sm" class="btn" variant="secondary"  v-if="currentUser.id == comment.member._id"
                        @click="modifyComment">수정
                 </b-btn>
-                <b-btn size="sm" class="btn" variant="secondary"
-                       v-if="!isModify" @click="deleteComment">삭제
+                <b-btn size="sm" class="btn" variant="secondary"  
+                       v-if="!isModify && currentUser.id == comment.member._id" @click="deleteComment">삭제
                 </b-btn>
             </b-col>
-            <div v-show="show">
-                <b-col class="comment-content">
-                    <b-form-textarea id="commentModify"
-                                     class="content"
-                                     v-if="isModify"
-                                     v-model="comment.content"
-                                     :rows="2">
-                    </b-form-textarea>
-                    <p v-if="!isModify" class="content">{{comment.content}}</p>
-                </b-col>
-                <b-col class="btn">
-                    <b-btn size="sm" class="btn" variant="secondary"
-                           @click="replyComment">답글
-                    </b-btn>
-                    <b-btn size="sm" class="btn" variant="secondary"
-                           @click="modifyComment">수정
-                    </b-btn>
-                    <b-btn size="sm" class="btn" variant="secondary"
-                           v-if="!isModify" @click="deleteComment">삭제
-                    </b-btn>
-                </b-col>
-            </div>
         </b-row>
+        <div v-show="show">
+            <b-row>
+                <b-input-group :prepend=currentUser.nickName style = "padding-left:60px;"> 
+                    <b-form-input v-model="reply"></b-form-input>
+                    <b-input-group-append>
+                        <b-btn variant="info" @click="createReply()"> Enter</b-btn>
+                    </b-input-group-append>
+                </b-input-group>
+            </b-row>
+        </div>
     </div>
 </template>
 
@@ -61,8 +49,18 @@
         name: "comment",
         props: {
             isModify: false,
+            reply : '',
+            currentUser: {
+                    id: '',
+                    user_id: '',
+                    nickName: '',
+                    age: 14,
+                    gender: 'female',
+                    profile_img: ''
+                },
             comment: {
                 _id: String,
+                depth : Number,
                 member: {
                     _id: String,
                     name: {
@@ -118,6 +116,14 @@
                 ,
                 replyComment() {
                     this.show = true
+                },
+                createReply() {
+                    this.$http.post('http://localhost:3000/board/reply/' + this.comment._id, 
+                    {
+                        content : this.reply , user_id : this.currentUser.id})
+                    .then((result) => {
+                        window.location.reload();
+                    })
                 }
             }
     }

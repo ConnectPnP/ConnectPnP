@@ -92,16 +92,14 @@
                 </b-input-group>
             </b-row>
             <b-row>
-                <div>
+                <div v-for="comment in detailPartyInfo.comments" :key="comment._id">
                     <commentTemplate
-                            v-for="comment in detailPartyInfo.comments" :key="comment._id"
-                            :comment="comment">
-                        <commentTemplate style="margin-left:30px"
-                                         v-for="comment in detailPartyInfo.comments.childParent"
-                                         :key="comment.childParent._id"
-                                         :comment="comment"/>
+                            :comment="comment" :currentUser="currentUser">
                     </commentTemplate>
-
+                    <commentTemplate style="padding-left:50px;"
+                            v-for="reply in comment.childComment" :key="reply._id"
+                            :comment="reply" :currentUser="currentUser">
+                    </commentTemplate>
                 </div>
             </b-row>
             <br>
@@ -264,7 +262,7 @@
                         depth: 0,
                     })
                     .then((result) => {
-                        vm.detailPartyInfo = result.data
+                        window.location.reload();
                     })
             }
         },

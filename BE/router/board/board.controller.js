@@ -25,7 +25,7 @@ exports.getPost = (req, res) => {
   .populate({
     path: 'comments',
     populate: { 
-        path: 'childParent', select: 'member _id content createdAt', 
+        path: 'childComment', select: 'member _id content createdAt', 
         populate: {path : 'member', select : '_id name avatar_path'
       } 
     },
@@ -203,12 +203,17 @@ exports.createCommentReply = (req, res) => {
     content : req.body.content,
     depth : 1,
   });
-  Comment.findOneAndUpdate({_id : req.params.id}, {$push : {childParent : newComment._id}}, {new:true}, (err, result) => {
-    if(!err) {
-      return res.json(result);
-    }
-    else return res.json({result : "fail"});
-  });
+  newComment.save(function (err) {
+    if (err) return res.json(err);
+    Comment.findOneAndUpdate({_id : req.params.id}, {$push : {childComment : newComment._id}}, {new:true}, (err, result) => {
+      if(!err) {
+        console.log(result)
+        return res.json(result);
+      }
+      else return res.json({result : "fail"});
+    });
+  }); 
+  
 }
 
 exports.deleteCommentReply = (req, res) => {
