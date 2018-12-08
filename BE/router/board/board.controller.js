@@ -22,6 +22,14 @@ exports.getPost = (req, res) => {
     path: 'comments',
     populate: { path: 'member', select: '_id  name avatar_path' },
   })
+  .populate({
+    path: 'category',
+    select: 'name',
+  })
+  .populate({
+    path: 'subCategory',
+    select: 'name',
+  })
   .exec(function(error, comments) {
     console.log(comments.comments)
   });
@@ -39,6 +47,7 @@ exports.getMore = (req, res) => {
 // //post create edit delete
 // // 게시글 생성하기
 exports.create = (req, res) => {
+  console.log(req.body)
   Board.create( req.body , (err, result) => {
     if (err) {
       console.log(err)

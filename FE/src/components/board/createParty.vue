@@ -325,7 +325,8 @@
                     min_num : party.number_of_member[0],
                     max_num : party.number_of_member[1],
                     cost : party.cost,
-                    category_id : party.selected_subcategory_id,
+                    category : party.selected_category_id,
+                    subCategory : party.selected_subcategory_id,
                     conditions : { gender : party.conditions.gender, age : party.conditions.age},
                     detail: party.detail,
                     location : party.location,
@@ -335,12 +336,12 @@
             // 이미지 업로드
             .then((result) => {
                 console.log(result)
-                boardId = result.data._id
-                this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                // boardId = result.data._id
+                // this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             })
-            .then(()=> {
-                window.location.href = "http://localhost:8080/party/detail/" + boardId
-            })
+            // .then(()=> {
+            //     window.location.href = "http://localhost:8080/party/detail/" + boardId
+            // })
                 }
             },
             onLoad(map){
@@ -419,11 +420,9 @@
                 .then((result) => {
                     // get category list
                     for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                            var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
-
                     }
-
                     // get sub category list
                     for(var i=0; i<result.data.length; i++) {
                         var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];

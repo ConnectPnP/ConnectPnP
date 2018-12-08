@@ -9,7 +9,8 @@ const Schema = mongoose.Schema;
 */
 
 const GroupSchema = new Schema({
- category_id : {type : String, ref:'Category'},
+ category : {type : Number, ref:'Category'},
+ subCategory : {type: Number, ref:'Category'},
  title : {type : String},
  detail : {type: String},
  conditions : { gender : {type: String}, age : [{type: Number}] },

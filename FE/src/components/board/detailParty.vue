@@ -17,7 +17,7 @@
                         Location : <b> {{detailPartyInfo.locationText}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
-                        Category : <b> {{detailPartyInfo.category_id}}</b><br>
+                        Category : <b> {{detailPartyInfo.category.name}} > {{detailPartyInfo.subCategory.name}}</b><br>
                         <!--숫자 슬라이더 바를 통해서 min과 max표시하고 현재 모인 멤버 수를 표현해주는 방식 생각해보기-->
                         Min number of member : <b> {{detailPartyInfo.min_num}}</b><br>
                         Max number of member : <b> {{detailPartyInfo.max_num}}</b><br>
@@ -264,6 +264,7 @@
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
                 .then((result) => {
                     vm.detailPartyInfo = result.data.board
+                    console.log(result.data.board)
                     vm.host = result.data.host
                     for(var i=0; i < vm.detailPartyInfo.images.length; i++ ) {
                         this.coverList.push({"cover" : vm.detailPartyInfo.images[i]})
