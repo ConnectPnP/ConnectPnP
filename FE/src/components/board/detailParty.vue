@@ -3,7 +3,7 @@
         <modals-container/>
         <b-container>
             <b-row>
-                <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="0"></coverflow>
+                <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="Math.ceil(this.coverList.length/2)-1"></coverflow>
 
                 <b-col cols="6">
                     <b-card class="text-left"
