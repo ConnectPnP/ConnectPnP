@@ -14,6 +14,11 @@ const server = app.listen(port, function(){
  console.log("Express server has started on port " + port)
 });
 
+// [CONFIGURE MONGOOSE]
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useNewUrlParser', true);
+
 mongoose.connect(config.dbUrl());
 
 // [CONFIGURE FOR CHAT]
@@ -85,7 +90,7 @@ io.sockets.on('connection', function (socket) {
             }
         } else if (message.command == 'groupchat') {
             // 방에 들어있는 모든 사용자에게 메시지 전달
-            socket.join(message.dest);
+
             io.to(message.dest).emit('message', message)
 
             // 응답 메시지 전송
@@ -225,7 +230,7 @@ db.once('open', () => {
 });
 autoIncrement.initialize(db);
 
-
+app.use(cors())
 app.use((req, res, next) =>{
   res.header("Access-Control-Allow-Origin", "*")
   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');

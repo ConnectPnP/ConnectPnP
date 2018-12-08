@@ -89,6 +89,9 @@ exports.getRoomList = (socket, userID) => {
         var room_id_list = roomList.map((room) => {
             return room._id
         })
+        room_id_list.forEach((id)=>{
+            socket.join(id);
+        })
 
         chatMessage.find({dest: {"$in": room_id_list}}).sort({dest: 'desc', date: 'asc'}).exec(function (err, list) {
             if (err) {
