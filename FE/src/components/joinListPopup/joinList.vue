@@ -1,20 +1,11 @@
 <template>
 <div id="joinList">
-
     <h3>신청자 리스트</h3>
-
     <b-carousel class="carousel" indicators controls :interval="0">
         <div v-for="member in members">
-            <joinSlide :groupTitle=member.memberInfo.group 
-                :groupDate=member.memberInfo.date
-                :starRating=member.memberInfo.score
-                :memberNickName=member.memberInfo.nickname 
-                :memberImg=member.memberInfo.memberImg />
+            <joinSlide :member=member :group=group />
         </div>
     </b-carousel>
-
-    <b-btn class="btnGroup" size="sm" variant="primary">수락</b-btn> 
-    <b-btn class="btnGroup" size="sm" variant="primary">거절</b-btn> 
 
 </div>
 </template>
@@ -26,53 +17,25 @@ export default {
   components: {
       joinSlide
   },
-  data(){
-      return {
-          members: [
-                {
-                    id:1,
-                    memberInfo: {
-                        group: "보드게임 하쟈",
-                        date: "2018/11/10",
-                        score: "3.0",
-                        nickname: "Won",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:2,
-                    memberInfo: {
-                        group: "보드게임 하쟈",
-                        date: "2018/11/10",
-                        score: "2.0",
-                        nickname: "Kim",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:3,
-                    memberInfo: {
-                        group: "놀이공원 기기",
-                        date: "2018/11/08",
-                        score: "4.0",
-                        nickname: "Park",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:4,
-                    memberInfo: {
-                        group: "놀이공원 기기",
-                        date: "2018/11/08",
-                        score: "4.0",
-                        nickname: "Na",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                }
-            ]
-      }
-  }
+  props: {
+        members : [
+            {
+                _id : {type: Number},
+                name : {type : String},
+                avatar_path : {type : String},
+                gender : {type : String},
+                age : {type : Number},
+                star_rate : {type : Number}
+            }
+        ],
+        group : {
+            groupId : {type : Number},
+            groupTitle : {type: String},
+            groupDate : {type: String}
+        }
+    }
 }
+
 </script>
 
 <style>

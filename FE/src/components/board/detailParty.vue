@@ -202,10 +202,6 @@
                 if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
-                    console.log("currentUser")
-                    console.log(vm.currentUser.id)
-                    console.log("id")
-                    console.log(vm.detailPartyInfo._id)
                     this.$http.post('http://localhost:3000/board/wait', {
                         group: vm.detailPartyInfo._id, // 모임 Id
                         user : vm.currentUser.id
@@ -237,9 +233,7 @@
                 })
             },
             showJoinList() {
-                this.$modal.show(JoinList, {
-                    // 주최자 정보
-                }, {
+                this.$modal.show(JoinList, {members : this.detailPartyInfo.waiting, group : {groupId : this.detailPartyInfo._id, groupTitle : this.detailPartyInfo.title, groupDate : this.detailPartyInfo.meeting_date}}, {
                     name: 'joinList',
                     width: '500px',
                     height: '440px',

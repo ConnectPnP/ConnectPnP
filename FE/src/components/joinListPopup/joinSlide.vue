@@ -3,19 +3,18 @@
         <b-container>
             <b-row>
                 <b-col>
-                    <h3>{{ groupTitle }}</h3>
-                    <h4>{{ groupDate }}</h4>
+                    <h3>{{ group.groupTitle}}</h3>
+                    <h3>{{ group.groupDate}}</h3>
                     <br>
                 </b-col>
             </b-row>
             <b-row>
                 <b-col>
-                    <b-img class="slideProfileImg" rounded="circle" :src="memberImg"
-                        onclick="location.href='/myPage'" />
+                    <b-img class="slideProfileImg" rounded="circle" :src="member.avatar_path"/>
                 </b-col>
                 <b-col>
-                    <h4>{{ memberNickName }}</h4>
-                    <star-rating id="starRating" :rating="starRating" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
+                    <h4>{{ member.name }}</h4>
+                    <star-rating id="starRating" :rating="member.star_rate" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
                 </b-col>
             </b-row>
             <b-row>
@@ -23,6 +22,8 @@
                     <br><br><br>
                 </b-col>
             </b-row>
+                <b-btn class="btnGroup" size="sm" variant="primary" @click="acceptMember">수락</b-btn> 
+                <b-btn class="btnGroup" size="sm" variant="primary" @click="refuseMember">거절</b-btn> 
         </b-container>
 
     </b-carousel-slide>
@@ -36,31 +37,41 @@ export default {
         StarRating
     },
     props: {
-        starRating: {
-            type: String,
-            default() {return "0"}
-        },
-        groupTitle: {
-            type: String,
-            default() { return "Title"; }
-        },
-        groupDate: {
-            type: String,
-            default() { return "Date"; }
-        },
-        memberNickName: {
-            type: String,
-            default() { return "NickName"; }
-        },
-        memberImg: {
-            type: String,
-            default() { return "https://www.freeiconspng.com/uploads/no-image-icon-6.png"; }
+        members : [
+            {
+                _id : {type: Number},
+                name : {type : String},
+                avatar_path : {type : String},
+                gender : {type : String},
+                age : {type : Number},
+                star_rate : {type : Number}
+            }
+        ],
+        group : {
+            groupId : {type : Number},
+            groupTitle : {type: String},
+            groupDate : {type: String}
         }
     },
-    data () {
-        return {
+    methods: {
+        acceptMember() {
+            this.$http.post('http://localhost:3000/board/join', {
+                        group: this.groupId, // 모임 Id
+                        user : this.member._id
+                    }).then((result) => {
+                        console.log(result)
+                    })
+        },
+        refuseMember() {
+            this.$http.post('http://localhost:3000/board/cancel', {
+                        group: this.groupId, // 모임 Id
+                        user : this.member._id
+                    }).then((result) => {
+                        console.log(result)
+                    })
         }
     }
+
 }
 </script>
 
