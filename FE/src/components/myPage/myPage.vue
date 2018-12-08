@@ -9,7 +9,7 @@
             <div class="image-container">
               <b-img :src="memberInfo.img" id="imgProfile" style="width: 150px; height: 150px" class="img-thumbnail"></b-img>
               <div class="middle">
-                <b-form-file v-model="file" accept=".jpg, .png" size="sm" class="mt-3" plain>프로필 바꾸기</b-form-file>
+                <b-form-file v-model="file" @change="changeProfileImage($event.target.files)" accept=".jpg, .png" size="sm" class="mt-3" plain>프로필 바꾸기</b-form-file>
               </div>
               <h2 class="d-block" style="font-size: 1.5rem; font-weight: bold; margin-top:10px">{{ memberInfo.usrName }}</h2>
 
@@ -136,7 +136,8 @@ export default {
   data() {
     return {
       categoryList: [],
-      file:'',
+      file : null,
+      formData : new FormData(),
       memberInfo: {
         id: '',
         usrName: "",
@@ -160,7 +161,7 @@ export default {
     this.$http.get('http://localhost:3000/user/details/'+this.memberInfo.id)
       .then((result)=>{
         // 닉네임 가져오기
-        if(result.data.nickName == null){
+        if((result.data.nickName == "")||(result.data.nickName == null)){
           this.memberInfo.nickName = this.memberInfo.usrName;
         } else {
           this.memberInfo.nickName = result.data.nickName;
@@ -182,23 +183,25 @@ export default {
         }
     }).then(()=>{ this.getGroupDate(); });
 
-  },methods:{
+  },
+  methods:{
     getCategoryList() {
                 var vm = this
                 this.$http.get('http://localhost:3000/category')
                 .then((result) => {
                     // get category list
                     for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
-                            vm.categoryList.push(JSON.parse(categoryOption));
+                        if(result.data[i].depth == 0){
+                          var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
+                          vm.categoryList.push(JSON.parse(categoryOption));
+                        } 
                     }
-
                 });
             },
   changeNickname(){
     this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
       nickName: this.memberInfo.nickName
-    }).then(()=>{
+    }).then((result)=>{
       alert('닉네임 변경이 완료되었습니다.');
     });
   },
@@ -218,6 +221,13 @@ export default {
         });
     }
     
+  },
+  changeProfileImage(newFile){
+    this.file = {blob: URL.createObjectURL(newFile[0])};
+    this.formData.append('profileImage', newFile[0], newFile[0].name);
+
+    this.$http.post('http://localhost:3000/user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  
   }
   }
   
