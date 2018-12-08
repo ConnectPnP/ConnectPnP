@@ -25,7 +25,7 @@ exports.getPost = (req, res) => {
   .populate({
     path: 'comments',
     populate: { 
-        path: 'childComment', select: 'member _id content createdAt', 
+        path: 'childComment', select: 'member _id content createdAt depth', 
         populate: {path : 'member', select : '_id name avatar_path'
       } 
     },
@@ -218,7 +218,7 @@ exports.createCommentReply = (req, res) => {
 
 exports.deleteCommentReply = (req, res) => {
   
-  Comment.findOneAndUpdate({_id : req.params.comment}, {$pull : {childParent : newComment._id}}, {new:true}, (err, result) => {
+  Comment.findOneAndUpdate({_id : req.params.comment}, {$pull : {childParent : req.params.reply}}, {new:true}, (err, result) => {
     if(!err) {
       Comment.findOneAndRemove({_id: req.params.reply}, (err, result) => {
         if(!err && result) { 

@@ -26,7 +26,10 @@
                        @click="modifyComment">수정
                 </b-btn>
                 <b-btn size="sm" class="btn" variant="secondary"  
-                       v-if="!isModify && currentUser.id == comment.member._id" @click="deleteComment">삭제
+                       v-if="!isModify && currentUser.id == comment.member._id && comment.depth==0" @click="deleteComment">삭제
+                </b-btn>
+                <b-btn size="sm" class="btn" variant="secondary"  
+                       v-if="!isModify && currentUser.id == comment.member._id && comment.depth==1" @click="deleteReply">삭제
                 </b-btn>
             </b-col>
         </b-row>
@@ -50,6 +53,7 @@
         props: {
             isModify: false,
             reply : '',
+            parentComment: '',
             currentUser: {
                     id: '',
                     user_id: '',
@@ -100,7 +104,7 @@
                                 content: this.comment.content,
                             })
                             .then((result) => {
-                                window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
+                                window.location.reload();
                             })
                     } else { // 댓글 수정기능 활성화
                         this.isModify = true;
@@ -110,10 +114,15 @@
                 deleteComment() {
                     this.$http.delete('http://localhost:3000/board/comments/' + this.$route.params.id + '/' + this.comment._id)
                         .then((result) => {
-                            window.location.href = "http://localhost:8080/party/detail/" + this.$route.params.id
+                            window.location.reload();
                         })
-                }
-                ,
+                }, 
+                deleteReply() {
+                    this.$http.delete('http://localhost:3000/board/reply/'+this.parentComment + '/' + this.comment._id)
+                     .then((result) => {
+                            window.location.reload();
+                        })
+                },
                 replyComment() {
                     this.show = true
                 },

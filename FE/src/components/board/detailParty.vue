@@ -98,7 +98,7 @@
                     </commentTemplate>
                     <commentTemplate style="padding-left:50px;"
                             v-for="reply in comment.childComment" :key="reply._id"
-                            :comment="reply" :currentUser="currentUser">
+                            :comment="reply" :currentUser="currentUser" :parentComment="comment._id">
                     </commentTemplate>
                 </div>
             </b-row>
