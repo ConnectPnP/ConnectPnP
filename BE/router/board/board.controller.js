@@ -162,8 +162,8 @@ exports.getAllComment = (req, res) => {
 
 // 댓글 수정하기
 exports.updateComment = (req, res) => {
-  Board.findOneAndUpdate({_id: req.params.id, "comments._id" : req.params.comment},
-  { $set : {"comments.$.body" : req.body.body}},(err, result) => {
+  comment.findOneAndUpdate({_id: req.params.id},
+  { content : req.body.content },(err, result) => {
     if(!err) {
       return res.json({result : "ok"});
     }
@@ -173,7 +173,7 @@ exports.updateComment = (req, res) => {
 
 // 댓글 삭제하기
 exports.deleteComment = (req, res) => {
-    Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : {_id: req.params.comment}}}, {multi:true}, (err, result) => {
+    Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : req.params.comment}}, {multi:true}, (err, result) => {
       if(!err) {
         return res.json({result : "ok"});
       }
