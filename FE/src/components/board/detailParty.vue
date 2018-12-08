@@ -284,9 +284,8 @@
                     depth : 0,
                 })
                 .then((result) => {
-                    console.log(result)
+                    vm.detailPartyInfo = result.data
                 })
-
             }
         },
         mounted() {

@@ -141,13 +141,18 @@ exports.createComment = (req, res) => {
   });
   newComment.save(function (err) {
     if (err) return res.json(err);
-    Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :  newComment._id}},
+    Board.findOneAndUpdate({ _id : req.params.id } ,{ $push : {comments :  newComment._id}}, {new: true},
       (err, board) => {
         if(!err) {
           return res.json(board);
         }
         else return res.json(err);
-      });
+      })
+      .populate('comments')
+      .populate({
+        path: 'comments',
+        populate: { path: 'member', select: '_id  name avatar_path' },
+      })
   }); 
 };
 
@@ -174,7 +179,7 @@ exports.updateComment = (req, res) => {
 
 // 댓글 삭제하기
 exports.deleteComment = (req, res) => {
-    Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : req.params.comment}}, {multi:true}, (err, result) => {
+    Board.findOneAndUpdate({_id: req.params.id}, {$pull : {comments : req.params.comment}}, {new:true}, (err, result) => {
       if(!err) {
         return res.json({result : "ok"});
       }
