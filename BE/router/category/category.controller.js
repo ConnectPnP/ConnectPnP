@@ -6,7 +6,7 @@ const npage = 5;
 
 // 대분류
 
-// 대분류 카테고리 생성 
+// 대분류 카테고리 생성
 exports.createCategory = (req, res) => {
     var newCategory = new Category ({
         name : req.body.name,
@@ -52,7 +52,6 @@ exports.getAllCategory = (req, res) => {
         return res.json(category);
     }).populate('sub_category')
         .exec(function(error, category) {
-            console.log(category)
         });
 };
 

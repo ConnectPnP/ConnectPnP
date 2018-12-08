@@ -1,11 +1,12 @@
 <template>
     <div id="createParty">
+        <modals-container @getResult="getResult"/>
         <link rel="stylesheet"
               href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
               crossorigin="anonymous">
-        <b-form @submit="onSubmit" class="form" >
-            <b-form-group >
+        <b-form @submit="onSubmit" class="form">
+            <b-form-group>
                 <h1><b>Party Registration</b></h1>
                 <b-form-group horizontal
                               label="Party Title :"
@@ -91,25 +92,16 @@
                               class="mb-0">
                     <!--API이용한 map 필요-->
                     <b-input-group>
-                        <b-form-input id="location"
-                                    v-model="party_form.locationText" 
-                                    type="text"
-                                    placeholder="장소를 검색해주세요" />
-                            <b-input-group-append>
-                                <b-button variant="primary" @click="searchPlace">장소 검색</b-button>
-                            </b-input-group-append>
+                        <b-form-input readonly
+                                      id="location"
+                                      v-model="party_form.location.title"
+                                      type="text"
+                                      placeholder="장소를 검색해주세요"/>
+                        <b-input-group-append>
+                            <b-button variant="primary" @click="showSearchMap">장소 검색</b-button>
+                        </b-input-group-append>
                     </b-input-group>
                     <br>
-                    <vue-daum-map :appKey="daumMap.appKey"
-                                :center.sync="party_form.location"
-                                :level.sync="daumMap.level"
-                                :mapTypeId="daumMap.mapTypeId"
-                                :libraries="daumMap.libraries"
-                                @load="onLoad"
-
-                                style="width:500px;height:400px;"
-
-                            /><br>
 
                 </b-form-group>
                 <b-form-group horizontal
@@ -117,28 +109,28 @@
                               label-class="text-sm-right"
                               label-for="js-party-cost">
                     <b-form-input class="input"
-                                id="js-party-cost"
-                                placeholder="ex) 1회 5만원 / 재료비 30000원 / 가입비 오천원"
-                                v-model="party_form.cost"></b-form-input>
+                                  id="js-party-cost"
+                                  placeholder="ex) 1회 5만원 / 재료비 30000원 / 가입비 오천원"
+                                  v-model="party_form.cost"></b-form-input>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Gender :"
                               label-class="text-sm-right"
                               label-for="js-party-Gender">
-                            <b-form-radio-group v-model="party_form.conditions.gender"
-                                    :options="gender"
-                                    id="js-party-Gender">
-                            </b-form-radio-group>
+                    <b-form-radio-group v-model="party_form.conditions.gender"
+                                        :options="gender"
+                                        id="js-party-Gender">
+                    </b-form-radio-group>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Age :"
                               label-class="text-sm-right"
                               label-for="js-party-Age">
-                              <b-form-radio-group 
-                                    v-model="party_form.conditions.selectAge"
-                                    :options="age"
-                                    @change="changeAgeCondition">
-                            </b-form-radio-group>
+                    <b-form-radio-group
+                            v-model="party_form.conditions.selectAge"
+                            :options="age"
+                            @change="changeAgeCondition">
+                    </b-form-radio-group>
                 </b-form-group>
 
                 <b-form-group horizontal
@@ -150,10 +142,12 @@
                               label="Category :"
                               label-class="text-sm-right"
                               label-for="js-party-category">
-                              <b-input-group>
-                    <b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3" @change="showSubCategory"></b-form-select>
-                    <b-form-select v-model="party_form.selected_subcategory_id" :options="categoryList2" class="mb-3"></b-form-select>
-                              </b-input-group>
+                    <b-input-group>
+                        <b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3"
+                                       @change="showSubCategory"></b-form-select>
+                        <b-form-select v-model="party_form.selected_subcategory_id" :options="categoryList2"
+                                       class="mb-3"></b-form-select>
+                    </b-input-group>
                 </b-form-group>
                 <b-form-group horizontal
                               label="Min&Max Number of Member :"
@@ -163,7 +157,7 @@
                     <vueSlider v-model="party_form.number_of_member" id="js-party-number-of-member"></vueSlider>
                 </b-form-group>
                 <b-button type="submit" variant="primary">Submit</b-button>
-                <b-button variant="danger" >Cancel</b-button>
+                <b-button variant="danger">Cancel</b-button>
             </b-form-group>
 
         </b-form>
@@ -173,91 +167,60 @@
 <script>
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
-    import VueDaumMap from 'vue-daum-map';
+    import SearchMap from './searchMap.vue';
 
     export default {
         name: "createParty",
         components: {
             vueSlider,
-            VueDaumMap
+            SearchMap
         },
-        props:[
-            '_title','_number_of_member','_detail','_dateOne','_dateTwo','_date',
-            '_locationText','_location','_cost','_conditions','_file','_categoryId'],
+        props: [
+            '_title', '_number_of_member', '_detail', '_dateOne', '_dateTwo', '_date',
+            '_locationText', '_location', '_cost', '_conditions', '_file', '_categoryId'],
         data() {
             return {
-                formData : new FormData(),
+                formData: new FormData(),
                 dateFormat: 'YYYY-MM-DD',
                 todayDate: '',
                 file: null,
                 checkList: [
-                    'Title','Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image', 'Category'
+                    'Title', 'Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image', 'Category'
                 ],
                 party_form:
                     {
-                        title:'',
+                        title: '',
                         number_of_member: [0, 10],
                         detail: '',
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
                         date: '',
-                        locationText: '',
-                        location:{lat:37.282908, lng:127.046402},
+                        location: {},
                         cost: '',
                         conditions: {
                             gender: 'none',
                             selectAge: 'none',
-                            age: [0,100],
+                            age: [0, 100],
                         },
                         file_array: [],
-                        selected_category_id:null,
-                        selected_subcategory_id:null
+                        selected_category_id: null,
+                        selected_subcategory_id: null
                     },
-                    gender: [
-                        { text: '상관 없음', value: 'none' },
-                        { text: 'Female', value: 'female' },
-                        { text: 'Male', value: 'male' }
-                    ],
-                    age: [
-                        {text: '상관 없음', value: 'none'},
-                        {text: '직접 설정', value: 'selectAge'}
-                    ],
-                categoryList1: [{ value: null, text: '--- 대분류 ---', disabled:true}],
+                gender: [
+                    {text: '상관 없음', value: 'none'},
+                    {text: 'Female', value: 'female'},
+                    {text: 'Male', value: 'male'}
+                ],
+                age: [
+                    {text: '상관 없음', value: 'none'},
+                    {text: '직접 설정', value: 'selectAge'}
+                ],
+                categoryList1: [{value: null, text: '--- 대분류 ---', disabled: true}],
                 categoryList2: [],
                 subCategoryList: [],
-                // categoryList1: [
-                //     { value: null, text: '--- 대분류 ---', disabled:true},
-                //     { value: 0, text: '게임'},
-                //     { value: 1, text: '운동'},
-                // ],
-                // subCategoryList: [
-                //     [
-                //         { value: null, text: '--- 소분류 ---', disabled:true},
-                //         { value: 0, text: '오버워치'},
-                //         { value: 1, text: '배그'},
-                //         { value: 2, text: '피파'},
-                //         { value: 3, text: '닌텐도'},
-                //         { value: 4, text: '보드게임'},
-                //     ],
-                //     [
-                //         { value: null, text: '--소분류--', disabled:true},
-                //         { value: 0, text: '축구'},
-                //         { value: 1, text: '야구'},
-                //         { value: 2, text: '테니스'},
-                //         { value: 3, text: '춤'},
-                //     ],
-                // ],
-                daumMap:{
-                    appKey: 'a3cfd8f8c44ef55f94f2fa1a99a18558',
-                    // center: {lat:37.282908, lng:127.046402},
-                    level: 4,
-                    mapTypeId: VueDaumMap.MapTypeId.NORMAL,
-                    libraries: ['services'],
-                    map: null
-                }
             }
         },
-        mounted(){
+        mounted() {
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
 
@@ -296,115 +259,64 @@
                     party.recruitment_period_dateOne,
                     party.recruitment_period_dateTwo,
                     party.date,
-                    party.locationText,
+                    party.location.title,
                     party.cost,
                     party.file_array,
                     party.selected_subcategory_id
                 ];
 
-                for(var i=0;i<validationCheck.length;i++){
-                    if(validationCheck[i]==null||validationCheck[i]==''){
+                for (var i = 0; i < validationCheck.length; i++) {
+                    if (validationCheck[i] == null || validationCheck[i] == '') {
                         alertString += checkList[i] + ', ';
                     }
                 }
-                if(alertString != ''){
-                    alert(alertString+" 칸을 채워주세요!");
-                }
-                else if(party.date < party.recruitment_period_dateTwo){
+                if (alertString != '') {
+                    alert(alertString + " 칸을 채워주세요!");
+                } else if (party.date < party.recruitment_period_dateTwo) {
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
-                }
-                else {
-
-                this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
-                this.$http.post('http://localhost:3000/board', {
-                    title : party.title,
-                    due_date : party.recruitment_period_dateTwo,
-                    start_date : party.recruitment_period_dateOne,
-                    meeting_date : party.date,
-                    min_num : party.number_of_member[0],
-                    max_num : party.number_of_member[1],
-                    cost : party.cost,
-                    category_id : party.selected_subcategory_id,
-                    conditions : { gender : party.conditions.gender, age : party.conditions.age},
-                    detail: party.detail,
-                    location : party.location,
-                    locationText : party.locationText,
-                    // host :,
-            })
-            // 이미지 업로드
-            .then((result) => {
-                console.log(result)
-                boardId = result.data._id
-                this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-            })
-            .then(()=> {
-                window.location.href = "http://localhost:8080/party/detail/" + boardId
-            })
-                }
-            },
-            onLoad(map){
-                this.daumMap.map = map;
-                // var bounds = map.getBounds();
-                // var boundsStr = bounds.toString();
-
-                // var iwContent = '<br><pre> 아주대학교 </pre>'
-                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
-                // var marker = new daum.maps.Marker({
-                //     position: iwPosition,
-                //     map: map
-                // });
-                // var infowindow = new daum.maps.InfoWindow({
-                //     position: iwPosition,
-                //     content: iwContent
-                // });
-                // infowindow.open(map, marker)
-                
-
-            },
-            searchPlace(){
-                // 장소 찾기....
-                var keyword = this.party_form.locationText;
-                var ps = new daum.maps.services.Places();
-                var iwPosition = new daum.maps.LatLng(33,126);
-                var infowindow = new daum.maps.infowindow({
-                    zIndex:1
-                });
-
-                if (!keyword.replace(/^\s+|\s+$/g, '')) {
-                    alert('키워드를 입력해주세요!');
-                }
-                else {
-                    ps.keywordSearch(keyword,
-                        (data,status,pagination)=>{
-                            if(status == daum.maps.services.Status.OK){
-                                // 마커 표출
-                                // 페이지 번호 표출
-                            }
-                            else if(status == daum.maps.services.Status.ZERO_RESULT){
-                                alert('검색 결과가 존재하지 않습니다.');
-                            }
-                            else if(status == daum.maps.services.Status.ERROR){
-                                alert('검색 중 오류가 발생했습니다.');
-                            }
-                        });
-                }
-             },
-            changeAgeCondition(){
-                if(this.party_form.conditions.selectAge == 'none'){
-                    this.party_form.conditions.age = [20,30];
+                } else if (party.file_array.length < 3) {
+                    alert("최소 3장의 사진을 올려주세요!");
                 } else {
-                    this.party_form.conditions.age = [0,100];
+                    this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
+                    this.$http.post('http://localhost:3000/board', {
+                        title: party.title,
+                        due_date: party.recruitment_period_dateTwo,
+                        start_date: party.recruitment_period_dateOne,
+                        meeting_date: party.date,
+                        min_num: party.number_of_member[0],
+                        max_num: party.number_of_member[1],
+                        cost: party.cost,
+                        category_id: party.selected_subcategory_id,
+                        conditions: {gender: party.conditions.gender, age: party.conditions.age},
+                        detail: party.detail,
+                        location: party.location,
+                        // host :,
+                    })
+                    // 이미지 업로드
+                        .then((result) => {
+                            boardId = result.data._id
+                            this.$http.post('http://localhost:3000/board/files/'+ boardId, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                        })
+                        .then(()=> {
+                            window.location.href = "http://localhost:8080/party/detail/" + boardId
+                        })
                 }
             },
-            editor(){
+            changeAgeCondition() {
+                if (this.party_form.conditions.selectAge == 'none') {
+                    this.party_form.conditions.age = [20, 30];
+                } else {
+                    this.party_form.conditions.age = [0, 100];
+                }
+            },
+            editor() {
                 var party = this.party_form;
                 party.title = this._title;
                 party.number_of_member = this._number_of_member;
-                party.detail =this._detail;
+                party.detail = this._detail;
                 party.recruitment_period_dateOne = this._dateOne;
                 party.recruitment_period_dateTwo = this._dateTwo;
                 party.date = this._date;
-                party.locationText = this._locationText;
                 party.location = this._location;
                 party.cost = this._cost;
                 party.conditions = this._conditions;
@@ -415,28 +327,40 @@
             getCategoryList() {
                 var vm = this
                 this.$http.get('http://localhost:3000/category')
-                .then((result) => {
-                    // get category list
-                    for(var i=0; i<result.data.length; i++) {
-                            var categoryOption = '{"value" : "' + i + '", "text" : "'+ result.data[i].name+'"}';
+                    .then((result) => {
+                        // get category list
+                        for (var k = 0; k < result.data.length; k++) {
+                            var categoryOption = '{"value" : "' + k + '", "text" : "' + result.data[k].name + '"}';
                             vm.categoryList1.push(JSON.parse(categoryOption));
 
-                    }
-
-                    // get sub category list
-                    for(var i=0; i<result.data.length; i++) {
-                        var categoryOption = [{ value: null, text: '--- 소분류 ---', disabled:true}];
-                        for(var j=0; j<result.data[i].sub_category.length ; j++){
-                            var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "'+ result.data[i].sub_category[j].name+'"}';
-                            categoryOption.push(JSON.parse(option));
                         }
-                        vm.subCategoryList.push(categoryOption);
-                    }
-                });
+
+                        // get sub category list
+                        for (var i = 0; i < result.data.length; i++) {
+                            var categoryOption2 = [{value: null, text: '--- 소분류 ---', disabled: true}];
+                            for (var j = 0; j < result.data[i].sub_category.length; j++) {
+                                var option = '{"value" : "' + result.data[i].sub_category[j]._id + '", "text" : "' + result.data[i].sub_category[j].name + '"}';
+                                categoryOption2.push(JSON.parse(option));
+                            }
+                            vm.subCategoryList.push(categoryOption2);
+                        }
+                    });
             },
-            showSubCategory(select){
+            showSubCategory(select) {
                 this.party_form.selected_subcategory_id = null;
                 this.categoryList2 = this.subCategoryList[select];
+            },
+            showSearchMap() {
+                this.$modal.show(SearchMap, {}, {
+                    name: 'searchMap',
+                    width: '950px',
+                    height: 'auto',
+                    draggable: false,
+                    clickToClose: false
+                },);
+            },
+            getResult(result) {
+                this.party_form.location = result;
             }
         }
     }

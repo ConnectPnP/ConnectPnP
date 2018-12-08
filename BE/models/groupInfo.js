@@ -23,8 +23,11 @@ const GroupSchema = new Schema({
  max_num : {type: Number},
  cost : {type : String},
  images : [{type:String}],
- locationText : {type: String},
- location: {lat:{type: String}, lng: {type: String}},
+ location: {
+     title: {type: String},
+     latlng: {lat:{type: String}, lng: {type: String}},
+     url: {type:String}
+ },
  host : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
  comments : [{
     member : {type : mongoose.Schema.Types.ObjectId, ref:'User'},
