@@ -1,8 +1,8 @@
 <template>
     <div class="sc-message">
         <div class="sc-message--content" :class="{
-        sent: message.author === this.$cookie.get('userID'),
-        received: message.author !== this.$cookie.get('userID') && message.type !== 'system',
+        sent: message.author._id === this.$session.get('id'),
+        received: message.author._id !== this.$session.get('id') && message.type !== 'system',
         system: message.type === 'system'
       }">
             <div v-if="message.type !== 'system'" :title="authorName" class="sc-message--avatar" :style="{
@@ -74,7 +74,9 @@
                 }
             },
             determineMessageColors() {
-                return this.message.author === 'me' ? this.sentColorsStyle() : this.receivedColorsStyle()
+                console.log(this.message.author._id)
+                console.log(this.$session.get('id'))
+                return this.message.author._id === this.$session.get('id') ? this.sentColorsStyle() : this.receivedColorsStyle()
             }
         }
     }

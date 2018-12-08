@@ -104,7 +104,15 @@
                 }
             },
             _submitSuggestion(suggestion) {
-                this.onSubmit({author: this.$cookie.get('userID'), type: 'text', data: {text: suggestion}})
+                this.onSubmit({
+                    author: {
+                        _id: this.$session.get('id'),
+                        avatar_path: this.$session.get('profile_path'),
+                        name: this.$session.get('userName')
+                    },
+                    type: 'text',
+                    data: {text: suggestion}
+                })
             },
             _submitText(event) {
                 const text = this.$refs.userInput.textContent
@@ -112,17 +120,25 @@
                 if (file) {
                     if (text && text.length > 0) {
                         this.onSubmit({
-                            author: this.$cookie.get('userID'),
+                            author: {
+                                _id: this.$session.get('id'),
+                                avatar_path: this.$session.get('profile_path'),
+                                name: this.$session.get('userName')
+                            },
                             type: 'file',
-                            content:text,
-                            file:file,
+                            content: text,
+                            file: file,
                             dest: this.current_dest_id
                         })
                         this.file = null
                         this.$refs.userInput.innerHTML = ''
                     } else {
                         this.onSubmit({
-                            author: this.$cookie.get('userID'),
+                            author: {
+                                _id: this.$session.get('id'),
+                                avatar_path: this.$session.get('profile_path'),
+                                name: this.$session.get('userName')
+                            },
                             type: 'file',
                             file: file,
                             dest: this.current_dest_id
@@ -132,7 +148,11 @@
                 } else {
                     if (text && text.length > 0) {
                         this.onSubmit({
-                            author: this.$cookie.get('userID'),
+                            author: {
+                                _id: this.$session.get('id'),
+                                avatar_path: this.$session.get('profile_path'),
+                                name: this.$session.get('userName')
+                            },
                             type: 'text',
                             command: 'groupchat',
                             content: text,
@@ -144,7 +164,11 @@
             },
             _handleEmojiPicked(emoji) {
                 this.onSubmit({
-                    author: this.$cookie.get('userID'),
+                    author: {
+                        _id: this.$session.get('id'),
+                        avatar_path: this.$session.get('profile_path'),
+                        name: this.$session.get('userName')
+                    },
                     type: 'emoji',
                     emoji: emoji
                 })

@@ -3,8 +3,7 @@
         <div class="sc-header" v-for="group in groups" :key="group._id" style="padding-top: 5px">
             <div>
                 <img class="sc-header--img img-msg"
-                     :src=" 'http://poooo.ml/data/editor/1810/aa7462a202b36ecf40db2f8e44d4f594_1539011087_018.gif'"
-                     alt="http://poooo.ml/data/editor/1810/aa7462a202b36ecf40db2f8e44d4f594_1539011087_018.gif"
+                     :src="group.img_path"
                      @click=""/>
             </div>
             <div class="sc-header--title" :_id=group._id @click="toggle(group._id)" > {{group.name}}</div>

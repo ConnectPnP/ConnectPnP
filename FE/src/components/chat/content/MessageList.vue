@@ -1,12 +1,12 @@
 <template>
     <div class="sc-message-list" ref="scrollList" :style="{backgroundColor: colors.messageList.bg}">
-        <Message v-for="(message, idx) in messages" :message="message" :chatImageUrl="defaultChatIcon"
-                 :authorName="message.author" :key="idx" :colors="colors" :messageStyling="messageStyling"/>
+        <Message v-for="(message, idx) in messages" :message="message" :chatImageUrl="message.author.avatar_path"
+                 :authorName="message.author.name" :key="idx" :colors="colors" :messageStyling="messageStyling">
+        </Message>
     </div>
 </template>
 <script>
     import Message from './Message.vue'
-    import chatIcon from '../../../assets/chat_file/chat-icon.svg'
 
     export default {
         components: {
@@ -53,11 +53,6 @@
             // authorName(author) {
             //     return this.profile(author).name
             // }
-        },
-        computed: {
-            defaultChatIcon() {
-                return chatIcon
-            }
         },
         mounted() {
             this._scrollDown()
