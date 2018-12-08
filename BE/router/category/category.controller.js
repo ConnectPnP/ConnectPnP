@@ -101,3 +101,19 @@ exports.getAllSubCategory = (req, res) => {
       return res.json(category);
   });
 };
+
+// 소분류 카테고리 삭제
+exports.deleteSubCategory = (req, res) => {
+  Category.findOneAndUpdate({_id: req.params.cat}, {$pull : {sub_category : req.params.id}}
+  ,(err, result) => {
+    if(!err && result) { 
+      Category.findOneAndRemove({_id: req.params.id}, (err, result) => {
+        if(!err && result) { 
+        return res.json(result);
+      };
+      return res.status(404).send({ message: 'No data found to delete' });
+      });
+  };
+  return res.status(404).send({ message: 'No data found to delete' });
+  });
+};
