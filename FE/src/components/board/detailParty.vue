@@ -69,7 +69,7 @@
                         </b-tab>
                         <b-tab id="tabsInfo-locationMap" title="Location Map" @click="showMap" >
                             <div>
-                                <br><a :href="detailPartyInfo.location.url">{{detailPartyInfo.location.title}}</a>
+                                <br>위치 정보 보기 : <a :href="detailPartyInfo.location.url">{{detailPartyInfo.location.title}}</a>
                                 <ShowMap v-if="isMapTab"
                                     :location="detailPartyInfo.location" />
                             </div>
