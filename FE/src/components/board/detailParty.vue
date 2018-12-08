@@ -257,6 +257,7 @@
                     for(var i=0; i < vm.detailPartyInfo.images.length; i++ ) {
                         this.coverList.push({"cover" : vm.detailPartyInfo.images[i]})
                     }
+                    this.createCookie();
                 })
             },
             createComment (content) {
@@ -271,11 +272,28 @@
                     console.log(result)
                 })
 
-            }
+            },
+            createCookie(){
+                // cookie 만들기 this.$route.params.id
+                var cookieName = "recentGroup"+this.$route.params.id;
+                var cookie = {id: this.$route.params.id, title: this.detailPartyInfo.title, image: this.detailPartyInfo.images[0]};
+
+                if(this.$cookies.isKey(cookieName)==true) {
+                    this.$cookies.remove(cookieName);
+                }
+
+                this.$cookies.set(cookieName, cookie, "1h");
+                console.log(this.$cookies.keys())
+
+                // "recentGroup"+this.$route.params.id;
+            },
         },
-        mounted() {
-        this.getPartyDetail()
-    }
+        beforeMount() {
+
+        },
+        mounted(){   
+            this.getPartyDetail()
+        }
     }
 </script>
 
