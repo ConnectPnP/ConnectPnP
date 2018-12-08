@@ -3,6 +3,7 @@
 
 <!--대분류 카테고리 -->
         <nav class="mainCategoryGroup">
+            <br>
             <h3>대분류 카테고리</h3>
             <br>
 
@@ -42,8 +43,12 @@
                     <input id="imgURL" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryPath"></input>
                 </div>
 
+
+                <!--추가 버튼-->
                 <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
             </div>
+
+
 
         <!--대분류카테고리 리스트-->
 
@@ -90,6 +95,9 @@
                     <label for="subCategory"> 소분류 이름: </label>  &nbsp;
                     <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
                 </div>
+
+
+                <!--추가 버튼 -->
                 <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
             </div>
 
@@ -201,7 +209,6 @@
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-
                  var categoryDataUpload = await this.$http.post('http://localhost:3000/category', categoryData)
                  if(this.condition.imgUpload=='methodFile'){
                      var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
@@ -209,6 +216,9 @@
                  } else {
                      adminVue.mainCategoryList.push(categoryDataUpload.data);
                  }
+                 this.addCategoryName=""
+                 this.addCategoryPath=""
+
 
                  /*
                 this.$http.post('http://localhost:3000/category', categoryData)
@@ -237,6 +247,8 @@
                         }
                     }
                 });
+                this.addSubCategoryName=""
+
             },
 
             categoryUpdate(data){
@@ -278,9 +290,8 @@
 <style scoped>
 
     .mainCategoryGroup{
-        padding-right:15px;
+        padding: 10px;
         background-color: #d2e8ff;
-        border-right: 5px solid #d2e8ff;
         float:left;
     }
 
@@ -290,11 +301,9 @@
     }
 
     .categoryTable{
-        margin-left: 20px;
         margin-bottom: 15px;
         background-color: white;
 
-    border: 5px solid #007bff;
 
     }
 
@@ -302,6 +311,7 @@
         width: 160px;
         background-color: white;
         margin: 20px 20px;
+        padding:15px;
         text-align: center;
         color:white;
     }
@@ -309,11 +319,10 @@
     .createCategory{
         background-color: white;
         width: 410px;
-        border-radius:10px;
-        border: 5px solid #007bff;
+        border-radius:5px;
+        border: 3px solid #007bff;
         padding-top: 5px;
         margin-top: 10px;
-        margin-left: 20px;
         margin-bottom: 30px;
     }
 
@@ -324,7 +333,7 @@
 
     .plusbtn{
         margin-top: 30px;
-        width: 400px;
+        width: 407px;
     }
 
     .subplusbtn{
@@ -333,6 +342,7 @@
     }
 
     .subCategory{
+        padding: 10px;
         float:left;
         alignment: left;
     }
