@@ -174,7 +174,7 @@ io.sockets.on('connection', function (socket) {
 
         } else if (group.command === 'group') {
             console.log('채팅방 정보를 찾아옵니다.')
-            chat_controller.getRoomList(socket, group.user)
+            chat_controller.getRoomList(socket, group.userId)
 
         }
 
