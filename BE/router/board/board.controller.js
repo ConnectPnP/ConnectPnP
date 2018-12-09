@@ -119,8 +119,10 @@ exports.searchPost = (req, res) => {
   var page = req.params.page
   Board.find(req.body, (err,result) => {
     if(err) return res.json({ result : "fail"});
-    else return res.json(result);
-  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
+    else {
+      console.log(result)
+      return res.json(result);}
+  }).sort({_id: 1}).skip((page) * npage).limit(npage);;
 };
 
 exports.searchUser = (req, res) => {

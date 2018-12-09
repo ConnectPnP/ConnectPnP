@@ -105,19 +105,21 @@ export default {
   },
   methods: {
       pageChange(page) {
-          this.currentPage = page -1
+          this.currentPage = page
           this.getPostData()
       },
        getPostData () {
            var vm = this
-           this.$http.get('http://localhost:3000/board/list/' + this.currentPage + '/' + this.$session.get('category'))
+           var page = this.currentPage -1
+           this.$http.get('http://localhost:3000/board/list/' + page + '/' + this.$session.get('category'))
            .then((result) => {
                vm.groupList = result.data
            })
        },
        getMyGroup() {
         var vm = this
-           this.$http.post('http://localhost:3000/board/search/' + this.currentPage, 
+        var page = this.currentPage -1
+           this.$http.post('http://localhost:3000/board/search/' +page , 
            {
                 host : this.$session.get('id')
             })
@@ -247,8 +249,8 @@ export default {
                             }
                     break;  
             }
-
-            this.$http.post('http://localhost:3000/board/search/' + this.currentPage, type)
+            var page = this.currentPage - 1
+            this.$http.post('http://localhost:3000/board/search/' +page, type)
            .then((result) => {
                vm.groupList = result.data
            })
