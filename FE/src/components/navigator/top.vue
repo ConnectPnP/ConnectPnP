@@ -185,6 +185,7 @@
                 Kakao.Auth.cleanup();
                 this.$cookie.set('loginStatus', 'logout', 1);
                 //this.$session.set('loginStatus', 'logout');
+                this.$session.clear();
                 location.href = "/"
             }
 
