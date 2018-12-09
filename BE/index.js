@@ -140,7 +140,6 @@ io.sockets.on('connection', function (socket) {
             if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
                 console.log('존재하지 않는 방입니다.')
             } else {  // 방이 있는 경우
-
                 chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청

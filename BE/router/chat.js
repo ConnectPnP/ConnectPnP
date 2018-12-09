@@ -64,6 +64,17 @@ exports.deleteChatRoom = (group) => {
 }
 
 exports.joinChatRoom = (socket, group) => {
+    var newMessage = new chatMessage({
+        dest: group._id,
+        author: group.user._id,
+        content: group.user.name+'님이 들어오셨습니다.',
+        type: 'system',
+        group: true
+
+    })
+    newMessage.save((err) => {
+        console.log(err)
+    })
     chatRoom.findOne({group_id: group._id},
         function (err, room) {
             if (err) {
@@ -78,6 +89,7 @@ exports.joinChatRoom = (socket, group) => {
                         console.log(err)
                     } else {
                         socket.in(group._id).emit('join', group.user)
+                        socket.in(group._id).emit('message',newMessage)
                         console.log('채팅방 참여인원으로 등록')
                     }
                 })
@@ -90,6 +102,17 @@ exports.joinChatRoom = (socket, group) => {
 
 exports.leaveChatRoom = (socket, group, user) => {
     var vm = this
+    var newMessage = new chatMessage({
+        dest: group._id,
+        author: user._id,
+        content: user.name+'님이 나가셨습니다.',
+        type: 'system',
+        group: true
+
+    })
+    newMessage.save((err) => {
+        console.log(err)
+    })
     chatRoom.findOne({group_id: group._id},
         function (err, room) {
 
@@ -101,19 +124,20 @@ exports.leaveChatRoom = (socket, group, user) => {
                     group_id: group._id
                 }, {$pull: {participants: user._id}})
                     .exec((err, result) => {
-                    if (err) {
-                        console.log(err)
-                        console.log("채팅방 나가기 불가")
-                    } else {
-                        socket.leave(group._id, function (err) {
-                            if (err) {
-                                console.log(err)
-                            } else {
-                                vm.getRoomList(socket,user._id)
-                            }
-                        });
-                    }
-                })
+                        if (err) {
+                            console.log(err)
+                            console.log("채팅방 나가기 불가")
+                        } else {
+                            socket.leave(group._id, function (err) {
+                                if (err) {
+                                    console.log(err)
+                                } else {
+                                    vm.getRoomList(socket, user._id)
+                                    socket.in(group._id).emit('message', newMessage)
+                                }
+                            });
+                        }
+                    })
             }
 
 
@@ -124,7 +148,7 @@ exports.getRoomList = (socket, id) => {
     var roomList = []
     var messageList = []
 
-console.log('getRooms')
+    console.log('getRooms')
     chatRoom.find({participants: {"$in": [id]}})
         .populate({path: 'host', model: 'User'})
         .populate({
@@ -159,13 +183,14 @@ console.log('getRooms')
 
                     var output = {command: 'list', roomList: roomList, messageList: messageList};
                     // console.log('클라이언트로 보낼 데이터 : ' + JSON.stringify(output));
+                    socket.emit('leave')
                     socket.emit('group', output)
 
                 })
         })
 }
 
-exports.sendMessage = async (message) => {
+exports.sendMessage =  (message) => {
 
     if (message.command == 'chat') {
         var newMessage = new chatMessage({
