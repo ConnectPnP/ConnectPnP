@@ -55,6 +55,7 @@ export default {
       return {
           currentPage: 0,
           searchText : '',
+          type : 0,
           firstSelect: null, secondSelect:{},
           selected_category_id: null, selected_subcategory_id: null,
             select1 : [
@@ -89,6 +90,17 @@ export default {
   },
   mounted(){
       this.getCategoryList();
+      switch(this.type) {
+        case 0 :
+            this.getPostData()
+            break;
+        case 1 :
+            this.getMyGroup()
+            break;
+        case 2 :
+            this.searchGroup()
+            break;
+      }
       this.getPostData()
   },
   methods: {
@@ -100,6 +112,17 @@ export default {
            var vm = this
            this.$http.get('http://localhost:3000/board/list/' + this.currentPage + '/' + this.$session.get('category'))
            .then((result) => {
+               vm.groupList = result.data
+           })
+       },
+       getMyGroup() {
+        var vm = this
+           this.$http.post('http://localhost:3000/board/search/' + this.currentPage, 
+           {
+                host : this.$session.get('id')
+            })
+           .then((result) => {
+               vm.type = 1;
                vm.groupList = result.data
            })
        },
@@ -145,6 +168,7 @@ export default {
         },
         searchGroup() {
             var vm = this
+            this.type = 2;
             var searchParam = this.firstSelect * this.secondSelect;
             var type;
             switch(searchParam) {
