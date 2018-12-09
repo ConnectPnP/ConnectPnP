@@ -179,22 +179,6 @@
                         window.location.href = "http://localhost:8080/party/list"
                     })
             },
-            onLoad(map) {
-                var bounds = map.getBounds();
-
-                var iwContent = '<br><pre> 아주대학교 </pre>'
-                var iwPosition = new daum.maps.LatLng(this.detailPartyInfo.location["lat"], this.detailPartyInfo.location["lng"]);
-                var marker = new daum.maps.Marker({
-                    position: iwPosition,
-                    map: map
-                });
-                var infowindow = new daum.maps.InfoWindow({
-                    position: iwPosition,
-                    content: iwContent
-                });
-                infowindow.open(map, marker)
-
-            },
             waitParty() {
                 // 이미 신청 or 가입 되어있는지 확인해야 함
                 var vm = this
