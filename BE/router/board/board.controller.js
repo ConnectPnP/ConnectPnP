@@ -15,7 +15,7 @@ exports.getPost = (req, res) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(board);
   })
-  .populate({path : 'host', select: '_id name avatar_path gender age'})
+  .populate({path : 'host', select: '_id name avatar_path gender age star_rate'})
   .populate('comments')
   .populate({
     path: 'comments',
