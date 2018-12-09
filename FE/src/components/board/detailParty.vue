@@ -171,7 +171,6 @@
                 this.currentUser.age = this.$session.get('age');
                 this.currentUser.gender = this.$session.get('gender');
                 this.getPartyDetail();
-
             },
             deletePost() {
                 this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)
@@ -183,7 +182,14 @@
                 // 이미 신청 or 가입 되어있는지 확인해야 함
                 var vm = this
                 var condition = this.detailPartyInfo.conditions;
-                if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
+
+                if(vm.currentUser.user_id == undefined){
+                  alert("로그인이 필요합니다");  
+                }
+                else if(this.detailPartyInfo.max_num <= this.detailPartyInfo.guest.length){
+                    alert("신청 가능 인원이 가득 찼습니다.");
+                }
+                else if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
                     this.$http.post('http://localhost:3000/board/wait', {
@@ -263,7 +269,12 @@
             },
             createComment(content) {
                 var vm = this
-                this.$http.defaults.headers.post['Content-Type'] = 'application/json'
+                
+                if(vm.currentUser.user_id == undefined){
+                  alert("로그인이 필요합니다");  
+                }
+                else {
+                    this.$http.defaults.headers.post['Content-Type'] = 'application/json'
                 this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
                     {
                         user_id: vm.currentUser.id,
@@ -272,7 +283,9 @@
                     })
                     .then((result) => {
                         window.location.reload()
-                    })
+                    });
+                }
+                
 
             },
             createCookie() {

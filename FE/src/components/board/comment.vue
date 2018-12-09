@@ -125,7 +125,10 @@
                         })
                 },
                 replyComment() {
-                    this.show = true
+                    if(this.currentUser.user_id == undefined)
+                        alert("로그인이 필요합니다");  
+                    else 
+                        this.show = true
                 },
                 createReply() {
                     this.$http.post('http://localhost:3000/board/reply/' + this.comment._id, 
