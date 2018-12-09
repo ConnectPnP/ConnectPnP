@@ -24,7 +24,6 @@
                 </b-input-group-append>
             </b-input-group>
         </form>
-        <b-button class="btn btn-info" @click="showReview">리뷰</b-button>
     </div>
 
         <!--  카테고리 리스트가 보여지는 부분   -->
@@ -163,16 +162,6 @@ import Review from './reviewPopup/Review.vue'
                         });
                     }
                 })
-            },
-            showReview(){
-                this.$modal.show(Review,{
-                    // 주최자 정보
-                },{
-                    name: 'review',
-                    width: '500px',
-                    height: '450px',
-                    draggable: true
-                });
             },
             getCategoryList() {
             var vm = this
