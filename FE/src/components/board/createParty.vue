@@ -267,8 +267,7 @@
                     party.date,
                     party.location.title,
                     party.cost,
-                    party.file_array,
-                    party.selected_subcategory_id
+                    party.file_array
                 ];
 
                 for (var i = 0; i < validationCheck.length; i++) {
@@ -279,6 +278,24 @@
                 if (alertString != '') {
                     alert(alertString + " 칸을 채워주세요!");
                 } else if (party.date < party.recruitment_period_dateTwo) {
+                // // 빈칸 체크
+                // for(var i=0;i<validationCheck.length-1;i++){
+                //     if(validationCheck[i]==null||validationCheck[i]==''){
+                //         alertString += checkList[i] + ', ';
+                //     }
+                // }
+
+                // //카테고리 체크
+                // if(party.selected_subcategory_id == null){
+                //     if(this.categoryList2.length !=1){
+                //         alertString += 'Category';
+                //     }
+                // }
+
+                // if(alertString != ''){
+                //     alert(alertString+" 칸을 채워주세요!");
+                // }
+                // else if(party.date < party.recruitment_period_dateTwo){
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 } else {
                     console.log("category Id : " + party.selected_category_id.id);

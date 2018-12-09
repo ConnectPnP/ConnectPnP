@@ -3,12 +3,12 @@
             border-variant="light">
 
         <input type="image"
-               :src="member.profile_img"
-               v-bind:id="`memberSimpleProfile${member.id}`"
+               :src="member.avatar_path"
+               v-bind:id="`memberSimpleProfile${member._id}`"
                height="150px"
                width="120px"
         />
-        <b-popover v-bind:target="`memberSimpleProfile${member.id}`" triggers="hover focus">
+        <b-popover v-bind:target="`memberSimpleProfile${member._id}`" triggers="hover focus">
             <template slot="title">{{member.name}}</template>
             Age : <strong>{{member.age}}</strong> <br>
             gender : <strong>{{member.gender}}</strong>
@@ -22,14 +22,11 @@
     export default {
         name: "memberSimpleProfile",
         props: {
-            member: {
-                id: Number,
-                name: String,
-                age: Number,
-                gender: String,
-                profile_img: String
-            },
+            member: {},
             index: Number
+        },
+        mounted(){
+            console.log(this.member);
         }
     }
 </script>

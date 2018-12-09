@@ -11,37 +11,36 @@ const npage = 6; // 페이지당 6개 게시글 불러오기
 
 // 게시글 상세보기
 exports.getPost = (req, res) => {
-    Board.findOne({_id: req.params.id}, (err, board) => {
-        if (err) return res.status(500).send(err); // 500 error
-        return res.json(board);
-    })
-        .populate({path: 'host', select: '_id name avatar_path'})
-        .populate('comments')
-        .populate({
-            path: 'comments',
-            populate: {path: 'member', select: '_id  name avatar_path createdAt'},
-        })
-        .populate('waiting')
-        .populate('guest')
-        .populate({
-            path: 'comments',
-            populate: {
-                path: 'childComment', select: 'member _id content createdAt depth',
-                populate: {
-                    path: 'member', select: '_id name avatar_path'
-                }
-            },
-        })
-        .populate({
-            path: 'category',
-            select: 'name',
-        })
-        .populate({
-            path: 'subCategory',
-            select: 'name',
-        })
-        .exec(function (error, comments) {
-        });
+  Board.findOne({_id: req.params.id}, (err, board) => {
+    if (err) return res.status(500).send(err); // 500 error
+    return res.json(board);
+  })
+  .populate({path : 'host', select: '_id name avatar_path gender age'})
+  .populate('comments')
+  .populate({
+    path: 'comments',
+    populate: { path: 'member', select: '_id  name avatar_path createdAt' },
+  })
+  .populate('waiting')
+  .populate('guest')
+  .populate({
+    path: 'comments',
+    populate: {
+        path: 'childComment', select: 'member _id content createdAt depth',
+        populate: {path : 'member', select : '_id name avatar_path'
+      }
+    },
+  })
+  .populate({
+    path: 'category',
+    select: 'name',
+  })
+  .populate({
+    path: 'subCategory',
+    select: 'name',
+  })
+  .exec(function(error, comments) {
+  });
 };
 
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
@@ -245,36 +244,31 @@ exports.cancelGroup = (req, res) => {
 }
 
 exports.joinGroup = (req, res) => {
-    Board.findOneAndUpdate({_id: req.body.group}, {
-        $pull: {waiting: req.body.user},
-        $push: {guest: req.body.user}
-    }, {new: true}, (err, result) => {
-        if (!err && result) {
-            User.findOneAndUpdate({_id: req.body.user}, {$push: {"group_log.group_id": req.body.group}},{new:true}, (err, result) => {
-                if (!err)
-                    return res.json(result);
-                else
-                    return res.json(err);
-            })
-        }
-        ;
-        return res.json(err);
-    })
+  Board.findOneAndUpdate({_id : req.body.group}, {$pull : {waiting : req.body.user}, $push : {guest : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      User.findOneAndUpdate({_id : req.body.user}, {$push : {group_log :{ group_id : req.body.group}}}, (err, result) => {
+        if(!err)
+        return res.json(result);
+        else
+          return res.json(err);
+      })
+    };
+    return res.json(err);
+  })
 }
 
 exports.exitGroup = (req, res) => {
-    Board.findOneAndUpdate({_id: req.body.group}, {$pull: {guest: req.body.user}}, {new: true}, (err, result) => {
-        if (!err && result) {
-            User.findOneAndUpdate({_id: req.body.user}, {$pull: {"group_log.group_id": req.body.group}}, (err, result) => {
-                if (!err)
-                    return res.json(result);
-                else
-                    return res.json(err);
-            })
-        }
-        ;
-        return res.json(err);
-    })
+  Board.findOneAndUpdate({_id : req.body.group}, {$pull : {guest : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      User.findOneAndUpdate({_id : req.body.user}, {$pull : {group_log : { group_id : req.body.group}}}, (err, result) => {
+        if(!err)
+        return res.json(result);
+        else
+          return res.json(err);
+      })
+    };
+    return res.json(err);
+  })
 }
 
 exports.checkState = (req, res) => {
