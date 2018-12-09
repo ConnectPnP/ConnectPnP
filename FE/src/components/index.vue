@@ -2,10 +2,6 @@
     <div id="homePage">
     <modals-container />
 
-        <!--
-        로고 이미지
-        <img alt="Vue logo" src="../assets/logo.png">-->
-
     <div class="mainTitleArea">
         <div class="mainTitle">
             Connect PnP

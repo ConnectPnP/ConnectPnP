@@ -6,7 +6,6 @@
             <joinSlide :member=member :group=group />
         </div>
     </b-carousel>
-    <b-button size="sm" class="btnJoinAccept btn-info" @click="$emit('close')">확인</b-button>
 </div>
 </template>
 
