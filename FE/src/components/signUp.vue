@@ -81,8 +81,8 @@
        },
         computed:{
             userInfo(){
-                var userInfoName=this.$cookie.get('userName');
-                var userInfoProfile = this.$cookie.get('profile_path');
+                var userInfoName=this.$session.get('userName');
+                var userInfoProfile = this.$session.get('profile_path');
                 return [userInfoName, userInfoProfile]
             }
 
