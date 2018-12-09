@@ -291,8 +291,9 @@
             createCookie() {
                 // cookie 만들기 this.$route.params.id
                 var cookieName = "recentGroup" + this.$route.params.id;
+                var cookieId = String(this.$route.params.id);
                 var cookie = {
-                    id: this.$route.params.id,
+                    id: cookieId,
                     title: this.detailPartyInfo.title,
                     image: this.detailPartyInfo.images[0]
                 };
@@ -301,7 +302,7 @@
                     this.$cookies.remove(cookieName);
                 }
 
-                this.$cookies.set(cookieName, cookie, "1h");
+                this.$cookies.set(cookieName, cookie, "3h");
                 console.log(this.$cookies.keys())
 
                 // "recentGroup"+this.$route.params.id;

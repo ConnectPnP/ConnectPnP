@@ -153,7 +153,7 @@ import Review from './reviewPopup/Review.vue'
 
                     for(var i=0; i<result.data.length; i++){
                         if(num == 5) break;
-                        if(catListtemp.indexOf(result.data[i].category) != -1){
+                        if((catListtemp.indexOf(result.data[i].category) != -1)){
                             this.recommendedList.push(result.data[i]);
                             num++;
                         }
@@ -161,26 +161,6 @@ import Review from './reviewPopup/Review.vue'
                     });
                 })
             },
-            // getRecommendGroup(){ /////////////////
-            //     this.$http.get('http://localhost:3000/user/details/'+this.id).then((result) => {
-            //         // 관심 카테고리 가져오기
-            //         console.log(result);
-            //         var catListtemp = [];
-            //         for(var j=0; j<result.data.categoryList.length; j++){
-            //             catListtemp.push(result.data.categoryList[j]);
-            //             console.log(result.data.categoryList[j]);
-            //         }
-            //         this.userInterestedCategory = catListtemp;
-            //         console.log(catListtemp);
-
-
-
-
-
-
-
-            //     });
-            // },
             showReview(){
                 this.$modal.show(Review,{
                     // 주최자 정보
