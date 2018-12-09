@@ -357,7 +357,7 @@
                     console.log(imgFileUpload.data);
                     for(let i=0;i<this.mainCategoryList.length;i++){
                         if(this.mainCategoryList[i]._id==data._id){
-                            adminVue.mainCategoryList[i]=imgFileUpload.data
+                            adminVue.mainCategoryList[i].img_path=imgFileUpload.data.img_path
                         }}
 
                 } else {
