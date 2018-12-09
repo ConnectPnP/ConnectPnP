@@ -61,7 +61,7 @@
               <label style="font-weight:bold;">나의 평점</label>
             </div>
             <div class="col-sm-2 col-md-2 col-2">
-              <star-rating id="starRating" :rating="memberInfo.starRating" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
+              <star-rating id="starRating" :rating="memberInfo.starRating" :read-only="true" :star-size="30" :increment="0.01"></star-rating>
             </div>
 
           </b-row>
@@ -176,8 +176,15 @@ export default {
         this.memberInfo.interestedCategory = catListtemp;
         this.memberInfo.img = result.data.avatar_path
         // 평점 가져오기
-        this.memberInfo.starRating = result.data.star_rate;
+        if(result.data.star_rate.divider != 0){
+          this.memberInfo.starRating = (result.data.star_rate.totalScore/result.data.star_rate.divider)/2;
+
+        }
+        else {
+          this.memberInfo.starRating = 0;
+        }
         this.memberInfo.events = result.data.group_log
+        console.log(this.memberInfo.starRating);
 
     }).then(()=>{ this.getGroupDate(); });
 
