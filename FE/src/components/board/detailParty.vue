@@ -242,6 +242,7 @@
                     .then((result) => {
                         vm.detailPartyInfo = result.data
                         vm.host = result.data.host
+                        vm.detailPartyInfo.guest.unshift(vm.host);
                         for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
                             this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
                         }
