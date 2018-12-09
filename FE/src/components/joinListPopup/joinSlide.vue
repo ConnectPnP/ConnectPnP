@@ -1,5 +1,5 @@
 <template>
-    <b-carousel-slide class="slide">
+    <b-carousel-slide class="joinSlide">
         <b-container>
             <b-row>
                 <b-col>
@@ -10,7 +10,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <b-img class="slideProfileImg" rounded="circle" :src="member.avatar_path"/>
+                    <b-img class="joinSlideProfileImg" rounded="circle" :src="member.avatar_path"/>
                 </b-col>
                 <b-col>
                     <h4>{{ member.name }}</h4>
@@ -22,8 +22,8 @@
                     <br><br><br>
                 </b-col>
             </b-row>
-                <b-btn class="btnGroup" size="sm" variant="primary" @click="acceptMember">수락</b-btn> 
-                <b-btn class="btnGroup" size="sm" variant="primary" @click="refuseMember">거절</b-btn> 
+                <b-btn class="joinbtnGroup" :variant="isAccept" :disabled="disabled" size="sm" @click="acceptMember">수락</b-btn> 
+                <b-btn class="joinbtnGroup" :variant="isRefuse" :disabled="disabled" size="sm" @click="refuseMember">거절</b-btn> 
         </b-container>
 
     </b-carousel-slide>
@@ -38,11 +38,19 @@ export default {
     },
     props: {
         member : [],
-        group : {}
+        group : {},
+    },
+    data(){
+        return {
+            isAccept: "secondary",
+            isRefuse: "secondary",
+            disabled: false
+        }
     },
     methods: {
         acceptMember() {
-            console.log(this.group.groupId)
+            this.isAccept = "primary";
+            this.disabled = true;
             this.$http.post('http://localhost:3000/board/join', {
                         group: this.group.groupId, // 모임 Id
                         user : this.member._id
@@ -51,6 +59,8 @@ export default {
                     })
         },
         refuseMember() {
+            this.isRefuse = "danger";
+            this.disabled = true;
             this.$http.post('http://localhost:3000/board/cancel', {
                         group: this.group.groupId, // 모임 Id
                         user : this.member._id
@@ -65,11 +75,11 @@ export default {
 
 
 <style>
-.slide {
+.joinSlide {
     height: 430px;
 }
 
-.slideProfileImg {
+.joinSlideProfileImg {
     width: 100px;
     height: 100px;
     cursor : pointer;
@@ -81,5 +91,11 @@ div {
 
 #starRating {
     margin-bottom: 20px;
+}
+
+.joinbtnGroup {
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
 </style>
