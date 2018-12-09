@@ -16,7 +16,7 @@
     </b-input-group>
                 <b-button-group class="btnGroup">
                 <b-btn class="btn-info btnGroup" href="/party/create">모임 생성</b-btn>
-                <b-btn class="btn-info btnGroup" variant="primary" @click="getMyGroup">내 모임</b-btn>
+                <b-btn class="btn-info btnGroup" variant="primary" @click="getMyGroup(true)">내 모임</b-btn>
                 </b-button-group>
 
 </b-form>
@@ -89,37 +89,37 @@ export default {
       }
   },
   mounted(){
-      this.getCategoryList();
-      switch(this.type) {
-        case 0 :
-            this.getPostData()
-            break;
-        case 1 :
-            this.getMyGroup()
-            break;
-        case 2 :
-            this.searchGroup()
-            break;
-      }
+      this.getCategoryList()
       this.getPostData()
   },
   methods: {
       pageChange(page) {
-          this.currentPage = page
-          this.getPostData()
+        this.currentPage = page - 1
+        switch(this.type) {
+            case 0 :
+                this.getPostData()
+                break;
+            case 1 :
+                this.getMyGroup(false)
+                break;
+            case 2 :
+                this.searchGroup()
+                break;
+        }
       },
        getPostData () {
            var vm = this
-           var page = this.currentPage -1
+           var page = this.currentPage
            this.$http.get('http://localhost:3000/board/list/' + page + '/' + this.$session.get('category'))
            .then((result) => {
                vm.groupList = result.data
            })
        },
-       getMyGroup() {
+       getMyGroup(btn) {
+        if(btn)
+            this.currentPage = 0;
         var vm = this
-        var page = this.currentPage -1
-           this.$http.post('http://localhost:3000/board/search/' +page , 
+           this.$http.post('http://localhost:3000/board/search/' +this.currentPage , 
            {
                 host : this.$session.get('id')
             })
