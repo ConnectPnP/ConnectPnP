@@ -19,20 +19,24 @@ export default {
   },
   props: {
         members : [
-            {
-                _id : {type: Number},
-                name : {type : String},
-                avatar_path : {type : String},
-                gender : {type : String},
-                age : {type : Number},
-                star_rate : {type : Number}
-            }
+            // {
+            //     _id : {type: Number},
+            //     name : {type : String},
+            //     avatar_path : {type : String},
+            //     gender : {type : String},
+            //     age : {type : Number},
+            //     star_rate : {type : Number}
+            // }
         ],
         group : {
-            groupId : {type : Number},
-            groupTitle : {type: String},
-            groupDate : {type: String}
+            // groupId : {type : Number},
+            // groupTitle : {type: String},
+            // groupDate : {type: String}
         }
+    },
+    mounted(){
+        console.log("members : "+this.members)
+        console.log("group : "+this.group)
     }
 }
 
@@ -42,8 +46,8 @@ export default {
 #joinList {
   background: rgb(210, 232, 255);
 
-  max-width: 500px;
-  max-height: 480px;
+  width: 500px;
+  height: 440px;
 
   text-align: center;
 
@@ -51,7 +55,7 @@ export default {
 }
 
 .carousel {
-    height: 300px;
+    height: 330px;
 }
 
 .btnGroup {
