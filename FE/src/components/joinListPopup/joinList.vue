@@ -1,12 +1,12 @@
 <template>
 <div id="joinList">
     <h3>신청자 리스트</h3>
-    <b-carousel class="carousel" indicators controls :interval="0">
+    <b-carousel class="joincarousel" indicators controls :interval="0">
         <div v-for="member in members">
             <joinSlide :member=member :group=group />
         </div>
     </b-carousel>
-
+    <b-button size="sm" class="btnJoinAccept btn-info" @click="$emit('close')">확인</b-button>
 </div>
 </template>
 
@@ -18,25 +18,8 @@ export default {
       joinSlide
   },
   props: {
-        members : [
-            // {
-            //     _id : {type: Number},
-            //     name : {type : String},
-            //     avatar_path : {type : String},
-            //     gender : {type : String},
-            //     age : {type : Number},
-            //     star_rate : {type : Number}
-            // }
-        ],
-        group : {
-            // groupId : {type : Number},
-            // groupTitle : {type: String},
-            // groupDate : {type: String}
-        }
-    },
-    mounted(){
-        console.log("members : "+this.members)
-        console.log("group : "+this.group)
+        members : [],
+        group : {}
     }
 }
 
@@ -47,21 +30,20 @@ export default {
   background: rgb(210, 232, 255);
 
   width: 500px;
-  height: 440px;
+  height: 500px;
 
   text-align: center;
 
   padding: 15px;
 }
 
-.carousel {
+.joincarousel {
     height: 330px;
 }
 
-.btnGroup {
-    width: 100px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+.btnJoinAccept {
+    margin-top: 50px;
 }
+
 
 </style>

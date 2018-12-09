@@ -15,7 +15,7 @@ exports.getPost = (req, res) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(board);
   })
-  .populate({path : 'host', select: '_id name avatar_path'})
+  .populate({path : 'host', select: '_id name avatar_path gender age'})
   .populate('comments')
   .populate({
     path: 'comments',
@@ -245,7 +245,7 @@ exports.cancelGroup = (req, res) => {
 exports.joinGroup = (req, res) => {
   Board.findOneAndUpdate({_id : req.body.group}, {$pull : {waiting : req.body.user}, $push : {guest : req.body.user}}, {new:true}, (err, result) => {
     if(!err && result) {
-      User.findOneAndUpdate({_id : req.body.user}, {$push : {"group_log.group_id" : req.body.group}}, (err, result) => {
+      User.findOneAndUpdate({_id : req.body.user}, {$push : {group_log :{ group_id : req.body.group}}}, (err, result) => {
         if(!err)
         return res.json(result);
         else 
@@ -259,7 +259,7 @@ exports.joinGroup = (req, res) => {
 exports.exitGroup = (req, res) => {
   Board.findOneAndUpdate({_id : req.body.group}, {$pull : {guest : req.body.user}}, {new:true}, (err, result) => {
     if(!err && result) {
-      User.findOneAndUpdate({_id : req.body.user}, {$pull : {"group_log.group_id" : req.body.group}}, (err, result) => {
+      User.findOneAndUpdate({_id : req.body.user}, {$pull : {group_log : { group_id : req.body.group}}}, (err, result) => {
         if(!err)
         return res.json(result);
         else 

@@ -171,7 +171,6 @@
                 this.currentUser.age = this.$session.get('age');
                 this.currentUser.gender = this.$session.get('gender');
                 this.getPartyDetail();
-
             },
             deletePost() {
                 this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)
@@ -179,27 +178,18 @@
                         window.location.href = "http://localhost:8080/party/list"
                     })
             },
-            onLoad(map) {
-                var bounds = map.getBounds();
-
-                var iwContent = '<br><pre> 아주대학교 </pre>'
-                var iwPosition = new daum.maps.LatLng(this.detailPartyInfo.location["lat"], this.detailPartyInfo.location["lng"]);
-                var marker = new daum.maps.Marker({
-                    position: iwPosition,
-                    map: map
-                });
-                var infowindow = new daum.maps.InfoWindow({
-                    position: iwPosition,
-                    content: iwContent
-                });
-                infowindow.open(map, marker)
-
-            },
             waitParty() {
                 // 이미 신청 or 가입 되어있는지 확인해야 함
                 var vm = this
                 var condition = this.detailPartyInfo.conditions;
-                if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
+
+                if(vm.currentUser.user_id == undefined){
+                  alert("로그인이 필요합니다");  
+                }
+                else if(this.detailPartyInfo.max_num <= this.detailPartyInfo.guest.length){
+                    alert("신청 가능 인원이 가득 찼습니다.");
+                }
+                else if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
                     this.$http.post('http://localhost:3000/board/wait', {
@@ -209,10 +199,10 @@
                         console.log(result)
                     })
                     alert("신청 완료 되었습니다.");
+                    this.isWaiting = true;
                 } else {
                     alert("조건에 맞지 않아 참여할 수 없습니다!");
                 }
-                this.isWaiting = true;
             },
             cancelWaiting() {
                 var vm = this
@@ -233,8 +223,9 @@
                 })
             },
             showJoinList() {
-                console.log("members : "+this.detailPartyInfo.waiting)
-                console.log("group : "+this.detailPartyInfo._id+", "+this.detailPartyInfo.title+", "+this.detailPartyInfo.meeting_date)
+                if(this.detailPartyInfo.waiting.length == 0){
+                    alert("새로운 신청자가 없습니다!");
+                } else {
                 this.$modal.show(JoinList, 
                 {
                     members : this.detailPartyInfo.waiting, 
@@ -246,9 +237,10 @@
                 {
                     name: 'joinList',
                     width: '500px',
-                    height: '440px',
+                    height: '500px',
                     draggable: true
                 })
+                }
             },
             getPartyDetail() {
                 var vm = this
@@ -256,6 +248,7 @@
                     .then((result) => {
                         vm.detailPartyInfo = result.data
                         vm.host = result.data.host
+                        vm.detailPartyInfo.guest.unshift(vm.host);
                         for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
                             this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
                         }
@@ -276,7 +269,12 @@
             },
             createComment(content) {
                 var vm = this
-                this.$http.defaults.headers.post['Content-Type'] = 'application/json'
+                
+                if(vm.currentUser.user_id == undefined){
+                  alert("로그인이 필요합니다");  
+                }
+                else {
+                    this.$http.defaults.headers.post['Content-Type'] = 'application/json'
                 this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
                     {
                         user_id: vm.currentUser.id,
@@ -285,7 +283,9 @@
                     })
                     .then((result) => {
                         window.location.reload()
-                    })
+                    });
+                }
+                
 
             },
             createCookie() {
