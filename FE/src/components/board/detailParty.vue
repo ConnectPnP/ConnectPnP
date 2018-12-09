@@ -209,10 +209,10 @@
                         console.log(result)
                     })
                     alert("신청 완료 되었습니다.");
+                    this.isWaiting = true;
                 } else {
                     alert("조건에 맞지 않아 참여할 수 없습니다!");
                 }
-                this.isWaiting = true;
             },
             cancelWaiting() {
                 var vm = this
@@ -233,8 +233,9 @@
                 })
             },
             showJoinList() {
-                console.log("members : "+this.detailPartyInfo.waiting)
-                console.log("group : "+this.detailPartyInfo._id+", "+this.detailPartyInfo.title+", "+this.detailPartyInfo.meeting_date)
+                if(this.detailPartyInfo.waiting.length == 0){
+                    alert("새로운 신청자가 없습니다!");
+                } else {
                 this.$modal.show(JoinList, 
                 {
                     members : this.detailPartyInfo.waiting, 
@@ -246,9 +247,10 @@
                 {
                     name: 'joinList',
                     width: '500px',
-                    height: '440px',
+                    height: '500px',
                     draggable: true
                 })
+                }
             },
             getPartyDetail() {
                 var vm = this
