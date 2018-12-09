@@ -101,8 +101,12 @@ exports.createSubCategory = (req, res) => {
 // 모든 소분류 카테고리 보기
 exports.getAllSubCategory = (req, res) => {
     Category.find({depth: 1}, (err, category) => {
-        if (err) return res.status(500).send(err); // 500 error
-        return res.json(category);
+        if (err) {
+            return res.status(500).send(err);
+        } // 500 error
+        else{
+            return res.json(category);
+        }
     });
 };
 
