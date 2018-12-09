@@ -37,26 +37,14 @@ export default {
         StarRating
     },
     props: {
-        members : [
-            {
-                _id : {type: Number},
-                name : {type : String},
-                avatar_path : {type : String},
-                gender : {type : String},
-                age : {type : Number},
-                star_rate : {type : Number}
-            }
-        ],
-        group : {
-            groupId : {type : Number},
-            groupTitle : {type: String},
-            groupDate : {type: String}
-        }
+        member : [],
+        group : {}
     },
     methods: {
         acceptMember() {
+            console.log(this.group.groupId)
             this.$http.post('http://localhost:3000/board/join', {
-                        group: this.groupId, // 모임 Id
+                        group: this.group.groupId, // 모임 Id
                         user : this.member._id
                     }).then((result) => {
                         console.log(result)
@@ -64,7 +52,7 @@ export default {
         },
         refuseMember() {
             this.$http.post('http://localhost:3000/board/cancel', {
-                        group: this.groupId, // 모임 Id
+                        group: this.group.groupId, // 모임 Id
                         user : this.member._id
                     }).then((result) => {
                         console.log(result)
@@ -78,7 +66,7 @@ export default {
 
 <style>
 .slide {
-    height: 350px;
+    height: 430px;
 }
 
 .slideProfileImg {
