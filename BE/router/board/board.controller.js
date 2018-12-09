@@ -114,20 +114,6 @@ exports.deletePost = (req, res) => {
     });
 };
 
-exports.test = (req, res) => {
-  var page = 0;
-  Board.find({
-    "conditions.age[0]" : 0
-}, (err,result) => {
-    if(err) {
-      console.log(err);
-      return res.json({ result : "fail"}); 
-    }
-    else {
-      console.log(result)
-      return res.json(result);}
-  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
-}
 
 exports.searchPost = (req, res) => {
   var page = req.params.page
