@@ -5,13 +5,12 @@
     <b-input-group style="width: 70%">
         <b-input-prepend>
             <b-form-select v-model="firstSelect" :options="select1" @change="selectOption1" />
-            <b-form-select v-if="(firstSelect==0)||(firstSelect==1)||(firstSelect==3)"
-                v-model="secondSelect" :options="select2" @change="selectOption2" />
-            <b-form-select v-if="(firstSelect==0)&&(secondSelect!=null)" v-model="selected_subcategory_id" :options="select3" />
+            <b-form-select v-if="(firstSelect==3)"
+                v-model="secondSelect" :options="select2" />
         </b-input-prepend>
-        <b-form-input v-if="firstSelect!=3" type="text" v-model="searchText" placeholder="Search"/>
+        <b-form-input v-if="firstSelect!=3" type="text" v-model="searchQuery" placeholder="Search"/>
             <b-input-group-append>
-                <b-btn class="btn-info" @click="searchGroup">검색</b-btn>
+                <b-btn class="btn-info" @click="searchGroup(true)">검색</b-btn>
             </b-input-group-append>
     </b-input-group>
                 <b-button-group class="btnGroup">
@@ -53,8 +52,9 @@ export default {
   },
   data(){
       return {
+          query : '',
           currentPage: 0,
-          searchText : '',
+          searchQuery : '',
           type : 0,
           firstSelect: null, secondSelect:{},
           selected_category_id: null, selected_subcategory_id: null,
@@ -67,21 +67,22 @@ export default {
             ],
             select2: [ ],
             select3: [ ],
-            hostSearchOption: [
-                { value: {}, text: '--필터--', disabled:true},
-                { value: 1, text: 'ID'},
-                { value: 2, text: '닉네임'}
-            ],
+            // hostSearchOption: [
+            //     { value: {}, text: '--필터--', disabled:true},
+            //     { value: 1, text: 'ID'},
+            //     { value: 2, text: '닉네임'}
+            // ],
             condition: [
                 { value: {}, text: '--필터--', disabled:true},
                 { value: 1, text: '헌재 모집중'},
                 { value: 2, text: '여자'},
                 { value: 3, text: '남자'},
-                { value: 4, text: '10대'},
-                { value: 5, text: '20대'},
-                { value: 6, text: '30대'},
-                { value: 7, text: '10명 이하'},
-                { value: 8, text: '20명 이하'}
+                { value: 4, text: '혼성'},
+                // { value: 5, text: '10대 이상'},
+                // { value: 6, text: '20대 이상'},
+                // { value: 7, text: '30대 이상'},
+                { value: 8, text: '10명 이하'},
+                { value: 9, text: '20명 이하'}
             ],
             categoryList1: [{ value: {}, text: '--- 대분류 ---', disabled:true}], // 카테고리 대분류
             categoryList2:[ ], // 카테고리 소분류
@@ -103,7 +104,7 @@ export default {
                 this.getMyGroup(false)
                 break;
             case 2 :
-                this.searchGroup()
+                this.searchGroup(false)
                 break;
         }
       },
@@ -119,7 +120,7 @@ export default {
         if(btn)
             this.currentPage = 0;
         var vm = this
-           this.$http.post('http://localhost:3000/board/search/' +this.currentPage , 
+           this.$http.post('http://localhost:3000/board/search/' +this.currentPage, 
            {
                 host : this.$session.get('id')
             })
@@ -129,25 +130,26 @@ export default {
            })
        },
         selectOption1(select){
-            // this.secondSelect = null;
+            this.secondSelect = null;
             // if(select == 0){
             //     this.select2 = this.categoryList1;
             // } else 
-            if(select == 1){
-                this.select2 = this.hostSearchOption;
-            } else if(select == 3) {
+            // if(select == 1){
+            //     this.select2 = this.hostSearchOption;
+            // } else 
+            if(select == 3) {
                 this.select2 = this.condition;
             }
         },
-        selectOption2(select){
-            this.thirdSelect = null;
-            if(this.firstSelect == 0){
-                if(select != null){
-                    this.select3 = this.categoryList2[select.index];
-                    this.selected_category_id = select.id;
-                }
-            }
-        },
+        // selectOption2(select){
+        //     this.thirdSelect = null;
+        //     if(this.firstSelect == 0){
+        //         if(select != null){
+        //             this.select3 = this.categoryList2[select.index];
+        //             this.selected_category_id = select.id;
+        //         }
+        //     }
+        // },
         getCategoryList() {
                 var vm = this
                 this.$http.get('http://localhost:3000/category')
@@ -168,93 +170,140 @@ export default {
                     }
                 });
         },
-        searchGroup() {
+        searchGroup(btn) {
             var vm = this
             this.type = 2;
-            var searchParam = this.firstSelect * this.secondSelect;
-            var type;
+            var searchParam = 0;
+            var page = this.currentPage
+            if(this.firstSelect == 3)
+                searchParam = this.firstSelect * this.secondSelect
+            else searchParam = this.firstSelect
+            if(btn)
+                page = 0;
             switch(searchParam) {
-                case 1*1 : // 주최자 ID
-                this.$http.post('http://localhost:3000/board/searchUser',{user_code : this.searchText})
+                case 1*1 : // 주최자 nickName
+                    vm.$http.post('http://localhost:3000/board/searchUser',{name : vm.searchQuery})
                     .then((result) => {
-                        type = {
-                            subCategory : vm.$session.get('category'), 
-                            host : result.data._id
-                        }
-                    })
-                    break;
-                case 1*2 : // 주최자 nickName
-                this.$http.post('http://localhost:3000/board/searchUser',{name : this.searchText})
-                    .then((result) => {
-                        type = {
-                            subCategory : vm.$session.get('category'), 
-                            host : result.data._id
-                        }
-                    })
-                    break;
-                case 2*2 : // 위치
-                    type = {
-                                subCategory : vm.$session.get('category'), 
+                        var id = [];
+                        result.data.forEach(
+                            function getIds(newId) {
+                                id.push(newId._id)
                             }
+                        )
+                        vm.query = {
+                            "subCategory" : vm.$session.get('category'), 
+                            "host" : {$in: id}
+                        }
+                        vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                            vm.groupList = result.data
+                        })
+                    })
+                    break;
+                case 2 : // 위치
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
+                                "location.title" : { "$regex": vm.searchQuery, "$options": "i" } 
+                    }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
                 case 3*1 : // 현재 모집중
-                    type = {
-                                subCategory : vm.$session.get('category'), 
-                                
-                            }
+                    var currentDate = new Date().toISOString().slice(0,10);
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
+                                "start_date" : {$lte: currentDate}, 
+                                "due_date" : {$gte: currentDate},
+                    }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
                 case 3*2 : // 여자
-                    type = {
-                                subCategory : vm.$session.get('category'), 
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
                                 "conditions.gender" : "female"
                             }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
                 case 3*3 : // 남자
-                    type = {
-                                subCategory : vm.$session.get('category'), 
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
                                 "conditions.gender" : "male"
                             }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
-                case 3*4 : // 10대
-                    type = {
-                                subCategory : vm.$session.get('category'), 
-                                "conditions.age[0]" : { $gte: 10, $lte: 20 },
-                                "conditions.age[1]" : { $gte: 10, $lte: 20 }
+                 case 3*4 : // 혼성
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
+                                "conditions.gender" : "none"
                             }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
-                case 3*5 : // 20대
-                    type = {
-                                subCategory : vm.$session.get('category'),
-                                "conditions.age[0]" : { $gte: 20, $lte: 30 },
-                                "conditions.age[1]" : { $gte: 20, $lte: 30 } 
-                            }
-                    break;
-                case 3*6 : // 30대
-                    type = {
-                                subCategory : vm.$session.get('category'), 
-                                "conditions.age[0]" : { $gte: 30, $lte: 40 },
-                                "conditions.age[1]" : { $gte: 30, $lte: 40 }
-                            }
-                    break;
-                case 3*7 : // 10명 이하
-                    type = {
-                            subCategory : vm.$session.get('category'), 
-                            max_num : { $lte: 10 }
+                // case 3*5 : // 10대 이상
+                //     vm.query = {
+                //                 "subCategory" : vm.$session.get('category'), 
+                //                 "conditions.age[0]" : {$gte: 10}
+                //             }
+                //     vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                //         .then((result) => {
+                //         vm.groupList = result.data
+                //     })
+                //     break;
+                // case 3*6 : // 20대 이상
+                //     vm.query = {
+                //                 "subCategory" : vm.$session.get('category'),
+                //                 "conditions.age[0]" : {$gte: 20},
+                //             }
+                //     vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                //         .then((result) => {
+                //         vm.groupList = result.data
+                //     })
+                //     break;
+                // case 3*7 : // 30대 이상
+                //     vm.query = {
+                //                 "subCategory" : vm.$session.get('category'), 
+                //                 "conditions.age[0]" : {$gte: 30},
+                //             }
+                //     vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                //         .then((result) => {
+                //         vm.groupList = result.data
+                //     })
+                //     break;
+                case 3*8 : // 10명 이하
+                    vm.query = {
+                            "subCategory" : vm.$session.get('category'), 
+                            "max_num" : { $lte: 10 }
                         }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;
-                case 3*8 : // 20명 이하
-                    type = {
-                                subCategory : vm.$session.get('category'), 
-                                max_num : { $lte: 20 }
+                case 3*9 : // 20명 이하
+                    vm.query = {
+                                "subCategory" : vm.$session.get('category'), 
+                                "max_num" : { $lte: 20 }
                             }
+                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        .then((result) => {
+                        vm.groupList = result.data
+                    })
                     break;  
             }
-            var page = this.currentPage - 1
-            this.$http.post('http://localhost:3000/board/search/' +page, type)
-           .then((result) => {
-               vm.groupList = result.data
-           })
-        }
+        },
 
     }
 }

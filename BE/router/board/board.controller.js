@@ -114,21 +114,39 @@ exports.deletePost = (req, res) => {
     });
 };
 
-
-exports.searchPost = (req, res) => {
-  var page = req.params.page
-  Board.find(req.body, (err,result) => {
-    if(err) return res.json({ result : "fail"});
+exports.test = (req, res) => {
+  var page = 0;
+  Board.find({
+    "conditions.age[0]" : 0
+}, (err,result) => {
+    if(err) {
+      console.log(err);
+      return res.json({ result : "fail"}); 
+    }
     else {
       console.log(result)
       return res.json(result);}
-  }).sort({_id: 1}).skip((page) * npage).limit(npage);;
+  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
+}
+
+exports.searchPost = (req, res) => {
+  var page = req.params.page
+  console.log("herjaehks;rdlfjas;fj           + " + page)
+  console.log(req.body)
+  Board.find(req.body, (err,result) => {
+    if(err) {
+      console.log(err);
+      return res.json({ result : "fail"});}
+    else {
+      console.log(result)
+      return res.json(result);}
+  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
 };
 
 exports.searchUser = (req, res) => {
   User.find(req.body, (err, result) => {
     if(!err) {
-      return res.json({_id : result._id})
+      return res.json(result)
     } else return res.json({result: "fail"});
   })
 }

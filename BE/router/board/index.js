@@ -19,6 +19,8 @@ router.post('/files/:id', boardCtrl.uploadFile);
 
 router.get('/', boardCtrl.getAllPost);
 
+router.post('/test',boardCtrl.test);
+
 router.post('/edit/:id',boardCtrl.updatePost);
 router.delete('/delete/:id',boardCtrl.deletePost);
 
