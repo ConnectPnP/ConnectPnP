@@ -11,7 +11,7 @@ const Schema = mongoose.Schema;
 const chatMessageSchema = new Schema({
     author: {type: Number, required: true, ref:'User'},
     content: {type: String, required: true},
-    dest: {type: String,required:true},
+    dest: {type: Number,required:true},
     group: {type: Boolean},
     type: {type: String},
     time: {type: Date, default: Date.now()}

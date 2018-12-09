@@ -74,8 +74,6 @@
                 }
             },
             determineMessageColors() {
-                console.log(this.message.author._id)
-                console.log(this.$session.get('id'))
                 return this.message.author._id === this.$session.get('id') ? this.sentColorsStyle() : this.receivedColorsStyle()
             }
         }

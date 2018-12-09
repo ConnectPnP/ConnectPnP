@@ -31,7 +31,7 @@
     /* eslint-disable */
     import ChatWindow from './ChatWindow.vue'
     import availableColors from '../colors'
-    import io from 'socket.io-client'
+
     export default {
         components: {
             ChatWindow
@@ -79,7 +79,6 @@
                         }
                     }
                 },
-                socket: io.connect('http://localhost:3000', {'forceNew': true}),
                 //현재 chat 참여 리스트 (userId, name, imgpath 필요)
                 participants: [],
                 groups: [],
@@ -98,8 +97,7 @@
         },
         created() {
             this.setColor('blue');
-            this.getSocket();
-            this.socket.emit('group',{command:"group",type:"group",userId:this.$session.get('id')})
+            this.$socket.emit('group', {command: "group", type: "group", userId: this.$session.get('id')})
         },
         methods: {
             sendMessage(text) {
@@ -111,7 +109,7 @@
             //채팅하고자 하는 group이 바뀔경우 UI 바꾸기
             toggleGroupUI(_id) {
 
-                var chatRoom = this.chatRoom.filter((room) => room.group._id == _id)
+                var chatRoom = this.chatRoom.filter((room) => room.group.group_id == _id)
 
                 this.participants = chatRoom[0].group.participants
                 this.messageList = chatRoom[0].messageList
@@ -122,7 +120,7 @@
                 // if(this.groups.length!=0){
                 //
                 // }
-                this.socket.emit('message', message)
+                this.$socket.emit('message', message)
             },
             openChat() {
                 this.isOpen = true
@@ -135,48 +133,67 @@
                 this.colors = this.availableColors[color]
                 this.chosenColor = color
             },
-            getSocket() {
-                this.socket.on('connect', function () {
-                    console.log("소켓 연결")
-                })
-                this.socket.on('disconnect', function () {
-                    console.log("소켓 연결 종료")
-                })
-            },
             arrangeChatroom(List) {
 
                 var messageList = {}
                 this.groups.forEach((group) => {
-                    messageList = List.filter((list) => list.dest == group._id)
+                    messageList = List.filter((list) => list.dest == group.group_id)
                     this.chatRoom.push({
                         group: group,
                         messageList: messageList
                     })
                 })
+
+
             }
         },
         computed: {
             backgroundColor() {
                 return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
+            },
+            changeTitle() {
+                var group = this.groups.filter((group) => group.title === this.title)
+                if (!group) {
+                    this.title = 'Group List'
+                }
             }
         },
-
-        mounted() {
-            this.socket.on('message', (message) => {
+        sockets: {
+            message(message) {
                 console.log('메세지 event 받음')
                 this.messageList.push(message)
-            })
-            this.socket.on('group', (data) => {
+            },
+            group(data) {
                 console.log('채팅방 리스트 정보 받음')
                 if (data.command == 'list') {
                     this.groups = data.roomList
                     this.arrangeChatroom(data.messageList)
                 }
-            })
-            this.socket.on('response', (response) => {
-                console.log('응답 메세지를 받았습니다.' + response.command + ','
-                    + response.code + ',' + response.message)
-            })
+                this.title = 'Group List'
+            },
+            connect() {
+                console.log("소켓 연결")
+            },
+            disconnect() {
+                console.log("소켓 연결 종료")
+            }
+        },
+        mounted() {
+            // this.socket.on('message', (message) => {
+            //     console.log('메세지 event 받음')
+            //     this.messageList.push(message)
+            // })
+            // this.socket.on('group', (data) => {
+            //     console.log('채팅방 리스트 정보 받음')
+            //     if (data.command == 'list') {
+            //         this.groups = data.roomList
+            //         this.arrangeChatroom(data.messageList)
+            //     }
+            // })
+            // this.socket.on('response', (response) => {
+            //     console.log('응답 메세지를 받았습니다.' + response.command + ','
+            //         + response.code + ',' + response.message)
+            // })
         }
     }
 </script>

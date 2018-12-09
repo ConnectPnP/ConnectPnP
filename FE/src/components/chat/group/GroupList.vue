@@ -1,12 +1,12 @@
 <template>
     <div class="group-list">
-        <div class="sc-header" v-for="group in groups" :key="group._id" style="padding-top: 5px">
+        <div class="sc-header" v-for="group in groups" :key="group.group_id" style="padding-top: 5px">
             <div>
                 <img class="sc-header--img img-msg"
                      :src="group.img_path"
                      @click=""/>
             </div>
-            <div class="sc-header--title" :_id=group._id @click="toggle(group._id)" > {{group.name}}</div>
+            <div class="sc-header--title" :_id=group.group_id @click="toggle(group.group_id)" > {{group.name}}</div>
 
         </div>
     </div>
@@ -28,7 +28,7 @@
         methods:{
             toggle(group_id){
                 this.toggleGroupUI(group_id)
-                this.$emit('getCurrentDestId',group_id.toString())
+                this.$emit('getCurrentDestId',group_id)
             }
         }
     }

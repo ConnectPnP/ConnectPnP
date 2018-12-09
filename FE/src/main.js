@@ -16,6 +16,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'vue-awesome/icons';
 import 'vuesax/dist/vuesax.css'
 import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
+import VueSocketIO from 'vue-socket.io';
 
 
 const VueResource = require('vue-resource')
@@ -36,9 +37,14 @@ Vue.use(VModal, {dynamic: true});
 
 Vue.use(VueCookies);
 
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection:'http://localhost:3000'
+}))
+
 new Vue({
-  el: '#app',
-  router,
-  render : h=> h(App),
+    el: '#app',
+    router,
+    render: h => h(App),
 });
 

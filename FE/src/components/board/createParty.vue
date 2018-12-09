@@ -144,7 +144,8 @@
                               label-for="js-party-category">
                     <div v-if="isEdit"> 수정 전 카테고리 : {{detailEdit.category.name}} > {{detailEdit.subCategory.name}}</div>
                     <b-input-group>
-                        <br><b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3"
+                        <br>
+                        <b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3"
                                        @change="showSubCategory"></b-form-select>
                         <b-form-select v-model="party_form.selected_subcategory_id" :options="categoryList2"
                                        class="mb-3"></b-form-select>
@@ -178,8 +179,8 @@
             SearchMap
         },
         props: {
-            currentGroupId:'',
-            isEdit:{
+            currentGroupId: '',
+            isEdit: {
                 type: Boolean,
                 default: false
             }
@@ -230,8 +231,8 @@
         },
         created() {
             this.getCategoryList();
-            
-            if(this.isEdit == true){
+
+            if (this.isEdit == true) {
                 this.editor();
             }
 
@@ -263,6 +264,7 @@
                 return formattedDates
             },
             onSubmit(evt) {
+                var vm = this
                 evt.preventDefault();
                 var boardId;
                 var party = this.party_form;
@@ -286,22 +288,20 @@
                     }
                 }
                 //카테고리 체크
-                if(party.selected_subcategory_id == null){
-                    if(this.categoryList2.length !=1){
+                if (party.selected_subcategory_id == null) {
+                    if (this.categoryList2.length != 1) {
                         alertString += 'Category';
                     }
                 }
 
                 if (alertString != '') {
                     alert(alertString + " 칸을 채워주세요!");
-                } 
-                else if(party.date < party.recruitment_period_dateTwo){
+                } else if (party.date < party.recruitment_period_dateTwo) {
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
-                }
-                else {
-                        console.log("isEdit : "+this.isEdit);
+                } else {
+
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
-                    if(this.isEdit == false){
+                    if (this.isEdit == false) {
                         this.$http.post('http://localhost:3000/board', {
                             title: party.title,
                             due_date: party.recruitment_period_dateTwo,
@@ -317,21 +317,26 @@
                             location: party.location,
                             host: this.currentUser
                         })
-                    // 이미지 업로드
-                        .then((result) => {
-                            boardId = result.data._id
-                            this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
-                            this.$http.post('http://localhost:3000/board/join',{
-                                group: boardId,
-                                user: this.currentUser
-                            });
-                        })
-                        .then(() => {
-                            window.location.href = "http://localhost:8080/party/detail/" + boardId
-                        });
-                    }
-                    else if(this.isEdit == true) { // 수정
-                        this.$http.post('http://localhost:3000/board/edit/'+this.currentGroupId,{
+                        // 이미지 업로드
+                            .then((result) => {
+                                boardId = result.data._id
+                                this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                                this.$http.post('http://localhost:3000/board/join', {
+                                    group: boardId,
+                                    user: this.currentUser
+                                });
+                            })
+                            .then(() => {
+                                this.$http.get('http://localhost:3000/board/details/' + boardId).then((result) => {
+                                    vm.$socket.emit('group', {
+                                        command: 'create',
+                                        result
+                                    })
+                                    window.location.href = "http://localhost:8080/party/detail/" + boardId
+                                })
+                            })
+                    } else if (this.isEdit == true) { // 수정
+                        this.$http.post('http://localhost:3000/board/edit/' + this.currentGroupId, {
                             title: party.title,
                             due_date: party.recruitment_period_dateTwo,
                             start_date: party.recruitment_period_dateOne,
@@ -343,16 +348,16 @@
                             subCategory: party.selected_subcategory_id,
                             conditions: {gender: party.conditions.gender, age: party.conditions.age},
                             detail: party.detail,
-                            location: party.location,
+                            location: party.location
                         })
-                        .then(() => {
-                            this.$http.post('http://localhost:3000/board/files/' + this.currentGroupId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
-                        })
-                        .then(() => {
-                            window.location.href = "http://localhost:8080/party/detail/" + this.currentGroupId;
-                        });
+                            .then(() => {
+                                this.$http.post('http://localhost:3000/board/files/' + this.currentGroupId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                            })
+                            .then(() => {
+                                window.location.href = "http://localhost:8080/party/detail/" + this.currentGroupId;
+                            });
                     }
-                    
+
                 }
             },
             changeAgeCondition() {
@@ -361,7 +366,8 @@
                 } else {
                     this.party_form.conditions.age = [0, 100];
                 }
-            },
+            }
+            ,
             async editor() {
                 var vm = this
                 console.log(vm.currentGroupId);
@@ -380,17 +386,17 @@
                 vm.party_form.location = vm.detailEdit.location;
                 vm.party_form.cost = vm.detailEdit.cost;
                 vm.party_form.conditions.gender = gender;
-                
+
                 // 조건-나이 세팅
-                if(vm.detailEdit.conditions.age[0]==0&&vm.detailEdit.conditions.age[1]==100){
+                if (vm.detailEdit.conditions.age[0] == 0 && vm.detailEdit.conditions.age[1] == 100) {
                     selectAge = 'none';
-                    age = [0,100];
+                    age = [0, 100];
                 } else {
                     age = [vm.detailEdit.conditions.age[0], vm.detailEdit.conditions.age[1]];
                 }
                 vm.party_form.conditions.selectAge = selectAge;
                 vm.party_form.conditions.age = age;
-                for(var i=0;i<vm.detailEdit.images.length;i++){
+                for (var i = 0; i < vm.detailEdit.images.length; i++) {
                     vm.party_form.file_array.push({blob: vm.detailEdit.images[i]});
                 }
             },
@@ -414,12 +420,14 @@
                             vm.subCategoryList.push(categoryOption);
                         }
                     });
-            },
+            }
+            ,
             showSubCategory(select) {
                 this.party_form.selected_subcategory_id = null;
                 // this.party_form.selected_category_id = select.id;
                 this.categoryList2 = this.subCategoryList[select.index];
-            },
+            }
+            ,
             showSearchMap() {
                 this.$modal.show(SearchMap, {}, {
                     name: 'searchMap',
@@ -428,7 +436,8 @@
                     draggable: false,
                     clickToClose: false
                 },);
-            },
+            }
+            ,
             getResult(result) {
                 this.party_form.location = result;
             }

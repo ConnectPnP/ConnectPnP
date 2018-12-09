@@ -13,24 +13,24 @@ router.get('/home', (req, res) => {
     // 오늘 날짜 가져오기 -> 날짜 지난 모임은 랭킹에서 제외
     var today = new Date();
 
-    var year = today.getFullYear();                               
+    var year = today.getFullYear();
 
-    var month = (1 + today.getMonth());                  
-    month = month >= 10 ? month : '0' + month;     
+    var month = (1 + today.getMonth());
+    month = month >= 10 ? month : '0' + month;
 
-    var day = today.getDate();                                  
-    day = day >= 10 ? day : '0' + day;                          
+    var day = today.getDate();
+    day = day >= 10 ? day : '0' + day;
 
     var changeDateFormat = year+'-'+month+'-'+day;
     console.log(changeDateFormat);
 
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').exec((err, data) => {  
-        
+    GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').exec((err, data) => {
+
         // console.log(data);
-        
+
         var rank5GroupList = [];
-        
+
         // 모임 랭킹 평가 지수 = 참가자 수 대비 별점 평균 + 조회수 대비 신청자수
         for(var i=0; i<data.length; i++){
 
@@ -41,11 +41,11 @@ router.get('/home', (req, res) => {
 
             var hitsApplicantsRate = 0;
             var starRate = 0;
-            
+
             var C = 5;   // C 가 클수록 원래 값에서 멀어짐
             // star rate
             var m_star = 7;   // m 은 거의 리뷰가 없는 그룹의 평균 리뷰를 조정할 값
-            // 조회수 대비 신청자수 
+            // 조회수 대비 신청자수
             var m_hitapplicant = 0.5;
 
             var guestnum = data[i].guest.length;
@@ -56,13 +56,13 @@ router.get('/home', (req, res) => {
             console.log('due date           '+dueDate);
             console.log(data[i].title);
             console.log(guestnum);
-            
+
             // 참여자 별점 평균 bayesian_rating
             if((guestnum) > 0){
                 for(var j=0; j<guestnum; j++){
                     starRate += data[i].guest[j].star_rate;  //data[i].guest[j].user_id.star_rate;
                 }
-                starRate /= guestnum;            
+                starRate /= guestnum;
                 starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);
                 starRate /= 10;
             }
@@ -88,12 +88,12 @@ router.get('/home', (req, res) => {
 
             data[i].evaluationIndex = starRate + hitsApplicantsRate;
 
-            rank5GroupList.push(data[i]); 
+            rank5GroupList.push(data[i]);
         }
         rank5GroupList.sort(function(a, b) { // 내림차순 정렬
             return a.evaluationIndex > b.evaluationIndex ? -1 : a.evaluationIndex < b.evaluationIndex ? 1 : 0;
         });
-        console.log(rank5GroupList);
+        // console.log(rank5GroupList);
         res.json(rank5GroupList);
     });
 });

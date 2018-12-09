@@ -10,8 +10,8 @@ const chat_controller = require('./router/chat')
 const port = process.env.PORT || 3000;
 
 // [RUN SERVER]
-const server = app.listen(port, function(){
- console.log("Express server has started on port " + port)
+const server = app.listen(port, function () {
+    console.log("Express server has started on port " + port)
 });
 // [CONFIGURE MONGOOSE]
 mongoose.set('useCreateIndex', true);
@@ -36,12 +36,11 @@ const cors = require('cors');
 
 // [START SOCKET IO SERVER]
 const io = socketio.listen(server);
-console.log('socket 요청 받아들일 준비 완료')
+
 
 // [SOCKET CONNECTION]
 io.sockets.on('connection', function (socket) {
-
-    console.log('connection info :', socket.request.connection.remoteFamily);
+    console.log('socket 연결 완료')
 
     // 소켓 객체에 클라이언트 Host, Port 정보 속성으로 추가
     socket.remoteAddress = socket.request.connection.remoteAddress;
@@ -49,9 +48,6 @@ io.sockets.on('connection', function (socket) {
 
     var login_ids = {};
     socket.on('login', function (login) {
-        console.log('login 이벤트를 받았습니다.');
-        console.dir(login);
-
         // 기존 클라이언트 ID가 없으면 클라이언트 ID를 맵에 추가
         console.log('접속한 소켓의 ID : ' + socket.id);
         login_ids[login.id] = socket.id;
@@ -59,8 +55,6 @@ io.sockets.on('connection', function (socket) {
 
         console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
 
-        // 응답 메시지 전송
-        sendResponse(socket, 'login', '200', '로그인되었습니다.');
     });
 
     socket.on('logout', function (login) {
@@ -69,7 +63,6 @@ io.sockets.on('connection', function (socket) {
         login_ids.splice(login.id, 1)
 
         console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
-        sendResponse(socket, 'logout', '200', '로그아웃되었습니다.');
     })
 
 
@@ -88,22 +81,14 @@ io.sockets.on('connection', function (socket) {
         // command 속성으로 일대일 채팅(chat)과 그룹채팅(groupchat) 구분
         if (message.command == 'chat') {
             // 일대일 채팅 대상에게 메시지 전달
-            if (login_ids[message.dest]) {
+            if (message.dest) {
                 io.sockets.connected[login_ids[message.dest]].emit('message', message);
 
-                // 응답 메시지 전송
-                sendResponse(socket, 'message', '200', '메시지를 전송했습니다.');
             } else {
-                // 응답 메시지 전송
-                sendResponse(socket, 'login', '404', '상대방의 로그인 ID를 찾을 수 없습니다.');
             }
         } else if (message.command == 'groupchat') {
             // 방에 들어있는 모든 사용자에게 메시지 전달
-
             io.to(message.dest).emit('message', message)
-
-            // 응답 메시지 전송
-            sendResponse(socket, 'message', '200', '방 [' + message.dest + ']의 모든 사용자들에게 메시지를 전송했습니다.');
         }
 
 
@@ -122,72 +107,53 @@ io.sockets.on('connection', function (socket) {
      **/
     socket.on('group', function (group) {
         console.log('group 이벤트를 받았습니다.');
-        console.dir(group);
-
         if (group.command === 'create') {
-
-            if (io.sockets.adapter.rooms[group.id]) { // 방이 이미 만들어져 있는 경우
+            group = group.result.data
+            if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
                 console.log('방이 이미 만들어져 있습니다.');
-
             } else {
                 console.log('방을 새로 만듭니다.');
-                var group = chat_controller.createChatRoom(group)
-                if (group) {
-                    socket.join(group.id);
-                } else {
-                    console.log('방이 생성되지 않았습니다.')
-                }
+                chat_controller.createChatRoom(socket, group)
             }
 
         }
         //TODO client 단에서 party detail 에 대한 것 수정 시 사용되도록 하기
         else if (group.command === 'update') {
-
+            group = group.result.data
 
         }
         //TODO 다른 사람이 참여되어있는 방도 바꿀 수 있을까?
         else if (group.command === 'delete') {
+            group = group.group
+            if (io.sockets.adapter.rooms[group._id]) { // 방이  만들어져 있는 경우
+                socket.leave(group._id);
+                chat_controller.deleteChatRoom(socket, group)
+                delete io.sockets.adapter.rooms[group._id];
 
-            socket.leave(group.id);
-
-            if (io.sockets.adapter.rooms[group.id]) { // 방이  만들어져 있는 경우
-                delete io.sockets.adapter.rooms[group.id];
-                chat_controller.deleteChatRoom(group)
             } else {  // 방이  만들어져 있지 않은 경우
                 console.log('방이 만들어져 있지 않습니다.');
             }
 
         } else if (group.command === 'join') {
+            group = group.data
 
-            if (!io.sockets.adapter.rooms[group.roomId]) { // 방이 없는 경우
-                console.log('존재하지 않는 방입니다.');
+            if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
+                console.log('존재하지 않는 방입니다.')
             } else {  // 방이 있는 경우
-                socket.set('room', group.id);
-                socket.get('room', function (error, room) {
-                    io.sockets.in(room).emit('join', global.currentUser.user_code)
-                    chat_controller.joinChatRoom(group)
-                })
-                // 응답 메시지 전송
-                sendResponse(socket, 'group', '200', '방에 입장했습니다.');
+                chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청
-            if (!io.sockets.adapter.rooms[group.id]) { // 방이 없는 경우
+
+            if (!io.sockets.adapter.rooms[group.group._id]) { // 방이 없는 경우
                 console.log('존재하지 않는 방입니다.');
             } else {  // 방이 있는 경우
-                socket.leave(group.id);
-                chat_controller.leaveChatRoom(group)
-
-                // 응답 메시지 전송
-                sendResponse(socket, 'group', '200', '방에서 나갔습니다.');
+                chat_controller.leaveChatRoom(socket, group.group, group.user)
             }
 
         } else if (group.command === 'group') {
             console.log('채팅방 정보를 찾아옵니다.')
             chat_controller.getRoomList(socket, group.userId)
-
         }
-
-
     });
 
 
@@ -226,25 +192,20 @@ io.sockets.on('connection', function (socket) {
 //     return roomList;
 // }
 
-function sendResponse(socket, command, code, message) {
-    var statusObj = {command: command, code: code, message: message};
-    io.to(message.dest).emit('response', statusObj)
-}
-
 
 const db = mongoose.connection;
 db.on('error', console.error);
 db.once('open', () => {
-  console.log('Connected to mongodb server');
+    console.log('Connected to mongodb server');
 });
 autoIncrement.initialize(db);
 
 app.use(cors())
-app.use((req, res, next) =>{
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
-  next()
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type")
+    next()
 })
 
 //CORS 크로스 도메인 요청을 위한 함수..
@@ -269,9 +230,9 @@ app.use(function (req, res, next) {
 });
 
 // [CONFIGURE APP TO USE bodyParser]
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/',require('./router'));
+app.use('/', require('./router'));
 app.use('/files', express.static(__dirname + '/files'));
 module.exports = app;
 

@@ -14,7 +14,8 @@
                 </b-col>
                 <b-col>
                     <h4>{{ member.name }}</h4>
-                    <star-rating id="starRating" :rating="member.star_rate" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
+                    <star-rating id="starRating" :rating="member.star_rate" :read-only="true" :star-size="30"
+                                 :increment="0.5"></star-rating>
                 </b-col>
             </b-row>
             <b-row>
@@ -22,80 +23,93 @@
                     <br><br><br>
                 </b-col>
             </b-row>
-                <b-btn class="joinbtnGroup" :variant="isAccept" :disabled="disabled" size="sm" @click="acceptMember">수락</b-btn> 
-                <b-btn class="joinbtnGroup" :variant="isRefuse" :disabled="disabled" size="sm" @click="refuseMember">거절</b-btn>  
+            <b-btn class="joinbtnGroup" :variant="isAccept" :disabled="disabled" size="sm" @click="acceptMember">수락
+            </b-btn>
+            <b-btn class="joinbtnGroup" :variant="isRefuse" :disabled="disabled" size="sm" @click="refuseMember">거절
+            </b-btn>
         </b-container>
 
     </b-carousel-slide>
 </template>
 
 <script>
-import StarRating from 'vue-star-rating'
+    import StarRating from 'vue-star-rating'
+    import io from 'socket.io-client'
 
-export default {
-    components:{
-        StarRating
-    },
-    props: {
-        member : [],
-        group : {}
-    },
-    data(){
-        return {
-            isAccept: "secondary",
-            isRefuse: "secondary",
-            disabled: false
-        }
-    },
-    methods: {
-        acceptMember() {
-            this.isAccept = "primary";
-            this.disabled = true;
-            this.$http.post('http://localhost:3000/board/join', {
-                        group: this.group.groupId, // 모임 Id
-                        user : this.member._id
-                    }).then((result) => {
-                        console.log(result)
-                    })
+    export default {
+        components: {
+            StarRating
         },
-        refuseMember() {
-            this.isRefuse = "danger";
-            this.disabled = true;
-            this.$http.post('http://localhost:3000/board/cancel', {
-                        group: this.group.groupId, // 모임 Id
-                        user : this.member._id
-                    }).then((result) => {
-                        console.log(result)
+        props: {
+            member: {
+                type:Array
+            },
+            group: {}
+        },
+        data() {
+            return {
+                isAccept: "secondary",
+                isRefuse: "secondary",
+                disabled: false,
+                socket: io.connect('http://localhost:3000')
+            }
+        },
+        methods: {
+            acceptMember() {
+                var vm = this
+                this.isAccept = "primary";
+                this.disabled = true;
+                this.$http.post('http://localhost:3000/board/join', {
+                    group: this.group.groupId, // 모임 Id
+                    user: this.member._id
+                }).then((result) => {
+                    vm.socket.emit('group', {
+                        command: 'join',
+                        data: {
+                            _id: this.group.groupId,
+                            user: result.data
+                        }
                     })
-        }
-    }
 
-}
+                })
+            },
+            refuseMember() {
+                this.isRefuse = "danger";
+                this.disabled = true;
+                this.$http.post('http://localhost:3000/board/cancel', {
+                    group: this.group.groupId, // 모임 Id
+                    user: this.member._id
+                }).then((result) => {
+                })
+            }
+        }
+
+    }
 </script>
 
 
 <style>
-.joinSlide {
-    height: 430px;
-}
+    .joinSlide {
+        height: 430px;
+    }
 
-.joinSlideProfileImg {
-    width: 100px;
-    height: 100px;
-    cursor : pointer;
-}
+    .joinSlideProfileImg {
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
 
-div {
-    color: #2c3e50;
-}
+    div {
+        color: #2c3e50;
+    }
 
-#starRating {
-    margin-bottom: 20px;
-}
+    #starRating {
+        margin-bottom: 20px;
+    }
 
-.joinbtnGroup {
-    width: 100px;
-    margin-top: 10px;
-    margin-bottom: 30px;
-}
+    .joinbtnGroup {
+        width: 100px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
 </style>

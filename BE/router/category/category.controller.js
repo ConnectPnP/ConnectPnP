@@ -52,7 +52,6 @@ exports.getAllCategory = (req, res) => {
         return res.json(category);
     }).populate('sub_category')
         .exec(function (error, category) {
-            console.log(category)
         });
 };
 
@@ -100,7 +99,6 @@ exports.createSubCategory = (req, res) => {
 exports.getAllSubCategory = (req, res) => {
     Category.find({depth: 1}, (err, category) => {
         if (err) return res.status(500).send(err); // 500 error
-        console.log(category)
         return res.json(category);
     });
 };
