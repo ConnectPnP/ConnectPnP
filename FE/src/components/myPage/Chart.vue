@@ -6,31 +6,62 @@
     export default{
         name: 'Chart',
         props: {
-            name: String,
-            ratingResult: []
+            eventMonth: Array
         },
-        mounted(){
-            Highcharts.chart('container', {
-                chart: {
-                    type: 'bar'
-                },
-                title: {
-                    text: '나의 평가 지수'
-                },
-                xAxis: {
-                    categories: ['매너', '잘생김', '시간약속']
-                },
-                yAxis: {
-                    title: {
-                        text: '수치 (10점 만점)'
+        data(){
+            return {
+                joinHistory: [0,0,0]
+            }
+        },
+        created(){
+            console.log("created Chart.vue");
+        },
+        watch:{
+            eventMonth : function(newVal, oldVal){
+                this.please();
+            }
+        },
+        methods:{
+           please(){
+                var date = new Date();
+                var monthNow = date.getMonth()+1;
+                
+                for(var i = 0;i<this.eventMonth.length;i++){
+                    switch(this.eventMonth[i]){
+                    case (monthNow):
+                        this.joinHistory[0]++;
+                        break;
+                    case (monthNow - 1):
+                        this.joinHistory[1]++;
+                        break;
+                    case (monthNow - 2):
+                        this.joinHistory[2]++;
+                        break;
                     }
-                },
-                series: [{
-                    name: this.name,
-                    data: this.ratingResult
-                }]
+                }
+                
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'bar'
+                    },
+                    title: {
+                        text: '최근 활동 기록'
+                    },
+                    xAxis: {
+                        categories: [monthNow+'월', (monthNow-1)+'월', (monthNow-2)+'월']
+                    },
+                    yAxis: {
+                        title: {
+                            text: '모임 참여 횟수'
+                        }
+                    },
+                    series: [{
+                        name: '모임',
+                        data: this.joinHistory
+                    }]
             });
-        }
+           }
+        },
     }
 
 </script>
