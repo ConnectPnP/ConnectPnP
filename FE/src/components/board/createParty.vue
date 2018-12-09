@@ -142,8 +142,9 @@
                               label="Category :"
                               label-class="text-sm-right"
                               label-for="js-party-category">
+                    <div v-if="isEdit"> 수정 전 카테고리 : {{detailEdit.category.name}} > {{detailEdit.subCategory.name}}</div>
                     <b-input-group>
-                        <b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3"
+                        <br><b-form-select v-model="party_form.selected_category_id" :options="categoryList1" class="mb-3"
                                        @change="showSubCategory"></b-form-select>
                         <b-form-select v-model="party_form.selected_subcategory_id" :options="categoryList2"
                                        class="mb-3"></b-form-select>
@@ -156,7 +157,8 @@
                               style="padding-top: 10px">
                     <vueSlider v-model="party_form.number_of_member" id="js-party-number-of-member"></vueSlider>
                 </b-form-group>
-                <b-button type="submit" variant="primary">Submit</b-button>
+                <b-button v-if="isEdit" type="submit" variant="primary">Edit</b-button>
+                <b-button v-if="!isEdit" type="submit" variant="primary">Submit</b-button>
                 <b-button variant="danger">Cancel</b-button>
             </b-form-group>
 
@@ -175,18 +177,23 @@
             vueSlider,
             SearchMap
         },
-        props: [
-            '_title', '_number_of_member', '_detail', '_dateOne', '_dateTwo', '_date',
-            '_locationText', '_location', '_cost', '_conditions', '_file', '_categoryId'],
+        props: {
+            currentGroupId:'',
+            isEdit:{
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 currentUser: '',
+                detailEdit: {},
                 formData: new FormData(),
                 dateFormat: 'YYYY-MM-DD',
                 todayDate: '',
                 file: null,
                 checkList: [
-                    'Title', 'Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image', 'Category'
+                    'Title', 'Detail', 'Start Date', 'End Date', 'Meeting Date', 'Location', 'Cost', 'Image'
                 ],
                 party_form:
                     {
@@ -221,13 +228,18 @@
                 subCategoryList: [],
             }
         },
-        mounted() {
+        created() {
+            this.getCategoryList();
+            
+            if(this.isEdit == true){
+                this.editor();
+            }
+
             this.currentUser = this.$session.get('id');
 
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
 
-            this.getCategoryList();
 
         },
         methods: {
@@ -267,78 +279,81 @@
                     party.file_array
                 ];
 
+                // 빈칸 체크
                 for (var i = 0; i < validationCheck.length; i++) {
                     if (validationCheck[i] == null || validationCheck[i] == '') {
                         alertString += checkList[i] + ', ';
                     }
                 }
+                //카테고리 체크
+                if(party.selected_subcategory_id == null){
+                    if(this.categoryList2.length !=1){
+                        alertString += 'Category';
+                    }
+                }
+
                 if (alertString != '') {
                     alert(alertString + " 칸을 채워주세요!");
-                } else if (party.date < party.recruitment_period_dateTwo) {
-                // // 빈칸 체크
-                // for(var i=0;i<validationCheck.length-1;i++){
-                //     if(validationCheck[i]==null||validationCheck[i]==''){
-                //         alertString += checkList[i] + ', ';
-                //     }
-                // }
-
-                // //카테고리 체크
-                // if(party.selected_subcategory_id == null){
-                //     if(this.categoryList2.length !=1){
-                //         alertString += 'Category';
-                //     }
-                // }
-
-                // if(alertString != ''){
-                //     alert(alertString+" 칸을 채워주세요!");
-                // }
-                // else if(party.date < party.recruitment_period_dateTwo){
+                } 
+                else if(party.date < party.recruitment_period_dateTwo){
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
-                }else {
-                    console.log("category Id : " + party.selected_category_id.id);
+                }
+                else {
+                        console.log("isEdit : "+this.isEdit);
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
-                    this.$http.post('http://localhost:3000/board', {
-                        title: party.title,
-                        due_date: party.recruitment_period_dateTwo,
-                        start_date: party.recruitment_period_dateOne,
-                        meeting_date: party.date,
-                        min_num: party.number_of_member[0],
-                        max_num: party.number_of_member[1],
-                        cost: party.cost,
-                        category: party.selected_category_id.id,
-                        subCategory: party.selected_subcategory_id,
-                        conditions: {gender: party.conditions.gender, age: party.conditions.age},
-                        detail: party.detail,
-                        location: party.location,
-                        locationText: party.locationText,
-                        host: this.currentUser
-                    })
+                    if(this.isEdit == false){
+                        this.$http.post('http://localhost:3000/board', {
+                            title: party.title,
+                            due_date: party.recruitment_period_dateTwo,
+                            start_date: party.recruitment_period_dateOne,
+                            meeting_date: party.date,
+                            min_num: party.number_of_member[0],
+                            max_num: party.number_of_member[1],
+                            cost: party.cost,
+                            category: party.selected_category_id.id,
+                            subCategory: party.selected_subcategory_id,
+                            conditions: {gender: party.conditions.gender, age: party.conditions.age},
+                            detail: party.detail,
+                            location: party.location,
+                            host: this.currentUser
+                        })
                     // 이미지 업로드
                         .then((result) => {
                             boardId = result.data._id
                             this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                            this.$http.post('http://localhost:3000/board/join',{
+                                group: boardId,
+                                user: this.currentUser
+                            });
                         })
                         .then(() => {
                             window.location.href = "http://localhost:8080/party/detail/" + boardId
+                        });
+                    }
+                    else if(this.isEdit == true) { // 수정
+                        this.$http.post('http://localhost:3000/board/edit/'+this.currentGroupId,{
+                            title: party.title,
+                            due_date: party.recruitment_period_dateTwo,
+                            start_date: party.recruitment_period_dateOne,
+                            meeting_date: party.date,
+                            min_num: party.number_of_member[0],
+                            max_num: party.number_of_member[1],
+                            cost: party.cost,
+                            category: party.selected_category_id.id,
+                            subCategory: party.selected_subcategory_id,
+                            conditions: {gender: party.conditions.gender, age: party.conditions.age},
+                            detail: party.detail,
+                            location: party.location,
                         })
+                        .then(() => {
+                            this.$http.post('http://localhost:3000/board/files/' + this.currentGroupId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                        })
+                        .then(() => {
+                            window.location.href = "http://localhost:8080/party/detail/" + this.currentGroupId;
+                        });
+                    }
+                    
                 }
-            },
-            onLoad(map) {
-                this.daumMap.map = map;
-                // var bounds = map.getBounds();
-                // var boundsStr = bounds.toString();
-
-                // var iwContent = '<br><pre> 아주대학교 </pre>'
-                // var iwPosition = new daum.maps.LatLng(this.party_form.location["lat"], this.party_form.location["lng"]);
-                // var marker = new daum.maps.Marker({
-                //     position: iwPosition,
-                //     map: map
-                // });
-                // var infowindow = new daum.maps.InfoWindow({
-                //     position: iwPosition,
-                //     content: iwContent
-                // });
-                // infowindow.open(map, marker)
             },
             changeAgeCondition() {
                 if (this.party_form.conditions.selectAge == 'none') {
@@ -347,20 +362,37 @@
                     this.party_form.conditions.age = [0, 100];
                 }
             },
-            editor() {
-                var party = this.party_form;
-                party.title = this._title;
-                party.number_of_member = this._number_of_member;
-                party.detail = this._detail;
-                party.recruitment_period_dateOne = this._dateOne;
-                party.recruitment_period_dateTwo = this._dateTwo;
-                party.date = this._date;
-                party.location = this._location;
-                party.cost = this._cost;
-                party.conditions = this._conditions;
-                party.file_array = this._file;
-                party.selected_category_id.id = this._categoryId;
-                // alert(party.title);
+            async editor() {
+                var vm = this
+                console.log(vm.currentGroupId);
+                var result = await vm.$http.get('http://localhost:3000/board/details/' + vm.currentGroupId)
+                vm.detailEdit = result.data;
+                var age = [];
+                var selectAge = 'selectAge';
+                var gender = vm.detailEdit.conditions.gender;
+
+                vm.party_form.title = vm.detailEdit.title;
+                vm.party_form.number_of_member = [vm.detailEdit.min_num, vm.detailEdit.max_num];
+                vm.party_form.detail = vm.detailEdit.detail;
+                vm.party_form.recruitment_period_dateOne = vm.detailEdit.start_date;
+                vm.party_form.recruitment_period_dateTwo = vm.detailEdit.due_date;
+                vm.party_form.date = vm.detailEdit.meeting_date;
+                vm.party_form.location = vm.detailEdit.location;
+                vm.party_form.cost = vm.detailEdit.cost;
+                vm.party_form.conditions.gender = gender;
+                
+                // 조건-나이 세팅
+                if(vm.detailEdit.conditions.age[0]==0&&vm.detailEdit.conditions.age[1]==100){
+                    selectAge = 'none';
+                    age = [0,100];
+                } else {
+                    age = [vm.detailEdit.conditions.age[0], vm.detailEdit.conditions.age[1]];
+                }
+                vm.party_form.conditions.selectAge = selectAge;
+                vm.party_form.conditions.age = age;
+                for(var i=0;i<vm.detailEdit.images.length;i++){
+                    vm.party_form.file_array.push({blob: vm.detailEdit.images[i]});
+                }
             },
             getCategoryList() {
                 var vm = this
@@ -444,3 +476,4 @@
         padding-bottom: 30px;
     }
 </style>
+
