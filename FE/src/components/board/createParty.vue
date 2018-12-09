@@ -390,7 +390,9 @@
                 }
                 vm.party_form.conditions.selectAge = selectAge;
                 vm.party_form.conditions.age = age;
-                vm.party_form.file_array = vm.detailEdit.images;
+                for(var i=0;i<vm.detailEdit.images.length;i++){
+                    vm.party_form.file_array.push({blob: vm.detailEdit.images[i]});
+                }
             },
             getCategoryList() {
                 var vm = this
