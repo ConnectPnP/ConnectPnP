@@ -305,17 +305,7 @@
                 }
                 this.addCategoryName="";
                 this.addCategoryPath="";
-                /*
-               this.$http.post('http://localhost:3000/category', categoryData)
-               .then((result) => {
-                   console.log(adminVue.formData.keys())
-                   return adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
-               })
-               .then((result) => {
-                   //result.data.img_path=tmpImgPath
-                   adminVue.mainCategoryList.push(result.data);
-               })
-*/
+
             },
             //세부 카테고리 추가
             addSubCategory(){
@@ -332,7 +322,6 @@
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
-                    //adminVue.mainCategoryList.sub_category=result.data.sub_category;
                     console.log(result.data);
                 });
                 this.addSubCategoryName=""
@@ -360,7 +349,6 @@
                         if(this.mainCategoryList[i]._id==data._id){
                             this.mainCategoryList[i].img_path = this.reviseCategoryPath;
                         }}
-                    //adminVue.mainCategoryList.push(categoryDataUpload.data);
                 }
                 this.reviseCategoryPath="";
                 this.condition.reviseComplete='revise';
@@ -385,12 +373,7 @@
                         }
                     }
                 }
-                /*
-                                for(let i=0;i<this.mainCategoryList.length;i++){
-                                    if(this.mainCategoryList[i]._id==id){
-                                        this.mainCategoryList.splice(i,1);
-                                    }
-                                }*/
+
             },
             //세부카테고리 삭제
             subCategoryDelete(id){
