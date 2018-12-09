@@ -60,7 +60,12 @@ router.get('/home', (req, res) => {
             // 참여자 별점 평균 bayesian_rating
             if((guestnum) > 0){
                 for(var j=0; j<guestnum; j++){
-                    starRate += data[i].guest[j].star_rate;  //data[i].guest[j].user_id.star_rate;
+                    if(data[i].guest[j].star_rate.divider != 0) {
+                        starRate = starRate + (data[i].guest[j].star_rate.totalScore / data[i].guest[j].star_rate.divider);  //data[i].guest[j].user_id.star_rate;
+                    }
+                    else {
+                        starRate = 0;
+                    }
                 }
                 starRate /= guestnum;            
                 starRate = ((C*m_star) + (starRate*guestnum)) / (C + guestnum);

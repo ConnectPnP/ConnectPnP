@@ -14,6 +14,22 @@
           <button type="button" class="btn navbtn btn-primary"  v-if="loginStatus==false" v-on:click=loginWithKakao(1)>로그인</button>
           <button type="button" class="btn navbtn btn-primary" v-if="loginStatus==false" v-on:click=loginWithKakao(0)>회원가입</button>
 
+
+
+          <b-nav-item-dropdown right v-if="loginStatus">
+                <template slot="button-content">
+                    <em>리뷰하기 <b-badge variant="light" @click="groupReview">NEW</b-badge></em>
+                </template>
+                <b-dropdown-header>리뷰해주세요☆</b-dropdown-header>
+                <b-dropdown-item
+                    v-for="list in groupReviewList"
+                    :key="list._id" @click="showReview(list._id)">
+                    {{ list.title }}
+                </b-dropdown-item>
+          </b-nav-item-dropdown>
+
+<!-- :to="{name:'cards-by-pack-id',params:{id:pack.id}}" -->
+
           <b-nav-item-dropdown right v-if="loginStatus">
             <template slot="button-content">
               <b-img class="profileImg" rounded="circle" width="40px" height="40px" stype="margin-right:5px" :src="userInfo[1]" />
@@ -35,14 +51,17 @@
   /* eslint-disable no-console*/
   import topItem from './topItem';
   import sidebar from './nav';
+  import Review from '../reviewPopup/Review.vue'
+
   var topVue = this;
   export default {
     name: 'top',
-    components: { topItem , sidebar},
+    components: { topItem , sidebar, Review},
     data(){
           return{
               user_name : String,
-              profile_path : String
+              profile_path : String,
+              groupReviewList: [],
           }
       },
       created:function() {
@@ -97,7 +116,7 @@
               return isAdmin;
           },
 
-
+         
       },
       methods: {
           //카카오 api 사용을 위한 초기화
@@ -107,6 +126,56 @@
           handleError: (err) => {
               console.warn(`This component threw an error (in '${err.target.outerHTML}'):`, this)
           },
+
+
+
+        groupReview(){
+            //alert('리뷰 필요한 목록 가져오기');
+            var id = this.$session.get('userID');
+
+            // 오늘 날짜 가져오기
+            // var today = new Date();
+            // var year = today.getFullYear();                               
+            // var month = (1 + today.getMonth());                  
+            // month = month >= 10 ? month : '0' + month;     
+            // var day = today.getDate();                                  
+            // day = day >= 10 ? day : '0' + day;                          
+            // var changeDateFormat = year+'-'+month+'-'+day;
+            // console.log(changeDateFormat);
+            var changeDateFormat = '2019-01-01';
+
+            this.groupReviewList = [];
+
+            this.$http.get('http://localhost:3000/user/details/'+id)
+            .then((userAllInfo) => { 
+                console.log(userAllInfo.data);
+                console.log(userAllInfo.data.group_log.length);
+
+                // 날짜랑.. 리뷰팝업.. 둘다 고려
+                for(var i=0; i<userAllInfo.data.group_log.length; i++){
+                    console.log(userAllInfo.data.group_log[i].group_id.title);
+                    if((userAllInfo.data.group_log[i].review_popup == true) 
+                    && (userAllInfo.data.group_log[i].group_id.meeting_date < changeDateFormat)) {
+
+                        this.groupReviewList.push(userAllInfo.data.group_log[i].group_id);
+                    }
+                    console.log(this.groupReviewList.length);
+
+                }
+            });            
+            //this.groupReviewList.push(1);
+        },
+        showReview(id){
+            console.log(id);
+            this.$modal.show(Review,{
+                // 주최자 정보
+            },{
+                name: 'review',
+                width: '500px',
+                height: '450px',
+                draggable: true
+            });
+        },
 
 
 

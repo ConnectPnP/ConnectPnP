@@ -18,14 +18,10 @@ const UserSchema = new Schema({
   age:{ type: Number},
   gender:{type: String},
   categoryList:[{type : Number, ref:'Category'}],
-  star_rate : {type : Number },
-  rating_status : [{
-    status_id : {type : Number, ref:'Evaluate' },
-    percentage : {type : Number}
-  }],
+  star_rate : { totalScore: {type : Number, default: 0}, divider: {type : Number, default: 0}}, 
   group_log : [{
     group_id : {type : Number, ref:'Group'},
-    review_popup : {type : Boolean }
+    review_popup : {type : Boolean, default: true}
   }],
   chat : [{
     chat_id : {type : Number, ref:'Chat'}
