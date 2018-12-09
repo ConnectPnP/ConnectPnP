@@ -58,7 +58,9 @@
                 <button class="plusbtn btn btn-primary" v-on:click="addCategory" >추가하기</button>
             </div>
 
-
+            <div class="hrLine20">
+                <hr>
+            </div>
 
             <!--대분류카테고리 리스트-->
 
