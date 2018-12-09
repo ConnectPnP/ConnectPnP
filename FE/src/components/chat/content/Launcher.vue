@@ -111,7 +111,7 @@
             //채팅하고자 하는 group이 바뀔경우 UI 바꾸기
             toggleGroupUI(_id) {
 
-                var chatRoom = this.chatRoom.filter((room) => room.group._id == _id)
+                var chatRoom = this.chatRoom.filter((room) => room.group.group_id == _id)
 
                 this.participants = chatRoom[0].group.participants
                 this.messageList = chatRoom[0].messageList
@@ -147,7 +147,7 @@
 
                 var messageList = {}
                 this.groups.forEach((group) => {
-                    messageList = List.filter((list) => list.dest == group._id)
+                    messageList = List.filter((list) => list.dest == group.group_id)
                     this.chatRoom.push({
                         group: group,
                         messageList: messageList
