@@ -214,9 +214,12 @@ export default {
       var view = this
       this.memberInfo.events.forEach(
         function getevent(value) {
-          var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false" }';
-          view.memberInfo.eventsDate.push(JSON.parse(event));
-          view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
+          if(value.group_id != null){
+            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false" }';
+            view.memberInfo.eventsDate.push(JSON.parse(event));
+            view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
+          }
+          
         }
       )
     },
