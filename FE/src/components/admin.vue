@@ -115,6 +115,8 @@
 
 
                             <button class="btn btn-primary" v-if="condition.reviseComplete=='complete'" v-on:click="categoryUpdate(item)">완료</button>
+                            <button class="btn btn-danger"  v-on:click="maincancelbtn">취소</button>
+
                         </td>
                     </tr>
                 </table>
@@ -162,12 +164,14 @@
                                 <div class="hrLine20">
                                     <hr>
                                 </div>
-                                <button class="btn btn-primary" v-if="condition.subreviseComplete=='revise'" v-on:click="subrevisebtnChange">수정</button>
+                                <button class="btn btn-primary" v-if="condition.subreviseComplete=='revise'" v-on:click="subrevisebtnChange(sub._id)">수정</button>
                                 <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
 
-                                <div class="revisesubCategory" v-if="condition.subreviseComplete=='complete'&&item._id==selectedCategoryID">
+                                <div class="revisesubCategory" v-if="condition.subreviseComplete=='complete'&& sub._id==condition.selectedsubCategory">
                                     <input class="subCategoryListTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
                                     <button class="btn btn-primary"  v-on:click="subcategoryUpdate(sub)">완료</button>
+                                    <button class="btn btn-danger"  v-on:click="subcancelbtn">취소</button>
+
 
                                 </div>
                             </b-col>
@@ -213,7 +217,7 @@
                 addSubCategoryName:"",
                 imageName:"",
                 condition:{
-
+                    selectedsubCategory:"",
                     imgUpload: "methodFile",
                     reviseComplete:'revise',
                     reviseimgUpload:"methodFile",
@@ -251,9 +255,16 @@
             revisebtnChange(){
                 this.condition.reviseComplete='complete'
             },
-            subrevisebtnChange(){
+            subrevisebtnChange(id){
+                this.condition.selectedsubCategory= id;
                 this.condition.subreviseComplete='complete'
+            },
+            maincancelbtn(){
+                this.condition.reviseComplete='revise'
 
+            },
+            subcancelbtn(){
+                this.condition.subreviseComplete='revise'
             },
             //대분류 카테고리 클릭시
             categoryClicked(categoryName, categoryid){
