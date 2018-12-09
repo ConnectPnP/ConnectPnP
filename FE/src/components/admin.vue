@@ -142,7 +142,7 @@
                 <div class="createsubCategory" v-if="selectedCategoryID!= -1">
                     <div class="inputMain">
                         <label for="subCategory"> 소분류 이름: </label>  &nbsp;
-                        <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
+                        <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"/>
                     </div>
 
 
@@ -158,14 +158,22 @@
                     <b-row v-if="selectedCategoryID==item._id">
                         <div  v-for="sub in item.sub_category.slice().reverse()">
                             <b-col class="subCategorySingle">
-                                <input class="subCategoryListTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
+                                    <h4>{{sub.name}}</h4>
                                 <div class="hrLine20">
                                     <hr>
                                 </div>
-                                <button class="btn btn-primary"  v-on:click="subcategoryUpdate(sub)">수정</button>
+                                <button class="btn btn-primary" v-if="condition.subreviseComplete=='revise'" v-on:click="subrevisebtnChange">수정</button>
                                 <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
+
+                                <div class="revisesubCategory" v-if="condition.subreviseComplete=='complete'&&item._id==selectedCategoryID">
+                                    <input class="subCategoryListTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
+                                    <button class="btn btn-primary"  v-on:click="subcategoryUpdate(sub)">완료</button>
+
+                                </div>
                             </b-col>
                         </div >
+                        <div>
+                        </div>
                     </b-row>
                 </div>
             </b-container>
@@ -208,7 +216,8 @@
 
                     imgUpload: "methodFile",
                     reviseComplete:'revise',
-                    reviseimgUpload:"methodFile"
+                    reviseimgUpload:"methodFile",
+                    subreviseComplete:'revise'
                 },
                 uploadMethod: [
                     {text: '컴퓨터에서 찾기', value: 'methodFile'},
@@ -241,6 +250,10 @@
         methods:{
             revisebtnChange(){
                 this.condition.reviseComplete='complete'
+            },
+            subrevisebtnChange(){
+                this.condition.subreviseComplete='complete'
+
             },
             //대분류 카테고리 클릭시
             categoryClicked(categoryName, categoryid){
@@ -353,6 +366,8 @@
                 console.log(data._id)
                 var updateURL='http://localhost:3000/category/edit/'+data._id;
                 var updatedCategory = this.$http.post(updateURL,data);
+                this.condition.subreviseComplete='revise';
+
             },
 
 
@@ -456,7 +471,9 @@
         margin-top: 30px;
         width: 405px;
     }
-
+    .revisesubCategory{
+        margin-top: 10px;
+    }
     .subCategory{
         padding: 10px;
         float:left;
