@@ -313,6 +313,7 @@
         },
         mounted() {
             this.getUser()
+            this.$session.set('currentGroupId',this.$route.params.id);
         }
     }
 </script>
