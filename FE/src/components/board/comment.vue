@@ -43,6 +43,7 @@
                 </b-input-group>
             </b-row>
         </div>
+        <hr>
     </div>
 </template>
 
