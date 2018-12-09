@@ -145,12 +145,17 @@
                 })
 
 
-
             }
         },
         computed: {
             backgroundColor() {
                 return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
+            },
+            changeTitle() {
+                var group = this.groups.filter((group) => group.title === this.title)
+                if (!group) {
+                    this.title = 'Group List'
+                }
             }
         },
         sockets: {

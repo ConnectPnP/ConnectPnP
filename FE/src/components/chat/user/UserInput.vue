@@ -29,9 +29,9 @@
                 <div v-if="showEmoji" class="sc-user-input--button">
                     <EmojiIcon :onEmojiPicked="_handleEmojiPicked" :color="colors.userInput.text"/>
                 </div>
-                <div v-if="showFile" class="sc-user-input--button">
-                    <FileIcons :onChange="_handleFileSubmit" :color="colors.userInput.text"/>
-                </div>
+                <!--<div v-if="showFile" class="sc-user-input&#45;&#45;button">-->
+                    <!--<FileIcons :onChange="_handleFileSubmit" :color="colors.userInput.text"/>-->
+                <!--</div>-->
                 <div class="sc-user-input--button">
                     <SendIcon :onClick="_submitText" :color="colors.userInput.text"/>
                 </div>
@@ -170,7 +170,9 @@
                         name: this.$session.get('userName')
                     },
                     type: 'emoji',
-                    emoji: emoji
+                    content: emoji,
+                    command: 'groupchat',
+                    dest: this.current_dest_id
                 })
             },
             _handleFileSubmit(file) {

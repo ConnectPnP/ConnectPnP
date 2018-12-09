@@ -121,7 +121,6 @@ exports.searchPost = (req, res) => {
     Board.find(req.body, (err, result) => {
         if (err) return res.json({result: "fail"});
         else {
-            console.log(result)
             return res.json(result);
         }
     }).sort({_id: 1}).skip((page) * npage).limit(npage);

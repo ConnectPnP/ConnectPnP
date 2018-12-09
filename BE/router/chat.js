@@ -2,6 +2,7 @@ const chatRoom = require('../models/chat/chatRoom');
 const chatMessage = require('../models/chat/chatMessage')
 const user = require('../models/user')
 
+var emoji = require('node-emoji')
 
 exports.createChatRoom = (socket, group) => {
     chatRoom.find({group_id: group._id},
@@ -54,11 +55,22 @@ exports.createChatRoom = (socket, group) => {
 
 };
 
-exports.deleteChatRoom = (group) => {
-    chatRoom.delete({userId: group.userId},
+exports.deleteChatRoom = (socket, group) => {
+    var vm = this
+    chatRoom.findOneAndRemove({group_id: group._id},
         function (err) {
             if (err) {
                 console.log(err)
+            } else {
+                chatMessage.deleteMany({dest: group._id},
+                    () => {
+
+                        console.log('메세지다지움\n getRoomList 실행')
+                        vm.getRoomList(socket, group.host)
+                        group.guest.forEach((one) => {
+                            vm.getRoomList(socket, one)
+                        })
+                    })
             }
         })
 }
@@ -67,7 +79,7 @@ exports.joinChatRoom = (socket, group) => {
     var newMessage = new chatMessage({
         dest: group._id,
         author: group.user._id,
-        content: group.user.name+'님이 들어오셨습니다.',
+        content: group.user.name + '님이 들어오셨습니다.',
         type: 'system',
         group: true
 
@@ -84,12 +96,12 @@ exports.joinChatRoom = (socket, group) => {
             if (!room.participants.includes(group.user._id)) {
                 chatRoom.findOneAndUpdate({
                     group_id: group._id
-                }, {$push: {participants: group.user._id}}).then((err, result) => {
+                }, {$push: {participants: group.user._id}}, {new: true}).then((result, err) => {
                     if (err) {
                         console.log(err)
                     } else {
                         socket.in(group._id).emit('join', group.user)
-                        socket.in(group._id).emit('message',newMessage)
+                        socket.in(group._id).emit('message', newMessage)
                         console.log('채팅방 참여인원으로 등록')
                     }
                 })
@@ -105,7 +117,7 @@ exports.leaveChatRoom = (socket, group, user) => {
     var newMessage = new chatMessage({
         dest: group._id,
         author: user._id,
-        content: user.name+'님이 나가셨습니다.',
+        content: user.name + '님이 나가셨습니다.',
         type: 'system',
         group: true
 
@@ -190,7 +202,7 @@ exports.getRoomList = (socket, id) => {
         })
 }
 
-exports.sendMessage =  (message) => {
+exports.sendMessage = (message) => {
 
     if (message.command == 'chat') {
         var newMessage = new chatMessage({
@@ -217,6 +229,21 @@ exports.sendMessage =  (message) => {
             newMessage.save((err) => {
                 console.log(err)
             })
+        }
+        else if(message.type=="emoji"){
+            console.log("db저장 전")
+            var newMessage = new chatMessage({
+                dest: message.dest,
+                author: message.author._id,
+                content: emoji.unemojify(message.content),
+                type: message.type,
+                group: true
+
+            })
+            newMessage.save((err) => {
+                console.log(err)
+            })
+
         }
     }
 }

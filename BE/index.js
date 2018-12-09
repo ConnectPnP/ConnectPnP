@@ -107,7 +107,6 @@ io.sockets.on('connection', function (socket) {
      **/
     socket.on('group', function (group) {
         console.log('group 이벤트를 받았습니다.');
-
         if (group.command === 'create') {
             group = group.result.data
             if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
@@ -125,18 +124,19 @@ io.sockets.on('connection', function (socket) {
         }
         //TODO 다른 사람이 참여되어있는 방도 바꿀 수 있을까?
         else if (group.command === 'delete') {
-            group = group.result.data
-            socket.leave(group._id);
-
+            group = group.group
             if (io.sockets.adapter.rooms[group._id]) { // 방이  만들어져 있는 경우
+                socket.leave(group._id);
+                chat_controller.deleteChatRoom(socket, group)
                 delete io.sockets.adapter.rooms[group._id];
-                chat_controller.deleteChatRoom(group)
+
             } else {  // 방이  만들어져 있지 않은 경우
                 console.log('방이 만들어져 있지 않습니다.');
             }
 
         } else if (group.command === 'join') {
             group = group.data
+
             if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
                 console.log('존재하지 않는 방입니다.')
             } else {  // 방이 있는 경우
