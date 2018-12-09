@@ -5,8 +5,6 @@ const router = express.Router();
 const userCtrl = require('./user.controller');
 
 
-
-
 // create user
 router.post('/',userCtrl.create);
 //유저로 등록되어 있는지 확인

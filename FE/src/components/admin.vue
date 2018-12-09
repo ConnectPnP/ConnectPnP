@@ -81,7 +81,7 @@
                             </div>
                             <button class="btn btn-primary" v-if="condition.reviseComplete=='revise'" v-on:click="revisebtnChange">수정</button>
 
-                            <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
+                            <button class="btn btn-danger" v-if="condition.reviseComplete=='revise'" v-on:click="categoryDelete(item._id)">삭제</button>
                         </td>
                     </tr>
 
@@ -172,13 +172,11 @@
                                     <hr>
                                 </div>
                                 <button class="btn btn-primary" v-if="condition.subreviseComplete=='revise'" v-on:click="subrevisebtnChange(sub._id)">수정</button>
-                                <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
+                                <button class="btn btn-danger" v-if="condition.subreviseComplete=='revise'" v-on:click="subCategoryDelete(sub._id)">삭제</button>
 
                                 <div class="revisesubCategory" v-if="condition.subreviseComplete=='complete'&& sub._id==condition.selectedsubCategory">
                                     <input class="subCategoryListTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
                                     <button class="btn btn-primary"  v-on:click="subcategoryUpdate(sub)">완료</button>
-                                    <button class="btn btn-danger"  v-on:click="subcancelbtn">취소</button>
-
 
                                 </div>
                             </b-col>
