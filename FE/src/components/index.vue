@@ -138,27 +138,30 @@ import Review from './reviewPopup/Review.vue'
                 .then((result) => {
                     this.rankingList = result.data.slice(0,5);
 
-                    // 나의 관심카테고리 중에 top 5
-                    this.$http.get('http://localhost:3000/user/details/'+this.id)
-                    .then((userInfo) => {
+                    if(this.id != null) {
+                        // 나의 관심카테고리 중에 top 5
+                        this.$http.get('http://localhost:3000/user/details/'+this.id)
+                        .then((userInfo) => {
 
-                    // 관심 카테고리 가져오기
-                    var catListtemp = [];
-                    for(var j=0; j<userInfo.data.categoryList.length; j++){
-                        catListtemp.push(userInfo.data.categoryList[j]);
-                    }
-                    this.userInterestedCategory = catListtemp;
-
-                    var num = 0;
-
-                    for(var i=0; i<result.data.length; i++){
-                        if(num == 5) break;
-                        if((catListtemp.indexOf(result.data[i].category) != -1)){
-                            this.recommendedList.push(result.data[i]);
-                            num++;
+                        // 관심 카테고리 가져오기
+                        var catListtemp = [];
+                        for(var j=0; j<userInfo.data.categoryList.length; j++){
+                            catListtemp.push(userInfo.data.categoryList[j]);
                         }
+                        this.userInterestedCategory = catListtemp;
+
+                        var num = 0;
+                        var id = this.$session.get('id');
+
+                        for(var i=0; i<result.data.length; i++){
+                            if(num == 5) break;
+                            if((catListtemp.indexOf(result.data[i].category) != -1) && (result.data[i].host != id)){
+                                this.recommendedList.push(result.data[i]);
+                                num++;
+                            }
+                        }
+                        });
                     }
-                    });
                 })
             },
             showReview(){

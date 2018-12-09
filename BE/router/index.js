@@ -25,7 +25,7 @@ router.get('/home', (req, res) => {
     console.log(changeDateFormat);
 
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
-    GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').populate('host').exec((err, data) => {  
+    GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').exec((err, data) => {  
         
         // console.log(data);
         
