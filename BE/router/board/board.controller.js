@@ -11,7 +11,7 @@ const npage = 6; // 페이지당 6개 게시글 불러오기
 
 // 게시글 상세보기
 exports.getPost = (req, res) => {
-  Board.findOne({_id: req.params.id}, (err, board) => {
+  Board.findOneAndUpdate({_id: req.params.id},{$inc : {hits : 1}}, (err, board) => {
     if (err) return res.status(500).send(err); // 500 error
     return res.json(board);
   })
@@ -225,7 +225,7 @@ exports.deleteCommentReply = (req, res) => {
 }
 
 exports.waitGroup = (req, res) => {
-  Board.findOneAndUpdate({_id : req.body.group}, {$push : {waiting : req.body.user}}, {new:true}, (err, result) => {
+  Board.findOneAndUpdate({_id : req.body.group}, {$push : {waiting : req.body.user}, $inc : {applicants : 1}}, {new:true}, (err, result) => {
     if(!err && result) {
       return res.json(result);
     };
