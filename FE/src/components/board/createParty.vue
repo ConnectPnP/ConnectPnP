@@ -168,6 +168,7 @@
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
     import SearchMap from './searchMap.vue';
+    import io from 'socket.io-client'
 
     export default {
         name: "createParty",
@@ -180,6 +181,7 @@
             '_locationText', '_location', '_cost', '_conditions', '_file', '_categoryId'],
         data() {
             return {
+                socket: io.connect('http://localhost:3000'),
                 currentUser: '',
                 formData: new FormData(),
                 dateFormat: 'YYYY-MM-DD',
@@ -251,6 +253,7 @@
                 return formattedDates
             },
             onSubmit(evt) {
+                var vm = this
                 evt.preventDefault();
                 var boardId;
                 var party = this.party_form;
@@ -277,7 +280,7 @@
                     alert(alertString + " 칸을 채워주세요!");
                 } else if (party.date < party.recruitment_period_dateTwo) {
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
-                }else {
+                } else {
                     console.log("category Id : " + party.selected_category_id.id);
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                     this.$http.post('http://localhost:3000/board', {
@@ -300,12 +303,19 @@
                         .then((result) => {
                             boardId = result.data._id
                             this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
-                        })
-                        .then(() => {
-                            window.location.href = "http://localhost:8080/party/detail/" + boardId
+                                .then(() => {
+                                    this.$http.get('http://localhost:3000/board/details/' + boardId).then((result) => {
+                                        vm.socket.emit('group', {
+                                            command: 'create',
+                                            result
+                                        })
+                                        window.location.href = "http://localhost:8080/party/detail/" + boardId
+                                    })
+                                })
+
                         })
                 }
-            },
+            } ,
             onLoad(map) {
                 this.daumMap.map = map;
                 // var bounds = map.getBounds();
@@ -322,14 +332,16 @@
                 //     content: iwContent
                 // });
                 // infowindow.open(map, marker)
-            },
+            }
+            ,
             changeAgeCondition() {
                 if (this.party_form.conditions.selectAge == 'none') {
                     this.party_form.conditions.age = [20, 30];
                 } else {
                     this.party_form.conditions.age = [0, 100];
                 }
-            },
+            }
+            ,
             editor() {
                 var party = this.party_form;
                 party.title = this._title;
@@ -344,7 +356,8 @@
                 party.file_array = this._file;
                 party.selected_category_id.id = this._categoryId;
                 // alert(party.title);
-            },
+            }
+            ,
             getCategoryList() {
                 var vm = this
                 this.$http.get('http://localhost:3000/category')
@@ -365,12 +378,14 @@
                             vm.subCategoryList.push(categoryOption);
                         }
                     });
-            },
+            }
+            ,
             showSubCategory(select) {
                 this.party_form.selected_subcategory_id = null;
                 // this.party_form.selected_category_id = select.id;
                 this.categoryList2 = this.subCategoryList[select.index];
-            },
+            }
+            ,
             showSearchMap() {
                 this.$modal.show(SearchMap, {}, {
                     name: 'searchMap',
@@ -379,7 +394,8 @@
                     draggable: false,
                     clickToClose: false
                 },);
-            },
+            }
+            ,
             getResult(result) {
                 this.party_form.location = result;
             }

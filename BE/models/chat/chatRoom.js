@@ -9,6 +9,7 @@ const Schema = mongoose.Schema;
  */
 
 const chatRoomSchema = new Schema({
+    group_id:{type:Number},
     name:{type:String},
     host:{type:Number,ref:'User'},
     img_path:{type:String},

@@ -3,81 +3,56 @@ const chatMessage = require('../models/chat/chatMessage')
 const user = require('../models/user')
 
 
-exports.createChatRoom = (group) => {
-
-    if (group.type == "group") { // 생성할 chatRoom이 그룹채팅방일 때,
-        chatRoom.find({name: group.title, host: group.host._id},
-            function (err, existchatRoom) {
-                console.log(existchatRoom)
-                if (err) {
-                    console.log(err)
-                    return null
-                }
-                //이미 db에 방이 존재하는 경우
-                if (existchatRoom.length != 0) {
-                    console.log("이미 존재하는 방입니다.")
-                    return null
-                }
-                //존재하지 않는 경우
-                else {
-                    var participants = [];
-                    participants.push(group.host._id)
-
-                    var newRoom = new chatRoom({
-                        name: group.title,
-                        img_path: group.images[0],
-                        participants: participants,
-                        host: group.host._id
-                    })
-                    newRoom.save((err, group) => {
-                        if (err) {
-                            console.log(err)
-                            return null
-                        } else {
-                            return group;
-                        }
-                    });
-                }
-            }
-        )
-    } else if (group.type == "solo") {
-        //채팅방이 1:1채팅방일 경우
-        user.find({_jd: group.userId}, function (err, existUser) {
+exports.createChatRoom = (socket,group) => {
+    chatRoom.find({group_id: group._id},
+        function (err, existchatRoom) {
             if (err) {
                 console.log(err)
                 return null
             }
-            if (existUser != null) {
-                chatRoom.find({name: existUser.name, host: group.host._id}, function (err, existchatRoom) {
-                    //이미 db에 방이 존재하는 경우
-                    if (existchatRoom.length != 0) {
-                        console.log("이미 존재하는 방입니다.")
-                        return null
-                    }
-                    //존재하지 않는 경우
-                    else {
-                        var participants = [];
-                        participants.push(group.host._id)
-
-                        var newRoom = new chatRoom({
-                            name: existUser.name,
-                            img_path: existUser.avatar_path,
-                            participants: participants,
-                            host: group.host._id
-                        })
-                        newRoom.save((err, group) => {
-                            if (err) {
-                                console.log(err)
-                                return null
-                            } else {
-                                return group;
-                            }
-                        });
-                    }
+            //이미 db에 방이 존재하는 경우
+            if (existchatRoom.length != 0) {
+                console.log("이미 존재하는 방입니다.")
+                return null
+            }
+            //존재하지 않는 경우
+            else {
+                var participants = [];
+                participants.push(group.host._id)
+                console.log(group)
+                var newRoom = new chatRoom({
+                    group_id: group._id,
+                    name: group.title,
+                    img_path: group.images[0],
+                    participants: participants,
+                    host: group.host._id
                 })
+                newRoom.save((err, result) => {
+                    if (err) {
+                        console.log(err)
+                        return null
+                    } else {
+                        chatRoom.find({group_id: group._id})
+                            .populate({path: 'host', model: 'User'})
+                            .populate({
+                                path: 'participants', model: 'User',
+                                options: {sort: {newMessageReceivedDate: 'desc'}}
+                            })
+                            .exec(function (err, createdGroup) {
+                                if (createdGroup) {
+                                    socket.join(createdGroup._id);
+                                    socket.emit('created',createdGroup);
+                                    console.log("방이 생성되었습니다")
+                                } else {
+                                    console.log('방이 생성되지 않았습니다.')
+                                }
+                            })
+                    }
+                });
+
             }
         })
-    }
+
 };
 
 exports.deleteChatRoom = (group) => {
@@ -160,7 +135,6 @@ exports.getRoomList = (socket, id) => {
                     messageList = list.filter(message => roomList.filter(room => room._id == message.dest) != null)
 
                     var output = {command: 'list', roomList: roomList, messageList: messageList};
-                    console.log(output)
                     // console.log('클라이언트로 보낼 데이터 : ' + JSON.stringify(output));
                     socket.emit('group', output)
 
