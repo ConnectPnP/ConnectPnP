@@ -191,7 +191,7 @@ exports.getRoomList = (socket, id) => {
                     if (err) {
                         console.log(err)
                     }
-                    messageList = list.filter(message => roomList.filter(room => room._id == message.dest) != null)
+                    messageList = list.filter(message => roomList.filter(room => room.group_id == message.dest) != null)
 
                     var output = {command: 'list', roomList: roomList, messageList: messageList};
                     // console.log('클라이언트로 보낼 데이터 : ' + JSON.stringify(output));
