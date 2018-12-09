@@ -63,7 +63,7 @@
                         <b-col class="singleRanking">
                             <b-img fluid :src="item.images[0]" style="max-height: 200px;" alt="Thumbnail" />
                             <div class="singleRankingTitile">{{item.title}}</div>
-                            <div class="singleRankingDescription">{{item.locationText}}</div>
+                            <div class="singleRankingDescription">{{item.location.title}}</div>
                             <router-link :to= "{name: 'detailParty' , params: {id: item._id}}" class="btn-info" tag="b-button">자세히 보기</router-link>
                         </b-col>
                     </div>
@@ -84,7 +84,7 @@
                         <b-col class="singleRanking">
                             <b-img fluid :src="item.images[0]" style="max-height: 200px;" alt="Thumbnail" />
                             <div class="singleRankingTitile">{{item.title}}</div>
-                            <div class="singleRankingDescription">{{item.locationText}}</div>
+                            <div class="singleRankingDescription">{{item.location.title}}</div>
                             <router-link :to= "{name: 'detailParty' , params: {id: item._id}}" class="btn-info" tag="b-button">자세히 보기</router-link>
                         </b-col>
                     </div>
