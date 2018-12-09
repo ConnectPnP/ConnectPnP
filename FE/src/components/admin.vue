@@ -142,7 +142,14 @@
             <!--소분류 카테고리 추가-->
             <div class="createsubCategoryArea">
                 <div class="createsubCategory" v-if="selectedCategoryID!= -1">
+                    <br>
+                    <h4>Add SubCategory</h4>
+
+                    <div class="hrLine20">
+                        <hr>
+                    </div>
                     <div class="inputMain">
+
                         <label for="subCategory"> 소분류 이름: </label>  &nbsp;
                         <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"/>
                     </div>
@@ -247,11 +254,13 @@
             }
         },
         mounted: function () {
-            this.getCategory(),
-                console.log(this)
+
+            //카테고리 불러오기
+            this.getCategory()
 
         },
         methods:{
+            // 상황에 따른 버튼 표시를 위한 함수.
             revisebtnChange(){
                 this.condition.reviseComplete='complete'
             },
@@ -266,12 +275,16 @@
             subcancelbtn(){
                 this.condition.subreviseComplete='revise'
             },
+
+
+
             //대분류 카테고리 클릭시
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
                 this.selectedCategoryID=categoryid;
                 console.log(categoryid);
             },
+            //이미지 업로드
             onFileChange(newFile) {
                 console.log(newFile);
                 this.file = {blob: URL.createObjectURL(newFile[0])};
@@ -279,14 +292,14 @@
                 this.formData.append('categoryFile', newFile[0], newFile[0].name);
             },
 
-            //카테고리 리스트 가져오기
+            //전체카테고리 리스트 가져오기
             async getCategory(){
                 var categoryList  = await this.$http.get('http://localhost:3000/category');
                 console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
 
-            //카테고리 추가
+            //메인카테고리 추가
             async addCategory(){
                 var adminVue= this;
                 //https://picsum.photos/250/250/?image=54
@@ -319,7 +332,7 @@
 */
             },
 
-
+            //세부 카테고리 추가
             addSubCategory(){
                 var adminVue= this;
                 var subcategoryData ={
@@ -342,6 +355,7 @@
 
             },
 
+            //메인카테고리 수정
             async categoryUpdate(data){
                 var adminVue= this;
                 this.selectedCategoryName=data.name;
@@ -373,6 +387,7 @@
                 this.condition.reviseComplete='revise';
             },
 
+            //세부카테고리 수정
             subcategoryUpdate(data){
                 console.log(data._id)
                 var updateURL='http://localhost:3000/category/edit/'+data._id;
@@ -381,7 +396,7 @@
 
             },
 
-
+            //메인카테고리 삭제
             categoryDelete(id){
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==id){
@@ -404,6 +419,9 @@
                                     }
                                 }*/
             },
+
+
+            //세부카테고리 삭제
             subCategoryDelete(id){
                 var subdeleteURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub/delete/'+id;
                 var deleteResult = this.$http.post(subdeleteURL);
@@ -491,6 +509,7 @@
         alignment: left;
     }
     .createsubCategoryArea{
+        color: #706f76;
         padding-top: 20px;
         padding-bottom: 20px;
 
