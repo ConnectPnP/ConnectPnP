@@ -41,7 +41,8 @@
                     </div>
                     <!-- <div class="guestBtnGroup"> -->
                     <div class="guestBtnGroup" v-if="!isHost">
-                        <b-button v-if="!isJoined" class="btn btn-info" @click="joinParty">참여</b-button>
+                        <b-button v-if="!isJoined && !isWaiting" class="btn btn-info" @click="waitParty">참여대기</b-button>
+                        <b-button v-if="isWaiting" class="btn btn-info" @click="cancelWaiting">대기취소</b-button>
                         <b-button-group v-if="isJoined">
                             <b-button class="btn btn-info">채팅 참여</b-button>
                             <b-button class="btn btn-info" v-b-modal.exitParty>모임 나가기</b-button>
@@ -127,14 +128,15 @@
                 detailPartyInfo: {},
                 isMapTab: false,
                 isHost: false, // host인지 guest인지
-                isJoined: true, // 이 모임에 참여중인지
+                isWaiting : false, // 대기중 리스트에 있으면 true
+                isJoined: false, // 이 모임에 참여중인지
                 host: null,
                 currentUser: {
                     id: '',
                     user_id: '',
-                    nickName: '',
-                    age: 14,
-                    gender: 'female',
+                    name: '',
+                    age: null,
+                    gender: '',
                     profile_img: ''
                 },
                 coverList: [],
@@ -166,7 +168,8 @@
                 this.currentUser.nickName = this.$session.get('userName');
                 this.currentUser.profile_img = this.$session.get('profile_path');
                 this.currentUser.id = this.$session.get('id');
-                console.log("current User :" + this.currentUser.id)
+                this.currentUser.age = this.$session.get('age');
+                this.currentUser.gender = this.$session.get('gender');
                 this.getPartyDetail();
 
             },
@@ -192,31 +195,51 @@
                 infowindow.open(map, marker)
 
             },
-            joinParty() {
+            waitParty() {
                 // 이미 신청 or 가입 되어있는지 확인해야 함
-
+                var vm = this
                 var condition = this.detailPartyInfo.conditions;
                 if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
-                    this.$http.post('http://localhost:3000/board/join', {
-                        id: this.boardId, // 모임 Id
-                        // user 정보
+                    this.$http.post('http://localhost:3000/board/wait', {
+                        group: vm.detailPartyInfo._id, // 모임 Id
+                        user : vm.currentUser.id
+                    }).then((result) => {
+                        console.log(result)
                     })
                     alert("신청 완료 되었습니다.");
                 } else {
                     alert("조건에 맞지 않아 참여할 수 없습니다!");
                 }
-                this.isJoined = true;
+                this.isWaiting = true;
+            },
+            cancelWaiting() {
+                var vm = this
+                this.$http.post('http://localhost:3000/board/cancel', {
+                        group: vm.detailPartyInfo._id, // 모임 Id
+                        user : vm.currentUser.id
+                })
+                this.isWaiting = false;
             },
             exitParty() {
                 // 모임 나가기
+                var vm = this
+                this.isWaiting = false;
                 this.isJoined = false;
+                this.$http.post('http://localhost:3000/board/exit', {
+                        group: vm.detailPartyInfo._id, // 모임 Id
+                        user : vm.currentUser.id
+                })
             },
             showJoinList() {
-                this.$modal.show(JoinList, {
-                    // 주최자 정보
-                }, {
+                this.$modal.show(JoinList, 
+                {
+                    members : this.detailPartyInfo.waiting, 
+                    group : {
+                        groupId : this.detailPartyInfo._id, 
+                        groupTitle : this.detailPartyInfo.title, 
+                        groupDate : this.detailPartyInfo.meeting_date}}, {
                     name: 'joinList',
                     width: '500px',
                     height: '440px',
@@ -227,24 +250,29 @@
                 var vm = this
                 this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
                     .then((result) => {
-                        vm.detailPartyInfo = result.data.board
+                        vm.detailPartyInfo = result.data
                         vm.host = result.data.host
                         for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
                             this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
                         }
-
+                        // for문 외에 back에서 확인후 true false 로 반환하는 API 만들기.
                         this.createCookie();
                     })
-                    .then((result) => {
-                        console.log(vm.currentUser)
-                        console.log(vm.host)
-                        if (vm.currentUser.user_id == vm.host.user_code) vm.isHost = true;
+                    .then(() => {
+                        this.$http.post('http://localhost:3000/board/check', {
+                            group : vm.detailPartyInfo._id,
+                            user : vm.currentUser.id
+                        }).then((result) => {
+                            console.log(result)
+                            if (vm.currentUser.id == vm.host._id) vm.isHost = true;
+                            vm.isJoined = result.data.isJoined
+                            vm.isWaiting = result.data.isWaiting
+                        })
                     })
             },
             createComment(content) {
                 var vm = this
                 this.$http.defaults.headers.post['Content-Type'] = 'application/json'
-                console.log(vm.currentUser.id)
                 this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
                     {
                         user_id: vm.currentUser.id,

@@ -165,6 +165,8 @@
                        topVuethis.$cookie.set('loginStatus','login', 1);
                        topVuethis.$session.set('loginStatus','login');
                        topVuethis.$session.set('id', userResult.data._id);
+                       topVuethis.$session.set('gender', userResult.data.gender);
+                       topVuethis.$session.set('age', userResult.data.age);
                        location.href="/"
 
                    } else{  //회원이 아닌 경우 -> 회원가입 창으로

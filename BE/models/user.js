@@ -19,15 +19,15 @@ const UserSchema = new Schema({
   categoryList:[{type : Number, ref:'Category'}],
   star_rate : {type : Number },
   rating_status : [{
-    status_id : {type : mongoose.Schema.Types.ObjectId, ref:'Evaluate' },
+    status_id : {type : Number, ref:'Evaluate' },
     percentage : {type : Number}
   }],
   group_log : [{
-    group_id : {type : mongoose.Schema.Types.ObjectId, ref:'Group'},
+    group_id : {type : Number, ref:'Group'},
     review_popup : {type : Boolean }
   }],
   chat : [{
-    chat_id : {type : mongoose.Schema.Types.ObjectId, ref:'Chat'}
+    chat_id : {type : Number, ref:'Chat'}
   }]
 });
 

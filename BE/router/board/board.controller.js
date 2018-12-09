@@ -13,15 +13,16 @@ const npage = 6; // 페이지당 6개 게시글 불러오기
 exports.getPost = (req, res) => {
   Board.findOne({_id: req.params.id}, (err, board) => {
     if (err) return res.status(500).send(err); // 500 error
-    User.findOne({user_code : board.host}, (err, user) => {
-      return res.json({ "board" : board, "host" : user});
-    })
+    return res.json(board);
   })
+  .populate({path : 'host', select: '_id name avatar_path'})
   .populate('comments')
   .populate({
     path: 'comments',
     populate: { path: 'member', select: '_id  name avatar_path createdAt' },
   })
+  .populate('waiting')
+  .populate('guest')
   .populate({
     path: 'comments',
     populate: {
@@ -54,10 +55,8 @@ exports.getMore = (req, res) => {
 // //post create edit delete
 // // 게시글 생성하기
 exports.create = (req, res) => {
-  console.log(req.body)
   Board.create( req.body , (err, result) => {
     if (err) {
-      console.log(err)
       return res.status(500).send(err); }// 500 error
     return res.json(result);
   });
@@ -217,7 +216,6 @@ exports.createCommentReply = (req, res) => {
     if (err) return res.json(err);
     Comment.findOneAndUpdate({_id : req.params.id}, {$push : {childComment : newComment._id}}, {new:true}, (err, result) => {
       if(!err) {
-        console.log(result)
         return res.json(result);
       }
       else return res.json({result : "fail"});
@@ -240,3 +238,54 @@ exports.deleteCommentReply = (req, res) => {
   });
 }
 
+exports.waitGroup = (req, res) => {
+  Board.findOneAndUpdate({_id : req.body.group}, {$push : {waiting : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      return res.json(result);
+    };
+    return res.json(err);
+  })
+}
+
+exports.cancelGroup = (req, res) => {
+  Board.findOneAndUpdate({_id : req.body.group}, {$pull : {waiting : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      return res.json(result);
+    };
+    return res.json(err);
+  })
+}
+
+exports.joinGroup = (req, res) => {
+  Board.findOneAndUpdate({_id : req.body.group}, {$pull : {waiting : req.body.user}, $push : {guest : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      return res.json(result);
+    };
+    return res.json(err);
+  })
+}
+
+exports.exitGroup = (req, res) => {
+  Board.findOneAndUpdate({_id : req.body.group}, {$pull : {guest : req.body.user}}, {new:true}, (err, result) => {
+    if(!err && result) {
+      return res.json(result);
+    };
+    return res.json(err);
+  })
+}
+
+exports.checkState = (req, res) => {
+  Board.find({_id : req.body.group, waiting : req.body.user}, (err, waiting) => {
+    if(waiting.length != 0) {
+      return res.json({isWaiting : true, isJoined : false})
+    } else {
+      Board.find({_id : req.body.group, guest : req.body.user}, (err, joined) => {
+        if(joined.length != 0) {
+            return res.json({isWaiting : false, isJoined : true})
+        } else {
+          res.json({isWating : false, isJoined : false})
+        }
+      })
+    }
+  })
+}

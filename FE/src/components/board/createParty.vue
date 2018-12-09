@@ -222,7 +222,7 @@
             }
         },
         mounted() {
-            this.currentUser = this.$session.get('userID');
+            this.currentUser = this.$session.get('id');
 
             this.todayDate = new Date();
             this.todayDate = this.formatDates(this.todayDate);
