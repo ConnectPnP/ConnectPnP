@@ -215,7 +215,7 @@ export default {
       this.memberInfo.events.forEach(
         function getevent(value) {
           if(value.group_id != null){
-            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false" }';
+            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false", "url": "http://localhost:8080/party/detail/'+ value.group_id._id+'" }';
             view.memberInfo.eventsDate.push(JSON.parse(event));
             view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
           }
