@@ -183,6 +183,7 @@
                 });
                 Kakao.Auth.cleanup();
                 this.$cookie.set('loginStatus', 'logout', 1);
+                this.$session.clear();
                 this.$session.set('loginStatus', 'logout');
                 location.href = "/"
             }
