@@ -1,5 +1,4 @@
 <template>
-    <!-- <router-link :to= "{name: 'detailParty' , params: {id: groupId}}"> -->
     <div class = "imgTxt" @click="gotoPage(groupId)">    
         <tr>
             <b-img class="listView groupimg" :src = "groupImg"/>
@@ -8,7 +7,6 @@
             <p> {{getTitle}} </p>
         </tr>
     </div>    
-    <!-- </router-link> -->
 </template>
 
 

@@ -14,7 +14,8 @@
                         <h1>{{detailPartyInfo.title}}</h1>
 
                         <hr>
-                        Host : <b> {{host.name}} </b> <br>
+                        Host : <b> {{host.name}} </b> 
+                        <star-rating id="starRating" :rating="host.star_rate.totalScore/host.star_rate.divider/2" :read-only="true" :star-size="20" :increment="0.01"></star-rating>                  
                         Location : <b> {{detailPartyInfo.location.title}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
@@ -113,6 +114,7 @@
     import commentTemplate from './comment.vue'
     import JoinList from '../joinListPopup/joinList.vue'
     import ShowMap from './showMap.vue'
+    import StarRating from 'vue-star-rating'
 
     export default {
         name: "detailParty",
@@ -121,7 +123,8 @@
             memberSimpleProfile,
             commentTemplate,
             JoinList,
-            ShowMap
+            ShowMap,
+            StarRating,
         },
         data() {
             commentContent: "";
@@ -299,8 +302,9 @@
             createCookie() {
                 // cookie 만들기 this.$route.params.id
                 var cookieName = "recentGroup" + this.$route.params.id;
+                var cookieId = String(this.$route.params.id);
                 var cookie = {
-                    id: this.$route.params.id,
+                    id: cookieId,
                     title: this.detailPartyInfo.title,
                     image: this.detailPartyInfo.images[0]
                 };
@@ -309,7 +313,7 @@
                     this.$cookies.remove(cookieName);
                 }
 
-                this.$cookies.set(cookieName, cookie, "1h");
+                this.$cookies.set(cookieName, cookie, "3h");
                 console.log(this.$cookies.keys())
 
                 // "recentGroup"+this.$route.params.id;
