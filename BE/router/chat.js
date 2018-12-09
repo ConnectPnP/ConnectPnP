@@ -168,7 +168,7 @@ exports.getRoomList = (socket, id) => {
         })
 }
 
-exports.sendMessage = async (message) => {
+exports.sendMessage = (message) => {
 
     if (message.command == 'chat') {
         var newMessage = new chatMessage({
