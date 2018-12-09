@@ -166,10 +166,6 @@
                 }
                 this.title = 'Group List'
             },
-            response(response) {
-                console.log('응답 메세지를 받았습니다.' + response.command + ','
-                    + response.code + ',' + response.message)
-            },
             connect() {
                 console.log("소켓 연결")
             },

@@ -55,8 +55,6 @@ io.sockets.on('connection', function (socket) {
 
         console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
 
-        // 응답 메시지 전송
-        sendResponse(socket, 'login', '200', '로그인되었습니다.');
     });
 
     socket.on('logout', function (login) {
@@ -65,7 +63,6 @@ io.sockets.on('connection', function (socket) {
         login_ids.splice(login.id, 1)
 
         console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
-        sendResponse(socket, 'logout', '200', '로그아웃되었습니다.');
     })
 
 
@@ -87,19 +84,11 @@ io.sockets.on('connection', function (socket) {
             if (message.dest) {
                 io.sockets.connected[login_ids[message.dest]].emit('message', message);
 
-                // 응답 메시지 전송
-                sendResponse(socket, 'message', '200', '메시지를 전송했습니다.');
             } else {
-                // 응답 메시지 전송
-                sendResponse(socket, 'login', '404', '상대방의 로그인 ID를 찾을 수 없습니다.');
             }
         } else if (message.command == 'groupchat') {
             // 방에 들어있는 모든 사용자에게 메시지 전달
-
             io.to(message.dest).emit('message', message)
-
-            // 응답 메시지 전송
-            sendResponse(socket, 'message', '200', '방 [' + message.dest + ']의 모든 사용자들에게 메시지를 전송했습니다.');
         }
 
 
@@ -203,11 +192,6 @@ io.sockets.on('connection', function (socket) {
 //
 //     return roomList;
 // }
-
-function sendResponse(socket, command, code, message) {
-    var statusObj = {command: command, code: code, message: message};
-    io.to(message.dest).emit('response', statusObj)
-}
 
 
 const db = mongoose.connection;
