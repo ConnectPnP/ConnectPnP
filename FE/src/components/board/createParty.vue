@@ -179,7 +179,10 @@
         },
         props: {
             currentGroupId:'',
-            isEdit:false
+            isEdit:{
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -296,33 +299,38 @@
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 }
                 else {
+                        console.log("isEdit : "+this.isEdit);
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
-                    if(this.isEdit = false){
+                    if(this.isEdit == false){
                         this.$http.post('http://localhost:3000/board', {
-                        title: party.title,
-                        due_date: party.recruitment_period_dateTwo,
-                        start_date: party.recruitment_period_dateOne,
-                        meeting_date: party.date,
-                        min_num: party.number_of_member[0],
-                        max_num: party.number_of_member[1],
-                        cost: party.cost,
-                        category: party.selected_category_id.id,
-                        subCategory: party.selected_subcategory_id,
-                        conditions: {gender: party.conditions.gender, age: party.conditions.age},
-                        detail: party.detail,
-                        location: party.location,
-                        host: this.currentUser
-                    })
+                            title: party.title,
+                            due_date: party.recruitment_period_dateTwo,
+                            start_date: party.recruitment_period_dateOne,
+                            meeting_date: party.date,
+                            min_num: party.number_of_member[0],
+                            max_num: party.number_of_member[1],
+                            cost: party.cost,
+                            category: party.selected_category_id.id,
+                            subCategory: party.selected_subcategory_id,
+                            conditions: {gender: party.conditions.gender, age: party.conditions.age},
+                            detail: party.detail,
+                            location: party.location,
+                            host: this.currentUser
+                        })
                     // 이미지 업로드
                         .then((result) => {
                             boardId = result.data._id
                             this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                            this.$http.post('http://localhost:3000/board/join',{
+                                group: boardId,
+                                user: this.currentUser
+                            });
                         })
                         .then(() => {
                             window.location.href = "http://localhost:8080/party/detail/" + boardId
                         });
                     }
-                    else {
+                    else if(this.isEdit == true) { // 수정
                         this.$http.post('http://localhost:3000/board/edit/'+this.currentGroupId,{
                             title: party.title,
                             due_date: party.recruitment_period_dateTwo,
