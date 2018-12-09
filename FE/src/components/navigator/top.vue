@@ -134,15 +134,14 @@
             var id = this.$session.get('userID');
 
             // 오늘 날짜 가져오기
-            // var today = new Date();
-            // var year = today.getFullYear();                               
-            // var month = (1 + today.getMonth());                  
-            // month = month >= 10 ? month : '0' + month;     
-            // var day = today.getDate();                                  
-            // day = day >= 10 ? day : '0' + day;                          
-            // var changeDateFormat = year+'-'+month+'-'+day;
-            // console.log(changeDateFormat);
-            var changeDateFormat = '2019-01-01';
+            var today = new Date();
+            var year = today.getFullYear();                               
+            var month = (1 + today.getMonth());                  
+            month = month >= 10 ? month : '0' + month;     
+            var day = today.getDate();                                  
+            day = day >= 10 ? day : '0' + day;                          
+            var changeDateFormat = year+'-'+month+'-'+day;
+            console.log(changeDateFormat);
 
             this.groupReviewList = [];
 
