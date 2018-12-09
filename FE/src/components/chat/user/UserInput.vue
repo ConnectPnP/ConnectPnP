@@ -80,7 +80,7 @@
                 required: true
             },
             current_dest_id: {
-                type: String,
+                type: Number,
                 required: true
             }
         },

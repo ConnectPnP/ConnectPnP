@@ -31,7 +31,7 @@
     /* eslint-disable */
     import ChatWindow from './ChatWindow.vue'
     import availableColors from '../colors'
-    import io from 'socket.io-client'
+
     export default {
         components: {
             ChatWindow
@@ -79,7 +79,6 @@
                         }
                     }
                 },
-                socket: io.connect('http://localhost:3000', {'forceNew': true}),
                 //현재 chat 참여 리스트 (userId, name, imgpath 필요)
                 participants: [],
                 groups: [],
@@ -98,8 +97,7 @@
         },
         created() {
             this.setColor('blue');
-            this.getSocket();
-            this.socket.emit('group',{command:"group",type:"group",userId:this.$session.get('id')})
+            this.$socket.emit('group', {command: "group", type: "group", userId: this.$session.get('id')})
         },
         methods: {
             sendMessage(text) {
@@ -122,7 +120,7 @@
                 // if(this.groups.length!=0){
                 //
                 // }
-                this.socket.emit('message', message)
+                this.$socket.emit('message', message)
             },
             openChat() {
                 this.isOpen = true
@@ -135,14 +133,6 @@
                 this.colors = this.availableColors[color]
                 this.chosenColor = color
             },
-            getSocket() {
-                this.socket.on('connect', function () {
-                    console.log("소켓 연결")
-                })
-                this.socket.on('disconnect', function () {
-                    console.log("소켓 연결 종료")
-                })
-            },
             arrangeChatroom(List) {
 
                 var messageList = {}
@@ -153,6 +143,9 @@
                         messageList: messageList
                     })
                 })
+
+
+
             }
         },
         computed: {
@@ -160,23 +153,46 @@
                 return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
             }
         },
-
-        mounted() {
-            this.socket.on('message', (message) => {
+        sockets: {
+            message(message) {
                 console.log('메세지 event 받음')
                 this.messageList.push(message)
-            })
-            this.socket.on('group', (data) => {
+            },
+            group(data) {
                 console.log('채팅방 리스트 정보 받음')
                 if (data.command == 'list') {
                     this.groups = data.roomList
                     this.arrangeChatroom(data.messageList)
                 }
-            })
-            this.socket.on('response', (response) => {
+                this.title = 'Group List'
+            },
+            response(response) {
                 console.log('응답 메세지를 받았습니다.' + response.command + ','
                     + response.code + ',' + response.message)
-            })
+            },
+            connect() {
+                console.log("소켓 연결")
+            },
+            disconnect() {
+                console.log("소켓 연결 종료")
+            }
+        },
+        mounted() {
+            // this.socket.on('message', (message) => {
+            //     console.log('메세지 event 받음')
+            //     this.messageList.push(message)
+            // })
+            // this.socket.on('group', (data) => {
+            //     console.log('채팅방 리스트 정보 받음')
+            //     if (data.command == 'list') {
+            //         this.groups = data.roomList
+            //         this.arrangeChatroom(data.messageList)
+            //     }
+            // })
+            // this.socket.on('response', (response) => {
+            //     console.log('응답 메세지를 받았습니다.' + response.command + ','
+            //         + response.code + ',' + response.message)
+            // })
         }
     }
 </script>

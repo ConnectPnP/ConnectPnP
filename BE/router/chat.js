@@ -3,7 +3,7 @@ const chatMessage = require('../models/chat/chatMessage')
 const user = require('../models/user')
 
 
-exports.createChatRoom = (socket,group) => {
+exports.createChatRoom = (socket, group) => {
     chatRoom.find({group_id: group._id},
         function (err, existchatRoom) {
             if (err) {
@@ -40,7 +40,7 @@ exports.createChatRoom = (socket,group) => {
                             .exec(function (err, createdGroup) {
                                 if (createdGroup) {
                                     socket.join(createdGroup.group_id);
-                                    socket.emit('created',createdGroup);
+                                    socket.emit('created', createdGroup);
                                     console.log("방이 생성되었습니다")
                                 } else {
                                     console.log('방이 생성되지 않았습니다.')
@@ -63,7 +63,7 @@ exports.deleteChatRoom = (group) => {
         })
 }
 
-exports.joinChatRoom = (socket,group) => {
+exports.joinChatRoom = (socket, group) => {
     chatRoom.findOne({group_id: group._id},
         function (err, room) {
             if (err) {
@@ -73,36 +73,50 @@ exports.joinChatRoom = (socket,group) => {
             if (!room.participants.includes(group.user._id)) {
                 chatRoom.findOneAndUpdate({
                     group_id: group._id
-                }, {$push:{participants: group.user._id}}).then((err,result)=>{
-                    if(err){
+                }, {$push: {participants: group.user._id}}).then((err, result) => {
+                    if (err) {
                         console.log(err)
-                    }
-                    else{
+                    } else {
                         socket.in(group._id).emit('join', group.user)
                         console.log('채팅방 참여인원으로 등록')
                     }
                 })
-            }
-            else{
+            } else {
                 console.log("이미 참가중인 상태입니다.")
             }
 
         })
 }
 
-exports.leaveChatRoom = (group) => {
-    chatRoom.find({name: group.title, host: group.host.user_code},
+exports.leaveChatRoom = (socket, group, user) => {
+    var vm = this
+    chatRoom.findOne({group_id: group._id},
         function (err, room) {
+
             if (err) {
                 console.log(err)
             }
-            if (room.participants.includes(global.currentUser.user_code)) {
-                room.participants.slice(
-                    room.participants.indexOf(global.currentUser.user_code))
-                chatRoom.update({
-                    userId: group.userId
-                }, {participants: room.participants})
+            if (room.participants.includes(user._id)) {
+                chatRoom.findOneAndUpdate({
+                    group_id: group._id
+                }, {$pull: {participants: user._id}})
+                    .exec((err, result) => {
+                    if (err) {
+                        console.log(err)
+                        console.log("채팅방 나가기 불가")
+                    } else {
+                        socket.leave(group._id, function (err) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                vm.getRoomList(socket,user._id)
+                            }
+                        });
+                    }
+                })
             }
+
+
         })
 }
 
@@ -110,7 +124,7 @@ exports.getRoomList = (socket, id) => {
     var roomList = []
     var messageList = []
 
-
+console.log('getRooms')
     chatRoom.find({participants: {"$in": [id]}})
         .populate({path: 'host', model: 'User'})
         .populate({

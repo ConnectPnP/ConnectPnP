@@ -168,7 +168,6 @@
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
     import SearchMap from './searchMap.vue';
-    import io from 'socket.io-client'
 
     export default {
         name: "createParty",
@@ -181,7 +180,6 @@
             '_locationText', '_location', '_cost', '_conditions', '_file', '_categoryId'],
         data() {
             return {
-                socket: io.connect('http://localhost:3000'),
                 currentUser: '',
                 formData: new FormData(),
                 dateFormat: 'YYYY-MM-DD',
@@ -322,7 +320,7 @@
                             this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
                                 .then(() => {
                                     this.$http.get('http://localhost:3000/board/details/' + boardId).then((result) => {
-                                        vm.socket.emit('group', {
+                                        vm.$socket.emit('group', {
                                             command: 'create',
                                             result
                                         })

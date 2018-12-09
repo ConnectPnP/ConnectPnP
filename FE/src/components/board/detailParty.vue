@@ -139,7 +139,7 @@
                     gender: '',
                     profile_img: ''
                 },
-                coverList: [],
+                coverList: []
             }
         },
         computed: {
@@ -184,7 +184,7 @@
                 var condition = this.detailPartyInfo.conditions;
 
                 if(vm.currentUser.user_id == undefined){
-                  alert("로그인이 필요합니다");  
+                  alert("로그인이 필요합니다");
                 }
                 else if(this.detailPartyInfo.max_num <= this.detailPartyInfo.guest.length){
                     alert("신청 가능 인원이 가득 찼습니다.");
@@ -196,7 +196,6 @@
                         group: vm.detailPartyInfo._id, // 모임 Id
                         user : vm.currentUser.id
                     }).then((result) => {
-                        console.log(result)
                     })
                     alert("신청 완료 되었습니다.");
                     this.isWaiting = true;
@@ -220,20 +219,28 @@
                 this.$http.post('http://localhost:3000/board/exit', {
                         group: vm.detailPartyInfo._id, // 모임 Id
                         user : vm.currentUser.id
+                }).then((result,err)=>{
+                    vm.$socket.emit('group',{
+                        command:'leave',
+                        group:vm.detailPartyInfo,
+                        user: result.data
+                    })
+
                 })
+
             },
             showJoinList() {
                 if(this.detailPartyInfo.waiting.length == 0){
                     alert("새로운 신청자가 없습니다!");
                 } else {
-                this.$modal.show(JoinList, 
+                this.$modal.show(JoinList,
                 {
-                    members : this.detailPartyInfo.waiting, 
+                    members : this.detailPartyInfo.waiting,
                     group : {
-                        groupId : this.detailPartyInfo._id, 
-                        groupTitle : this.detailPartyInfo.title, 
+                        groupId : this.detailPartyInfo._id,
+                        groupTitle : this.detailPartyInfo.title,
                         groupDate : this.detailPartyInfo.meeting_date}
-                    }, 
+                    },
                 {
                     name: 'joinList',
                     width: '500px',
@@ -260,7 +267,6 @@
                             group : vm.detailPartyInfo._id,
                             user : vm.currentUser.id
                         }).then((result) => {
-                            console.log(result)
                             if (vm.currentUser.id == vm.host._id) vm.isHost = true;
                             vm.isJoined = result.data.isJoined
                             vm.isWaiting = result.data.isWaiting
@@ -269,9 +275,9 @@
             },
             createComment(content) {
                 var vm = this
-                
+
                 if(vm.currentUser.user_id == undefined){
-                  alert("로그인이 필요합니다");  
+                  alert("로그인이 필요합니다");
                 }
                 else {
                     this.$http.defaults.headers.post['Content-Type'] = 'application/json'
@@ -285,7 +291,7 @@
                         window.location.reload()
                     });
                 }
-                
+
 
             },
             createCookie() {

@@ -9,7 +9,7 @@
                 @groupList="handleGroupListToggle"
         />
         <UserList
-                v-if="showUserList"
+                v-if="showUserList && groups.length!=0 "
                 :participants="participants"
         />
         <GroupList
@@ -19,7 +19,7 @@
                 :toggleGroupUI="toggle"
         />
         <MessageList
-                v-if="!showUserList && !showGroupList"
+                v-if="!showUserList && !showGroupList && groups.length!=0"
                 :messages="messages"
                 :participants="participants"
                 :colors="colors"
@@ -27,7 +27,7 @@
                 :messageStyling="messageStyling"
         />
         <UserInput
-                v-if="!showUserList && !showGroupList"
+                v-if="!showUserList && !showGroupList && groups.length!=0"
                 :current_dest_id="current_dest_id"
                 :showEmoji="showEmoji"
                 :onSubmit="onUserInputSubmit"

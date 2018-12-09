@@ -155,15 +155,11 @@ io.sockets.on('connection', function (socket) {
                 chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청
-            group = group.result.data
-            if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
+
+            if (!io.sockets.adapter.rooms[group.group._id]) { // 방이 없는 경우
                 console.log('존재하지 않는 방입니다.');
             } else {  // 방이 있는 경우
-                socket.leave(group._id);
-                chat_controller.leaveChatRoom(group)
-
-                // 응답 메시지 전송
-                sendResponse(socket, 'group', '200', '방에서 나갔습니다.');
+                chat_controller.leaveChatRoom(socket, group.group, group.user)
             }
 
         } else if (group.command === 'group') {
