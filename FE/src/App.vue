@@ -29,13 +29,13 @@
         computed: {
             //현재 로그인 상태 확인. 로그인/ 로그아웃시 보여져야하는 UI 조정.
             loginStatus() {
-                var cookie_status = this.$cookie.get('loginStatus');
-                console.log("loginStatus>>" + cookie_status);
-                if (cookie_status == 'login') {
-                    console.log(cookie_status == 'login');
+                var session_status = this.$session.get('loginStatus');
+                console.log("loginStatus>>" + session_status);
+                if (session_status == 'login') {
+                    console.log(session_status == 'login');
                     return true
                 } else {
-                    console.log(cookie_status == 'login');
+                    console.log(session_status == 'login');
                     return false
                 }
             },

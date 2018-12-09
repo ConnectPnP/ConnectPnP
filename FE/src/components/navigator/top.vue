@@ -64,9 +64,9 @@
       computed:{
         //현재 로그인 상태 확인. 로그인/ 로그아웃시 보여져야하는 UI 조정.
           loginStatus(){
-              var cookie_status= this.$cookie.get('loginStatus');
+              //var cookie_status= this.$cookie.get('loginStatus');
               var session_status= this.$session.get('loginStatus');
-              console.log("loginStatus>>"+ cookie_status);
+              //console.log("loginStatus>>"+ cookie_status);
               console.log("loginStatus_Session>>"+ session_status);
 
               if(session_status=='login'){
@@ -80,7 +80,7 @@
 
            userInfo(){
               //쿠키에 저장되어 있는 유저 정보 불러오기
-              var cookie_status= this.$cookie.get('loginStatus');
+              //var cookie_status= this.$cookie.get('loginStatus');
               var session_status= this.$session.get('loginStatus');
               if(session_status=='login'){
                   var userInfoName=this.$session.get('userName');
@@ -134,9 +134,9 @@
                    var profile_path = kakaoData.properties.profile_image.toString();
 
                    //유저 이름, 프로필 이미지 쿠키로 저장.
-                   topVuethis.$cookie.set('userID',userID, 1);
-                   topVuethis.$cookie.set('userName',user_name, 1);
-                   topVuethis.$cookie.set('profile_path',profile_path, 1);
+                   //topVuethis.$cookie.set('userID',userID, 1);
+                   //topVuethis.$cookie.set('userName',user_name, 1);
+                   //topVuethis.$cookie.set('profile_path',profile_path, 1);
 
                    //유저 이름, 프로필 이미지 세션으로 저장.
                    topVuethis.$session.set('userID',userID);
@@ -162,7 +162,7 @@
                        if(btnClick==0){
                            alert("이미 회원가입이 완료된 회원입니다. 로그인 합니다.")
                        }
-                       topVuethis.$cookie.set('loginStatus','login', 1);
+                       //topVuethis.$cookie.set('loginStatus','login', 1);
                        topVuethis.$session.set('loginStatus','login');
                        topVuethis.$session.set('id', userResult.data._id);
                        topVuethis.$session.set('gender', userResult.data.gender);
@@ -184,7 +184,7 @@
                     location.href = "/"
                 });
                 Kakao.Auth.cleanup();
-                this.$cookie.set('loginStatus', 'logout', 1);
+                //this.$cookie.set('loginStatus', 'logout', 1);
                 this.$session.clear();
                 location.href = "/"
             }
