@@ -1,23 +1,33 @@
 <template>
     <div id="admin">
 
-<!--대분류 카테고리 -->
+        <!--대분류 카테고리 -->
         <nav class="mainCategoryGroup">
             <br>
-            <h3>대분류 카테고리</h3>
+            <h3>Main Category</h3>
             <br>
 
             <!--대분류카테고리 추가-->
             <div class="createCategory">
                 <br>
-                <h4>카테고리 추가하기</h4>
+                <h4>Add Category</h4>
+
+                <div class="hrLine20">
+                    <hr>
+                </div>
+
                 <div class="inputMain">
-                    <label for="mainCategory"> 대분류 이름: </label>  &nbsp;
+                    <label for="mainCategory"> 카테고리 이름: </label>  &nbsp;
                     <input id="mainCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addCategoryName"></input>
                 </div>
 
+                <div class="hrLine20">
+                    <hr>
+                </div>
+
                 <b-form-group>
-                    이미지 업로드 방식:
+                    <h6>이미지 업로드</h6>
+                    <br>
                     <b-form-radio-group
                             v-model="condition.imgUpload"
                             :options="uploadMethod">
@@ -45,28 +55,33 @@
 
 
                 <!--추가 버튼-->
-                <button class="plusbtn btn btn-primary" v-on:click="addCategory" >+</button>
+                <button class="plusbtn btn btn-primary" v-on:click="addCategory" >추가하기</button>
             </div>
 
 
 
-        <!--대분류카테고리 리스트-->
+            <!--대분류카테고리 리스트-->
 
             <div  v-for="item in mainCategoryList.slice().reverse()" :key="item._id">
-                <table class="categoryTable">
+                <table class="categoryTable" v-on:click="categoryClicked(item.name,item._id)">
                     <tr>
                         <th class="categoryImg"  rowspan="2">
-                            <input v-on:click="categoryClicked(item.name,item._id)" type="image" :src="item.img_path"
-                                   height="140px" width="140px"/>
+                            <input  type="image" :src="item.img_path"
+                                    height="140px" width="140px"/>
                         </th>
                         <th class="mainCategoryTitle">
-                            <input class="mainCategoryTitle" name="mainCategoryTitleInput"  type="text" v-model="item.name">
+                            <input v-on:click="categoryClicked(item.name,item._id)" class="mainCategoryTitle" name="mainCategoryTitleInput"  type="text" v-model="item.name">
                         </th>
                     </tr>
                     <tr>
                         <td class="tg-0lax">
                             <button class="btn btn-primary" v-on:click="categoryUpdate(item)">수정</button>
                             <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+
                         </td>
                     </tr>
                 </table>
@@ -76,36 +91,36 @@
 
 
 
-<!--대분류에 속해있는 소분류 카테고리 -->
+        <!--대분류에 속해있는 소분류 카테고리 -->
         <article class="subCategory">
             <br>
 
             <div class="subCategoryTitle" v-if="selectedCategoryID==-1">
-                <h2> 대분류 카테고리를 선택해주세요</h2>
+                <h2> 메인카테고리를 선택해주세요</h2>
             </div>
-
 
 
             <div class="subCategoryTitle" v-if="selectedCategoryID!=-1">
                 <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
             </div>
 
-    <!--소분류 카테고리 추가-->
-            <div class="createCategory" v-if="selectedCategoryID!= -1">
-                <div class="inputMain">
-                    <label for="subCategory"> 소분류 이름: </label>  &nbsp;
-                    <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
+            <!--소분류 카테고리 추가-->
+            <div class="createsubCategoryArea">
+                <div class="createsubCategory" v-if="selectedCategoryID!= -1">
+                    <div class="inputMain">
+                        <label for="subCategory"> 소분류 이름: </label>  &nbsp;
+                        <input id="subCategory" size="sm" type="text" placeholder="입력해주세요." v-model="addSubCategoryName"></input>
+                    </div>
+
+
+                    <!--추가 버튼 -->
+                    <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >추가하기</button>
                 </div>
-
-
-                <!--추가 버튼 -->
-                <button class="subplusbtn btn btn-primary" v-on:click="addSubCategory" >+</button>
             </div>
-
             <b-container class="subCategoryGroup" >
 
 
-    <!--소분류 카테고리 리스트-->
+                <!--소분류 카테고리 리스트-->
                 <div v-for="item in mainCategoryList" :key="item.id">
                     <b-row v-if="selectedCategoryID==item._id">
                         <div  v-for="sub in item.sub_category.slice().reverse()">
@@ -118,6 +133,9 @@
                     </b-row>
                 </div>
             </b-container>
+
+
+
 
         </article>
 
@@ -150,7 +168,7 @@
                 addSubCategoryName:"",
                 imageName:"",
                 condition:{
-                  imgUpload: "methodFile"
+                    imgUpload: "methodFile"
                 },
                 uploadMethod: [
                     {text: '컴퓨터에서 찾기', value: 'methodFile'},
@@ -177,11 +195,11 @@
         },
         mounted: function () {
             this.getCategory(),
-            console.log(this)
+                console.log(this)
 
         },
         methods:{
-
+            //대분류 카테고리 클릭시
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
                 this.selectedCategoryID=categoryid;
@@ -194,59 +212,64 @@
                 this.formData.append('categoryFile', newFile[0], newFile[0].name);
             },
 
+            //카테고리 리스트 가져오기
             async getCategory(){
                 var categoryList  = await this.$http.get('http://localhost:3000/category');
+                console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
 
-             async addCategory(){
+            //카테고리 추가
+            async addCategory(){
                 var adminVue= this;
                 //https://picsum.photos/250/250/?image=54
                 var categoryData ={
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-                 var categoryDataUpload = await this.$http.post('http://localhost:3000/category', categoryData)
-                 if(this.condition.imgUpload=='methodFile'){
-                     var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
-                     adminVue.mainCategoryList.push(imgFileUpload.data);
-                 } else {
-                     console.log("methodURL!")
+                var categoryDataUpload = await this.$http.post('http://localhost:3000/category', categoryData)
+                if(this.condition.imgUpload=='methodFile'){
+                    var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                    adminVue.mainCategoryList.push(imgFileUpload.data);
+                } else {
+                    console.log("methodURL!")
 
-                     adminVue.mainCategoryList.push(categoryDataUpload.data);
-                 }
-                 this.addCategoryName="";
-                 this.addCategoryPath="";
+                    adminVue.mainCategoryList.push(categoryDataUpload.data);
+                }
+                this.addCategoryName="";
+                this.addCategoryPath="";
 
 
-                 /*
-                this.$http.post('http://localhost:3000/category', categoryData)
-                .then((result) => {
-                    console.log(adminVue.formData.keys())
-                    return adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
-                })
-                .then((result) => {
-                    //result.data.img_path=tmpImgPath
-                    adminVue.mainCategoryList.push(result.data);
-                })
+                /*
+               this.$http.post('http://localhost:3000/category', categoryData)
+               .then((result) => {
+                   console.log(adminVue.formData.keys())
+                   return adminVue.$http.post('http://localhost:3000/category/files/'+result.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+               })
+               .then((result) => {
+                   //result.data.img_path=tmpImgPath
+                   adminVue.mainCategoryList.push(result.data);
+               })
 */
             },
+
+
             addSubCategory(){
                 var adminVue= this;
                 var subcategoryData ={
                     name:this.addSubCategoryName
                 };
-
                 var addsubURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub';
                 var addedData= this.$http.post(addsubURL, subcategoryData);
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
                         if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
+                            console.log(result.data.sub_category);
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
                     //adminVue.mainCategoryList.sub_category=result.data.sub_category;
-                   console.log(result.data);
+                    console.log(result.data);
 
                 });
                 this.addSubCategoryName=""
@@ -255,6 +278,7 @@
 
             categoryUpdate(data){
                 var updateURL='http://localhost:3000/category/edit/'+data._id;
+                this.selectedCategoryName=data.name;
                 var updatedCategory = this.$http.post(updateURL,data);
             },
 
@@ -295,7 +319,10 @@
 </script>
 
 <style scoped>
-
+    .hrLine20{
+        padding-left:10%;
+        padding-right:10%;
+    }
     .mainCategoryGroup{
         padding: 10px;
         background-color: #d2e8ff;
@@ -308,6 +335,7 @@
     }
 
     .categoryTable{
+        width: 90%;
         margin-bottom: 15px;
         background-color: white;
 
@@ -325,9 +353,8 @@
 
     .createCategory{
         background-color: white;
-        width: 410px;
+        width: 100%;
         border-radius:5px;
-        border: 3px solid #007bff;
         padding-top: 5px;
         margin-top: 10px;
         margin-bottom: 30px;
@@ -337,10 +364,9 @@
         margin-top: 15px;
         margin-bottom: 15px;
     }
-
     .plusbtn{
-        margin-top: 30px;
-        width: 407px;
+        margin-top: 10px;
+        width: 100%
     }
 
     .subplusbtn{
@@ -353,7 +379,20 @@
         float:left;
         alignment: left;
     }
+    .createsubCategoryArea{
+        padding-top: 20px;
+        padding-bottom: 20px;
 
+    }
+    .createsubCategory{
+        background-color: white;
+        width: 410px;
+        border-radius:5px;
+        border: 3px solid #007bff;
+        padding-top: 5px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
     .subCategoryGroup{
         width: 1000px;
         position: relative;
@@ -361,22 +400,21 @@
 
     .subCategoryTitle{
         text-align: center;
-        margin-top: 100px;
+
         margin-left: 30px;
         margin-bottom: 40px;
     }
     .subCategoryListTitle{
-        width:200px;
+        width:80%;
         margin-top:5px;
         margin-bottom:5px;
     }
     .subCategorySingle{
-        background-color: white;
-
+        background-color: #d2e8ff;
         width: 300px;
         border-radius:10px;
-        border: 5px solid #007bff;
-        padding-top: 5px;
+        padding:8px;
+
         margin-left: 20px;
         margin-bottom: 50px;
     }
