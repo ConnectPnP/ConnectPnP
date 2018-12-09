@@ -17,7 +17,7 @@ export default {
             currentGroupId: ''
         }
     },
-    mounted(){
+    created(){
         // this.editor();
         this.currentGroupId = this.$session.get('currentGroupId');
     }

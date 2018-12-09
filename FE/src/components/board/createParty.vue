@@ -225,7 +225,7 @@
                 subCategoryList: [],
             }
         },
-        mounted() {
+        created() {
             this.getCategoryList();
             
             if(this.isEdit == true){
@@ -356,7 +356,8 @@
             },
             async editor() {
                 var vm = this
-                 var result = await vm.$http.get('http://localhost:3000/board/details/' + vm.currentGroupId)
+                console.log(vm.currentGroupId);
+                var result = await vm.$http.get('http://localhost:3000/board/details/' + vm.currentGroupId)
                 vm.detailEdit = result.data;
                 var age = [];
                 var selectAge = 'selectAge';
