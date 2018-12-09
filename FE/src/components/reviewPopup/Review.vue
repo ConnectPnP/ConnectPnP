@@ -1,86 +1,82 @@
 <template>
 <div id="review">
 
-    <h3>모임의 후기를 작성해주세요!</h3>
+    <h3>모임 후기를 작성해주세요!</h3>
 
-    <b-carousel class="carousel" v-model="slide" indicators controls :interval="0">
-        <div v-for="member in members">
-            <reviewSlide
-                 v-bind:groupTitle=member.memberInfo.group v-bind:groupDate=member.memberInfo.date
-                v-bind:memberNickName=member.memberInfo.nickname v-bind:memberImg=member.memberInfo.memberImg />
-        </div>
-    </b-carousel>
 
-        <b-form-checkbox v-if="slide == (members.length-1)" size="sm" style="display: block">다시 보지 않기</b-form-checkbox>
-        <b-btn v-if="slide == (members.length-1)" class="btnGroup" size="sm" variant="primary">제출</b-btn> 
+        <h3>{{ groupData.name}}</h3>
+        <h5>{{ groupData.hostName}}</h5>
+        <b-img  rounded="circle" width="120px" height="120px" stype="margin-right:5px" :src="groupData.hostProfile" />
+        <star-rating id="starRatingReview" :glow="10" :rounded-corners="true"  @rating-selected="CurrentRating"  :show-rating="false" :star-size="30" :increment="0.5" ></star-rating>
+
+    <br>
+
+
+    <b-btn class="btnGroup" size="sm" variant="primary" v-on:click="reviewSubmit">제출</b-btn>
+    <b-button class="btnGroup" size="sm" @click="$emit('close')">취소</b-button>
 
 
 </div>
 </template>
 
 <script>
-import reviewSlide from './reviewSlide.vue'
+
+import StarRating from 'vue-star-rating'
 export default {
   name: 'review',
   components: {
-      reviewSlide
+      StarRating
+  },
+  props: {
+    getid: Number,
   },
   data(){
       return {
           slide:0,
-          members: [
-                {
-                    id:1,
-                    memberInfo: {
-                        group: "보드게임 하쟈",
-                        date: "2018/11/10",
-                        nickname: "Won",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:2,
-                    memberInfo: {
-                        group: "보드게임 하쟈",
-                        date: "2018/11/10",
-                        nickname: "Kim",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:3,
-                    memberInfo: {
-                        group: "마이크 공동구매!",
-                        date: "2018/11/12",
-                        nickname: "Jo",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:4,
-                    memberInfo: {
-                        group: "놀이공원 기기",
-                        date: "2018/11/08",
-                        nickname: "Ko",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                },
-                {
-                    id:5,
-                    memberInfo: {
-                        group: "놀이공원 기기",
-                        date: "2018/11/08",
-                        nickname: "Seo",
-                        profileImg:"https://www.freeiconspng.com/uploads/no-image-icon-6.png"
-                    }
-                }
-            ]
+          currentRating:Number,
+          groupData: {
+              id:Number,
+              hostId:Number,
+              name:String,
+              hostName:String,
+              hostProfile:String
+          },
       }
   },
+    async mounted(){
+        //'/details/:id'var deleteResult = this.$http.post(subdeleteURL);
+        var groupID = this.getid;
+        var getGroupData = await this.$http.get("http://localhost:3000/board/details/"+groupID);
+        console.log(getGroupData.data);
+        this.groupData.id=getGroupData.data._id;
+        this.groupData.name= getGroupData.data.title;
+        this.groupData.hostId=getGroupData.data.host._id;
+        this.groupData.hostName= getGroupData.data.host.name;
+        this.groupData.hostProfile=getGroupData.data.host.avatar_path;
+    },
+    methods:{
+        CurrentRating(rating){
+            this.currentRating=rating;
+        },
+        reviewSubmit(){
+            var ratingData={
+                rating: this.currentRating*2,
+                currentUserId: this.$session.get('id'),
+                group_id: this.groupData.id
+            }
+            var getGroupData =  this.$http.post("http://localhost:3000/user/rating/"+this.groupData.hostId,ratingData);
+            this.$emit('getResult', this.result);
+            this.$emit('close');
+
+        }
+    }
 }
 </script>
 
 <style>
+.gorupInfo{
+    alignment: center;
+}
 #review {
   background: rgb(210, 232, 255);
 
@@ -90,7 +86,11 @@ export default {
   padding: 15px;
   text-align: center;
 }
-
+#starRatingReview {
+    margin-bottom: 20px;
+    margin-top:20px;
+    margin-left:35%;
+}
 .carousel {
     height: 300px;
 }

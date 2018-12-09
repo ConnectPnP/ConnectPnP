@@ -166,9 +166,9 @@
             //this.groupReviewList.push(1);
         },
         showReview(id){
-            console.log(id);
+            // console.log(id);
             this.$modal.show(Review,{
-                // 주최자 정보
+                getid: id,
             },{
                 name: 'review',
                 width: '500px',

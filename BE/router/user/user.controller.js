@@ -128,3 +128,28 @@ exports.uploadAvatar = (req, res) => {
       res.status(500).send('Upload middlewares error');
     });
 };
+
+exports.updateRating=(req,res)=>{
+  var hostId = req.params.id;
+  console.log(req.body.rating);
+  console.log(req.body.currentUserId);
+  //req.body.group_id
+  User.findOneAndUpdate({_id : hostId}, {$inc: {"star_rate.divider": 1,"star_rate.totalScore":req.body.rating}},{new:true},function (err, user) {
+      if(err) {
+          console.log(err);
+          return res.json({});}
+      else {
+          User.findOneAndUpdate({_id:req.body.currentUserId},{})
+          console.log(user)
+      }
+  });
+
+  User.findOneAndUpdate({_id : req.body.currentUserId, "group_log.group_id":req.body.group_id}, {"group_log.$.review_popup":false},{new:true},function (err, user) {
+      if(err) {
+          console.log(err);
+          return res.json({});}
+      else {
+          console.log(user)
+      }
+  })
+};
