@@ -121,12 +121,11 @@ io.sockets.on('connection', function (socket) {
 
         if (group.command === 'create') {
             group = group.result.data
-            console.log(group)
             if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
                 console.log('방이 이미 만들어져 있습니다.');
             } else {
                 console.log('방을 새로 만듭니다.');
-                chat_controller.createChatRoom(socket,group)
+                chat_controller.createChatRoom(socket, group)
             }
 
         }
@@ -150,15 +149,10 @@ io.sockets.on('connection', function (socket) {
         } else if (group.command === 'join') {
             group = group.data
             if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
-                console.log('존재하지 않는 방입니다.');
+                console.log('존재하지 않는 방입니다.')
             } else {  // 방이 있는 경우
-                socket.set('room', group._id);
-                socket.get('room', function (error, room) {
-                    io.sockets.in(room).emit('join', this.$session.get('userID'))
-                    chat_controller.joinChatRoom(group)
-                })
-                // 응답 메시지 전송
-                sendResponse(socket, 'group', '200', '방에 입장했습니다.');
+
+                chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청
             group = group.result.data
@@ -174,7 +168,6 @@ io.sockets.on('connection', function (socket) {
 
         } else if (group.command === 'group') {
             console.log('채팅방 정보를 찾아옵니다.')
-
             chat_controller.getRoomList(socket, group.userId)
         }
     });
