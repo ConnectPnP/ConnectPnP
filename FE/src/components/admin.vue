@@ -70,17 +70,23 @@
                                     height="140px" width="140px"/>
                         </th>
                         <th class="mainCategoryTitle">
-                            <input v-on:click="categoryClicked(item.name,item._id)" class="mainCategoryTitle" name="mainCategoryTitleInput"  type="text" v-model="item.name">
+                            {{item.name}}
                         </th>
                     </tr>
                     <tr>
                         <td class="tg-0lax">
-                            <button class="btn btn-primary" v-on:click="categoryUpdate(item)">수정</button>
+                            <div class="hrLine20">
+                                <hr>
+                            </div>
+                            <button class="btn btn-primary" v-if="condition.reviseComplete=='revise'" v-on:click="revisebtnChange">수정</button>
+                            <button class="btn btn-primary" v-if="condition.reviseComplete=='complete'" v-on:click="categoryUpdate(item)">완료</button>
+
                             <button class="btn btn-danger" v-on:click="categoryDelete(item._id)">삭제</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr v-if="condition.reviseComplete=='complete'" >
                         <td colspan="2">
+                            <input v-on:click="categoryClicked(item.name,item._id)" class="mainCategoryTitle" name="mainCategoryTitleInput"  type="text" v-model="item.name">
 
                         </td>
                     </tr>
@@ -101,7 +107,7 @@
 
 
             <div class="subCategoryTitle" v-if="selectedCategoryID!=-1">
-                <h2>{{selectedCategoryName}}의 소분류 카테고리입니다.</h2>
+                <h2>{{selectedCategoryName}}의 소분류 카테고리</h2>
             </div>
 
             <!--소분류 카테고리 추가-->
@@ -126,7 +132,10 @@
                         <div  v-for="sub in item.sub_category.slice().reverse()">
                             <b-col class="subCategorySingle">
                                 <input class="subCategoryListTitle" name="subCategoryTitleInput"  type="text" v-model="sub.name"> <br>
-                                <button class="btn btn-primary" v-on:click="subcategoryUpdate(sub)">수정</button>
+                                <div class="hrLine20">
+                                    <hr>
+                                </div>
+                                <button class="btn btn-primary"  v-on:click="subcategoryUpdate(sub)">수정</button>
                                 <button class="btn btn-danger" v-on:click="subCategoryDelete(sub._id)">삭제</button>
                             </b-col>
                         </div >
@@ -168,7 +177,8 @@
                 addSubCategoryName:"",
                 imageName:"",
                 condition:{
-                    imgUpload: "methodFile"
+                    imgUpload: "methodFile",
+                    reviseComplete:'revise'
                 },
                 uploadMethod: [
                     {text: '컴퓨터에서 찾기', value: 'methodFile'},
@@ -199,6 +209,9 @@
 
         },
         methods:{
+            revisebtnChange(){
+                this.condition.reviseComplete='complete'
+            },
             //대분류 카테고리 클릭시
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
@@ -280,6 +293,7 @@
                 var updateURL='http://localhost:3000/category/edit/'+data._id;
                 this.selectedCategoryName=data.name;
                 var updatedCategory = this.$http.post(updateURL,data);
+                this.condition.reviseComplete='revise'
             },
 
             subcategoryUpdate(data){
@@ -324,6 +338,7 @@
         padding-right:10%;
     }
     .mainCategoryGroup{
+        color: #706f76;
         padding: 10px;
         background-color: #d2e8ff;
         float:left;
@@ -332,9 +347,11 @@
     .mainCategoryTitle{
         font-size: 20px;
         width: 200px;
+        margin-bottom: 5%;
     }
 
     .categoryTable{
+
         width: 90%;
         margin-bottom: 15px;
         background-color: white;
@@ -352,6 +369,7 @@
     }
 
     .createCategory{
+        color: #706f76;
         background-color: white;
         width: 100%;
         border-radius:5px;
@@ -392,16 +410,18 @@
         padding-top: 5px;
         margin-top: 10px;
         margin-bottom: 30px;
+        margin-left: 20%;
     }
     .subCategoryGroup{
-        width: 1000px;
+        margin-left: 15%;
+        width: 700px;
         position: relative;
     }
 
     .subCategoryTitle{
         text-align: center;
-
-        margin-left: 30px;
+        color: #706f76;
+        margin-left: 20%;
         margin-bottom: 40px;
     }
     .subCategoryListTitle{

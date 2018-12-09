@@ -66,8 +66,9 @@
           loginStatus(){
               var cookie_status= this.$cookie.get('loginStatus');
               var session_status= this.$session.get('loginStatus');
-              console.log("loginStatus>>"+ cookie_status);
+              var userName_session_status= this.$session.get('userName');
               console.log("loginStatus_Session>>"+ session_status);
+              console.log("userData_Session>>"+userName_session_status)
 
               if(session_status=='login'){
                   console.log(session_status=='login');
@@ -183,7 +184,7 @@
                 });
                 Kakao.Auth.cleanup();
                 this.$cookie.set('loginStatus', 'logout', 1);
-                this.$session.set('loginStatus', 'logout');
+                //this.$session.set('loginStatus', 'logout');
                 location.href = "/"
             }
 
