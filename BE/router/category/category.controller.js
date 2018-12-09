@@ -59,6 +59,7 @@ exports.getAllCategory = (req, res) => {
 
 // 카테고리 수정
 exports.updateCategory = (req, res) => {
+    console.log("IMAGE>>>"+req.body.img_path);
     Category.findOneAndUpdate(
         {_id: req.params.id}, {$set: {name: req.body.name, img_path: req.body.img_path}}, (err, result) => {
             if (!err) {

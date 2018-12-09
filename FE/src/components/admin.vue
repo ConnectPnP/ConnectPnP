@@ -205,6 +205,7 @@
                 addSubCategoryName:"",
                 imageName:"",
                 condition:{
+
                     imgUpload: "methodFile",
                     reviseComplete:'revise',
                     reviseimgUpload:"methodFile"
@@ -317,26 +318,35 @@
 
             },
 
-            categoryUpdate(data){
+            async categoryUpdate(data){
                 var adminVue= this;
                 this.selectedCategoryName=data.name;
                 var categoryData ={
-                    name:this.addCategoryName,
+                    name:data.name,
                     img_path: this.reviseCategoryPath
                 };
 
                 var updateURL='http://localhost:3000/category/edit/'+data._id;
-                var updatedCategory = this.$http.post(updateURL,data);
+                var updatedCategory = await this.$http.post(updateURL,categoryData);
                 if(this.condition.reviseimgUpload=='methodFile'){
+                    var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                    console.log(imgFileUpload.data);
+                    for(let i=0;i<this.mainCategoryList.length;i++){
+                        if(this.mainCategoryList[i]._id==data._id){
+                            adminVue.mainCategoryList[i]=imgFileUpload.data
+                        }}
 
                 } else {
                     console.log("Updated CategoryPath>>>"+this.reviseCategoryPath)
-
+                    for(let i=0;i<this.mainCategoryList.length;i++){
+                        if(this.mainCategoryList[i]._id==data._id){
+                            this.mainCategoryList[i].img_path = this.reviseCategoryPath;
+                        }}
                     //adminVue.mainCategoryList.push(categoryDataUpload.data);
                 }
 
                 this.reviseCategoryPath="";
-                this.condition.reviseComplete='revise'
+                this.condition.reviseComplete='revise';
             },
 
             subcategoryUpdate(data){
