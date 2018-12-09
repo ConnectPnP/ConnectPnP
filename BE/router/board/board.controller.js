@@ -250,7 +250,7 @@ exports.joinGroup = (req, res) => {
         $push: {guest: req.body.user}
     }, {new: true}, (err, result) => {
         if (!err && result) {
-            User.findOneAndUpdate({_id: req.body.user}, {$push: {"group_log.group_id": req.body.group}}, (err, result) => {
+            User.findOneAndUpdate({_id: req.body.user}, {$push: {"group_log.group_id": req.body.group}},{new:true}, (err, result) => {
                 if (!err)
                     return res.json(result);
                 else

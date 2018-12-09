@@ -22,8 +22,8 @@
                     <br><br><br>
                 </b-col>
             </b-row>
-                <b-btn class="btnGroup" size="sm" variant="primary" @click="acceptMember">수락</b-btn> 
-                <b-btn class="btnGroup" size="sm" variant="primary" @click="refuseMember">거절</b-btn> 
+                <b-btn class="btnGroup" size="sm" variant="primary" @click="acceptMember">수락</b-btn>
+                <b-btn class="btnGroup" size="sm" variant="primary" @click="refuseMember">거절</b-btn>
         </b-container>
 
     </b-carousel-slide>
@@ -31,8 +31,14 @@
 
 <script>
 import StarRating from 'vue-star-rating'
+import io from 'socket.io-client'
 
 export default {
+    data(){
+        return{
+            socket:io.connect('http://localhost:3000')
+        }
+    },
     components:{
         StarRating
     },
@@ -48,6 +54,7 @@ export default {
                         user : this.member._id
                     }).then((result) => {
                         console.log(result)
+                        // this.socket.emit('')
                     })
         },
         refuseMember() {
