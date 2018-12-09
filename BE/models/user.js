@@ -14,6 +14,7 @@ const UserSchema = new Schema({
   admin :{type:Boolean},
   avatar_path: {type: String },
   name: { type: String },
+  nickName: { type: String },
   age:{ type: Number},
   gender:{type: String},
   categoryList:[{type : Number, ref:'Category'}],

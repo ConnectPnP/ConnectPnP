@@ -82,7 +82,7 @@ exports.getUser = (req, res) => {
         else {
             res.send(user);
         }
-    });
+    }).populate("group_log.group_id").exec();
 }
 
 exports.delete = (req, res) => {
