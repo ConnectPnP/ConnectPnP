@@ -151,9 +151,9 @@ exports.updatePost = (req, res) => {
 exports.deletePost = (req, res) => {
     Board.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
-            for(var i = 0; i < result.images.length ; i++) {
-            fs.unlink(path.join(__dirname, `../../files/${result.images[i]}`)); // db에 저장된 img_path와 함께 해당 파일 삭제
-            }
+            // for(var i = 0; i < result.images.length ; i++) {
+            // fs.unlink(path.join(__dirname, `../../files/${result.images[i]}`)); // db에 저장된 img_path와 함께 해당 파일 삭제
+            // }
             return res.json(result);
         }
         else {return res.status(404).send({message: 'No data found to delete'})};
