@@ -109,11 +109,11 @@ io.sockets.on('connection', function (socket) {
      **/
     socket.on('group', function (group) {
         if (group.command === 'create') {
-            group = group.result.data
-            if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
-            } else {
-                chat_controller.createChatRoom(socket, group)
-            }
+            // group = group.result.data
+            // if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
+            // } else {
+                chat_controller.createChatRoom(socket, group.id)
+            // }
 
         }
         //TODO client 단에서 party detail 에 대한 것 수정 시 사용되도록 하기
@@ -129,7 +129,7 @@ io.sockets.on('connection', function (socket) {
                 chat_controller.deleteChatRoom(socket, group)
                 delete io.sockets.adapter.rooms[group._id];
 
-            } else {  
+            } else {
                 // 방이  만들어져 있지 않은 경우
             }
 
@@ -137,13 +137,13 @@ io.sockets.on('connection', function (socket) {
             group = group.data
 
             if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
-            } else {  
+            } else {
                 // 방이 있는 경우
                 chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청
 
-            if (!io.sockets.adapter.rooms[group.group._id]) { 
+            if (!io.sockets.adapter.rooms[group.group._id]) {
                 // 방이 없는 경우
             } else {  // 방이 있는 경우
                 chat_controller.leaveChatRoom(socket, group.group, group.user)

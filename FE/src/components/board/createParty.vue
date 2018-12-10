@@ -311,7 +311,7 @@
                 } else if (party.date < party.recruitment_period_dateTwo) {
                     alert("모임 날짜가 모집 날짜보다 이릅니다! 다시 선택해주세요.");
                 } else {
-
+                    var mainImage =''
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                     if (this.isEdit == false) {
                         this.$http.post(config.serverUrl()+'board', {
@@ -333,20 +333,19 @@
                             .then((result) => {
                                 boardId = result.data._id
                                 this.$http.post( config.serverUrl()+'board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                                    .then(() => {
+                                        vm.$socket.emit('group', {
+                                            command: 'create',
+                                            id:boardId
+                                        })
+                                        window.location.href = config.serverFE() + "party/detail/" + boardId
+                                    })
                                 this.$http.post( config.serverUrl()+'board/join', {
                                     group: boardId,
                                     user: this.currentUser
                                 });
                             })
-                            .then(() => {
-                                this.$http.get( config.serverUrl()+'board/details/' + boardId).then((board) => {
-                                    vm.$socket.emit('group', {
-                                        command: 'create',
-                                        result : board
-                                    })
-                                    window.location.href = config.serverFE() + "party/detail/" + boardId
-                                })
-                            })
+
                     } else if (this.isEdit == true) { // 수정
                         this.$http.post(config.serverUrl() + 'board/edit/' + this.currentGroupId, {
                             title: party.title,

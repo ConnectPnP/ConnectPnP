@@ -1,54 +1,55 @@
 const chatRoom = require('../models/chat/chatRoom');
 const chatMessage = require('../models/chat/chatMessage')
-const user = require('../models/user')
+const groupInfo = require('../models/groupInfo')
 
 var emoji = require('node-emoji')
 
-exports.createChatRoom = (socket, group) => {
-    chatRoom.find({group_id: group._id},
-        function (err, existchatRoom) {
-            if (err) {
-                return null
-            }
-            //이미 db에 방이 존재하는 경우
-            if (existchatRoom.length != 0) {
-                return null
-            }
-            //존재하지 않는 경우
-            else {
-                var participants = [];
-                participants.push(group.host._id)
-                var newRoom = new chatRoom({
-                    group_id: group._id,
-                    name: group.title,
-                    img_path: group.images[0],
-                    participants: participants,
-                    host: group.host._id
-                })
-                newRoom.save((err, result) => {
-                    if (err) {
-                        return null
-                    } else {
-                        chatRoom.find({group_id: group._id})
-                            .populate({path: 'host', model: 'User'})
-                            .populate({
-                                path: 'participants', model: 'User',
-                                options: {sort: {newMessageReceivedDate: 'desc'}}
-                            })
-                            .exec(function (err, createdGroup) {
-                                if (createdGroup) {
-                                    socket.join(createdGroup.group_id);
-                                    socket.emit('created', createdGroup);
-                                } else {
-                                    //방이 생성되지 않았습니다.
-                                }
-                            })
-                    }
-                });
+exports.createChatRoom = (socket, id) => {
+    groupInfo.findOne({_id: id}).then((group) => {
+        chatRoom.find({group_id: group._id},
+            function (err, existchatRoom) {
+                if (err) {
+                    return null
+                }
+                //이미 db에 방이 존재하는 경우
+                if (existchatRoom.length != 0) {
+                    return null
+                }
+                //존재하지 않는 경우
+                else {
+                    var participants = [];
+                    participants.push(group.host)
+                    var newRoom = new chatRoom({
+                        group_id: group._id,
+                        name: group.title,
+                        img_path: group.images[0],
+                        participants: participants,
+                        host: group.host
+                    })
+                    newRoom.save((err, result) => {
+                        if (err) {
+                            return null
+                        } else {
+                            chatRoom.find({group_id: group._id})
+                                .populate({path: 'host', model: 'User'})
+                                .populate({
+                                    path: 'participants', model: 'User',
+                                    options: {sort: {newMessageReceivedDate: 'desc'}}
+                                })
+                                .exec(function (err, createdGroup) {
+                                    if (createdGroup) {
+                                        socket.join(createdGroup.group_id);
+                                        socket.emit('created', createdGroup);
+                                    } else {
+                                        //방이 생성되지 않았습니다.
+                                    }
+                                })
+                        }
+                    });
 
-            }
-        })
-
+                }
+            })
+    })
 };
 
 exports.deleteChatRoom = (socket, group) => {
@@ -219,8 +220,7 @@ exports.sendMessage = (message) => {
             newMessage.save((err) => {
                 console.log(err)
             })
-        }
-        else if(message.type=="emoji"){
+        } else if (message.type == "emoji") {
             var newMessage = new chatMessage({
                 dest: message.dest,
                 author: message.author._id,
