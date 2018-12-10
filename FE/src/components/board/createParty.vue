@@ -156,7 +156,7 @@
                               label-class="text-sm-right"
                               label-for="js-party-number-of-member"
                               style="padding-top: 10px">
-                    <vueSlider v-model="party_form.number_of_member" id="js-party-number-of-member"></vueSlider>
+                    <vueSlider v-model="party_form.number_of_member" id="js-party-number-of-member" min=1></vueSlider>
                 </b-form-group>
                 <b-button type="submit" variant="primary">Submit</b-button>
                 <b-button variant="danger">Cancel</b-button>
@@ -193,7 +193,7 @@
                 party_form:
                     {
                         title: '',
-                        number_of_member: [0, 10],
+                        number_of_member: [1, 10],
                         detail: '',
                         recruitment_period_dateOne: '',
                         recruitment_period_dateTwo: '',
