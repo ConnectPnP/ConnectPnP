@@ -151,12 +151,12 @@ exports.updatePost = (req, res) => {
 exports.deletePost = (req, res) => {
     Board.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
-            fs.unlink(path.join(__dirname, `../../files/${result.img_path}`), (fsErr) => {
-                if (fsErr) res.json({err: 'not removed on Server'});
-            }); // db에 저장된 img_path와 함께 해당 파일 삭제
+            for(var i = 0; i < result.img_path.length ; i++) {
+            fs.unlink(path.join(__dirname, `../../files/${result.img_path[i]}`)); // db에 저장된 img_path와 함께 해당 파일 삭제
+            }
             return res.json(result);
         }
-        return res.status(404).send({message: 'No data found to delete'});
+        else {return res.status(404).send({message: 'No data found to delete'})};
     });
 };
 
