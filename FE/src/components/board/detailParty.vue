@@ -191,6 +191,8 @@
                             command: 'delete',
                             group: result.data
                         })
+                        var cookieName = "recentGroup" + this.$route.params.id;
+                        this.$cookies.remove(cookieName);
                         window.location.href = config.serverFE() +"party/list"
                     })
             },
