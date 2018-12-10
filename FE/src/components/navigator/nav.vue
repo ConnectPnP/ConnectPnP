@@ -21,7 +21,7 @@
 <script>
 // pary/list/:category
 // parameter 추가 필요
-
+const config = require('../../server.config');
 export default {
   data:()=>({
     active:false,
@@ -31,14 +31,14 @@ export default {
   methods: {
        getCategory () {
            var vm = this
-           this.$http.get('http://localhost:3000/category')
+           this.$http.get(config.serverUrl()+'category')
            .then((result) => {
                vm.categoryList = result.data
            })
         },
         goToList(subId) {
           this.$session.set('category',subId);
-          window.location.href="http://localhost:8080/party/list"
+          window.location.href= config.serverFE()+"party/list"
         }
     },
     mounted() {

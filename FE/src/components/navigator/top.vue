@@ -49,6 +49,7 @@
 
 <script>
   /* eslint-disable no-console*/
+  const config = require('../../server.config');
   import topItem from './topItem';
   import sidebar from './nav';
   import Review from '../reviewPopup/Review.vue'
@@ -145,7 +146,7 @@
 
             this.groupReviewList = [];
 
-            this.$http.get('http://localhost:3000/user/details/'+id)
+            this.$http.get(config.serverUrl()+'user/details/'+id)
             .then((userAllInfo) => {
                 console.log(userAllInfo.data);
                 console.log(userAllInfo.data.group_log.length);
@@ -213,7 +214,7 @@
 
 
                     //유저 관리자 여부 확인. 관리자 정보 세션에 저장.
-                    var useradminData = await topVuethis.$http.get('http://localhost:3000/user/details/' + userID);
+                    var useradminData = await topVuethis.$http.get(config.serverUrl()+'user/details/' + userID);
                     if (useradminData.data.admin) {
                         topVuethis.$session.set('admin', true);
                     } else {
@@ -221,7 +222,7 @@
                     }
 
                     //유저가 이미 등록된 회원인지 판별.
-                    var getURL = "http://localhost:3000/user/" + userID;
+                    var getURL = config.serverUrl()+"user/" + userID;
                     var userResult = await topVuethis.$http.get(getURL);
 
                     //회원일 경우 (이미 db에 유저 정보가 있다.) -> 새로고침-> 로그인 완료

@@ -9,7 +9,7 @@ import myPage from '@/components/myPage/myPage'
 import signUp from '@/components/signUp'
 import admin from '@/components/admin'
 const pageAuth= require('./pageAuth');
-
+const config = require('../server.config');
 Vue.use(Router);
 var thisVue = new Vue;
 
@@ -17,7 +17,7 @@ var thisVue = new Vue;
 const adminRequireAuth = async (to, from, next) => {
   //현재 로그인 중인 유저의 아이디 값으로 정보를 받아옴.
     var userID= thisVue.$session.get('userID');
-    var userData = await thisVue.$http.get('http://localhost:3000/user/details/'+userID);
+    var userData = await thisVue.$http.get( config.serverUrl()+'user/details/'+userID);
     if (pageAuth.AdminPage(userData)) {
         return next();
     } else {

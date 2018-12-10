@@ -199,6 +199,8 @@
 </template>
 
 <script>
+const config = require('../server.config');
+
     export default {
         name: "admin",
         components:{
@@ -283,7 +285,7 @@
             },
             //전체카테고리 리스트 가져오기
             async getCategory(){
-                var categoryList  = await this.$http.get('http://localhost:3000/category');
+                var categoryList  = await this.$http.get( config.serverUrl()+'category');
                 console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
@@ -295,9 +297,9 @@
                     name:this.addCategoryName,
                     img_path: this.addCategoryPath
                 };
-                var categoryDataUpload = await this.$http.post('http://localhost:3000/category', categoryData)
+                var categoryDataUpload = await this.$http.post( config.serverUrl()+'category', categoryData)
                 if(this.condition.imgUpload=='methodFile'){
-                    var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                    var imgFileUpload = await adminVue.$http.post( config.serverUrl()+'category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                     adminVue.mainCategoryList.push(imgFileUpload.data);
                 } else {
                     console.log("methodURL!")
@@ -313,7 +315,7 @@
                 var subcategoryData ={
                     name:this.addSubCategoryName
                 };
-                var addsubURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub';
+                var addsubURL= config.serverUrl()+'category/'+this.selectedCategoryID+'/sub';
                 var addedData= this.$http.post(addsubURL, subcategoryData);
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
@@ -334,10 +336,10 @@
                     name:data.name,
                     img_path: this.reviseCategoryPath
                 };
-                var updateURL='http://localhost:3000/category/edit/'+data._id;
+                var updateURL= config.serverUrl()+'category/edit/'+data._id;
                 var updatedCategory = await this.$http.post(updateURL,categoryData);
                 if(this.condition.reviseimgUpload=='methodFile'){
-                    var imgFileUpload = await adminVue.$http.post('http://localhost:3000/category/files/'+data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
+                    var imgFileUpload = await adminVue.$http.post( config.serverUrl()+'category/files/'+data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                     console.log(imgFileUpload.data);
                     for(let i=0;i<this.mainCategoryList.length;i++){
                         if(this.mainCategoryList[i]._id==data._id){
@@ -356,7 +358,7 @@
             //세부카테고리 수정
             subcategoryUpdate(data){
                 console.log(data._id)
-                var updateURL='http://localhost:3000/category/edit/'+data._id;
+                var updateURL= config.serverUrl()+'category/edit/'+data._id;
                 var updatedCategory = this.$http.post(updateURL,data);
                 this.condition.subreviseComplete='revise';
             },
@@ -365,7 +367,7 @@
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==id){
                         if(this.mainCategoryList[i].sub_category.length==0){
-                            var deleteURL='http://localhost:3000/category/delete/'+id;
+                            var deleteURL= config.serverUrl()+'category/delete/'+id;
                             this.$http.delete(deleteURL);
                             this.mainCategoryList.splice(i,1);
                         } else{
@@ -377,7 +379,7 @@
             },
             //세부카테고리 삭제
             subCategoryDelete(id){
-                var subdeleteURL='http://localhost:3000/category/'+this.selectedCategoryID+'/sub/delete/'+id;
+                var subdeleteURL= config.serverUrl()+'category/'+this.selectedCategoryID+'/sub/delete/'+id;
                 var deleteResult = this.$http.post(subdeleteURL);
                 for(let i=0;i<this.mainCategoryList.length;i++){
                     if(this.mainCategoryList[i]._id==this.selectedCategoryID){

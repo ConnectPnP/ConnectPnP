@@ -45,6 +45,7 @@
 
 <script>
 import ListView from './listView.vue'
+const config = require('../../server.config');
 
 export default {
   name: 'list',
@@ -103,14 +104,14 @@ export default {
            var vm = this
            var page = this.currentPage
            if(this.$session.get('category')!= null) {
-                this.$http.get('http://localhost:3000/board/list/' + page + '/' + this.$session.get('category'))
+                this.$http.get( config.serverUrl()+'board/list/' + page + '/' + this.$session.get('category'))
                 .then((result) => {
                     vm.groupList = result.data.board
                     vm.totalCount = result.data.total
                 })
            }
            else {
-                this.$http.post('http://localhost:3000/board/listAll/' + page, {
+                this.$http.post( config.serverUrl() +'board/listAll/' + page, {
                     query : this.$session.get('mainQuery')
                 })
                 .then((result) => {
@@ -124,7 +125,7 @@ export default {
         if(btn)
             this.currentPage = 0;
         var vm = this
-           this.$http.post('http://localhost:3000/board/search/' +this.currentPage, 
+           this.$http.post( config.serverUrl()+'board/search/' +this.currentPage, 
            {
                 host : this.$session.get('id')
             })
@@ -143,7 +144,7 @@ export default {
         getCategory() {
             var vm = this
             if(this.$session.get('category') != null) {
-                this.$http.get('http://localhost:3000/category/detail/' + this.$session.get('category'))
+                this.$http.get( config.serverUrl()+'category/detail/' + this.$session.get('category'))
                 .then((result) => {
                     vm.currentCategory = result.data.name
                 })
@@ -163,7 +164,7 @@ export default {
                 page = 0;
             switch(searchParam) {
                 case 1*1 : // 주최자 nickName
-                    vm.$http.post('http://localhost:3000/board/searchUser',{name : vm.searchQuery})
+                    vm.$http.post( config.serverUrl()+'board/searchUser',{name : vm.searchQuery})
                     .then((result) => {
                         var id = [];
                         result.data.forEach(
@@ -178,7 +179,7 @@ export default {
                                 ],
                             "host" : {$in: id}
                         }
-                        vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                        vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                             vm.groupList = result.data.board
                             vm.totalCount = result.data.total
@@ -193,7 +194,7 @@ export default {
                                 ],
                                 "location.title" : { "$regex": vm.searchQuery, "$options": "i" } 
                     }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -209,7 +210,7 @@ export default {
                                 "start_date" : {$lte: currentDate}, 
                                 "due_date" : {$gte: currentDate},
                     }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -223,7 +224,7 @@ export default {
                                 ],
                                 "conditions.gender" : "female"
                             }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -237,7 +238,7 @@ export default {
                                 ], 
                                 "conditions.gender" : "male"
                             }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -251,7 +252,7 @@ export default {
                                 ], 
                                 "conditions.gender" : "none"
                             }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -265,7 +266,7 @@ export default {
                                 ], 
                             "max_num" : { $lte: 10 }
                         }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
@@ -279,7 +280,7 @@ export default {
                                 ], 
                                 "max_num" : { $lte: 20 }
                             }
-                    vm.$http.post('http://localhost:3000/board/search/' + page, vm.query)
+                    vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total

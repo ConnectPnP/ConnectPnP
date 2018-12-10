@@ -115,7 +115,7 @@
     import JoinList from '../joinListPopup/joinList.vue'
     import ShowMap from './showMap.vue'
     import StarRating from 'vue-star-rating'
-
+    const config = require('../../server.config');
     export default {
         name: "detailParty",
         components: {
@@ -185,13 +185,13 @@
                 }
             },
             deletePost() {
-                this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)
+                this.$http.delete( config.serverUrl()+'board/delete/' + this.$route.params.id)
                     .then((result) => {
                         this.$socket.emit('group', {
                             command: 'delete',
                             group: result.data
                         })
-                        window.location.href = "http://localhost:8080/party/list"
+                        window.location.href = config.serverFE() +"party/list"
                     })
             },
             waitParty() {
@@ -206,7 +206,7 @@
                 } else if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
-                    this.$http.post('http://localhost:3000/board/wait', {
+                    this.$http.post(config.serverUrl()+'board/wait', {
                         group: vm.detailPartyInfo._id, // 모임 Id
                         user: vm.currentUser.id
                     }).then((result) => {
@@ -219,7 +219,7 @@
             },
             cancelWaiting() {
                 var vm = this
-                this.$http.post('http://localhost:3000/board/cancel', {
+                this.$http.post(config.serverUrl()+'board/cancel', {
                     group: vm.detailPartyInfo._id, // 모임 Id
                     user: vm.currentUser.id
                 })
@@ -230,7 +230,7 @@
                 var vm = this
                 this.isWaiting = false;
                 this.isJoined = false;
-                this.$http.post('http://localhost:3000/board/exit', {
+                this.$http.post( config.serverUrl() + 'board/exit', {
                     group: vm.detailPartyInfo._id, // 모임 Id
                     user: vm.currentUser.id
                 }).then((result, err) => {
@@ -266,7 +266,7 @@
             },
             getPartyDetail() {
                 var vm = this
-                this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
+                this.$http.get( config.serverUrl() +'board/details/' + this.$route.params.id)
                     .then((result) => {
                         vm.detailPartyInfo = result.data
                         vm.host = result.data.host
@@ -277,7 +277,7 @@
                         this.createCookie();
                     })
                     .then(() => {
-                        this.$http.post('http://localhost:3000/board/check', {
+                        this.$http.post( config.serverUrl()+'board/check', {
                             group: vm.detailPartyInfo._id,
                             user: vm.currentUser.id
                         }).then((result) => {
@@ -294,7 +294,7 @@
                     alert("로그인이 필요합니다");
                 } else {
                     this.$http.defaults.headers.post['Content-Type'] = 'application/json'
-                    this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
+                    this.$http.post(config.serverUrl()+'board/comments/' + this.$route.params.id,
                         {
                             user_id: vm.currentUser.id,
                             content: content,

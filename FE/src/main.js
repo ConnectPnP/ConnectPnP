@@ -17,7 +17,7 @@ import 'vue-awesome/icons';
 import 'vuesax/dist/vuesax.css'
 import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
 import VueSocketIO from 'vue-socket.io';
-
+const config = require('./server.config');
 
 const VueResource = require('vue-resource')
 Vue.use(Vuesax);
@@ -39,7 +39,7 @@ Vue.use(VueCookies);
 
 Vue.use(new VueSocketIO({
     debug: true,
-    connection:'http://localhost:3000'
+    connection: config.serverUrl()
 }))
 
 new Vue({

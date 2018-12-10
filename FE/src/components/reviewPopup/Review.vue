@@ -22,6 +22,8 @@
 <script>
 
 import StarRating from 'vue-star-rating'
+
+const config = require('../../server.config');
 export default {
   name: 'review',
   components: {
@@ -46,7 +48,7 @@ export default {
     async mounted(){
         //'/details/:id'var deleteResult = this.$http.post(subdeleteURL);
         var groupID = this.getid;
-        var getGroupData = await this.$http.get("http://localhost:3000/board/details/"+groupID);
+        var getGroupData = await this.$http.get( config.serverUrl()+"board/details/"+groupID);
         console.log(getGroupData.data);
         this.groupData.id=getGroupData.data._id;
         this.groupData.name= getGroupData.data.title;
@@ -64,7 +66,7 @@ export default {
                 currentUserId: this.$session.get('id'),
                 group_id: this.groupData.id
             }
-            var getGroupData =  this.$http.post("http://localhost:3000/user/rating/"+this.groupData.hostId,ratingData);
+            var getGroupData =  this.$http.post(config.serverUrl()+"user/rating/"+this.groupData.hostId,ratingData);
             this.$emit('getResult', this.result);
             this.$emit('close');
 

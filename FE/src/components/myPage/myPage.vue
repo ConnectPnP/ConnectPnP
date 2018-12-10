@@ -126,6 +126,7 @@ import Chart from './Chart.vue'
 import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.css'
 
+const config = require('../../server.config');
 export default {
   name: 'mypage',
   components: {
@@ -159,7 +160,7 @@ export default {
 
     this.getCategoryList();
 
-    this.$http.get('http://localhost:3000/user/details/'+this.memberInfo.id)
+    this.$http.get(config.serverUrl() + 'user/details/'+this.memberInfo.id)
       .then((result)=>{
         // 닉네임 가져오기
         if((result.data.nickName == "")||(result.data.nickName == null)){
@@ -192,7 +193,7 @@ export default {
   methods:{
     getCategoryList() {
                 var vm = this
-                this.$http.get('http://localhost:3000/category')
+                this.$http.get(config.serverUrl()+'category')
                 .then((result) => {
                     // get category list
                     for(var i=0; i<result.data.length; i++) {
@@ -204,14 +205,14 @@ export default {
                 });
             },
     changeNickname(){
-      this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
+      this.$http.post(config.serverUrl()+'user/profile/'+this.memberInfo.id, {
         nickName: this.memberInfo.nickName
       }).then((result)=>{
         alert('닉네임 변경이 완료되었습니다.');
       });
     },
     changeCategory(){
-      this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
+      this.$http.post(config.serverUrl()+'user/profile/'+this.memberInfo.id, {
         categoryList: this.memberInfo.interestedCategory
       }).then(()=>{
           alert('관심 카테고리 변경이 완료되었습니다.');
@@ -222,7 +223,7 @@ export default {
       this.memberInfo.events.forEach(
         function getevent(value) {
           if(value.group_id != null){
-            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false", "url": "http://localhost:8080/party/detail/'+ value.group_id._id+'" }';
+            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false", "url": "'+config.serverFE()+'party/detail/'+ value.group_id._id+'" }';
             view.memberInfo.eventsDate.push(JSON.parse(event));
             view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
           }
@@ -234,7 +235,7 @@ export default {
       this.file = {blob: URL.createObjectURL(newFile[0])};
       this.formData.append('profileImage', newFile[0], newFile[0].name);
 
-      this.$http.post('http://localhost:3000/user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      this.$http.post(config.serverUrl()+'user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
     
     },
   }

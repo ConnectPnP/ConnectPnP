@@ -35,7 +35,7 @@
 <script>
     import StarRating from 'vue-star-rating'
     import io from 'socket.io-client'
-
+    const config = require('../../server.config');
     export default {
         components: {
             StarRating
@@ -51,7 +51,7 @@
                 isAccept: "secondary",
                 isRefuse: "secondary",
                 disabled: false,
-                socket: io.connect('http://localhost:3000')
+                socket: io.connect(config.serverUrl())
             }
         },
         methods: {
@@ -59,7 +59,7 @@
                 var vm = this
                 this.isAccept = "primary";
                 this.disabled = true;
-                this.$http.post('http://localhost:3000/board/join', {
+                this.$http.post(config.serverUrl() + 'board/join', {
                     group: this.group.groupId, // 모임 Id
                     user: this.member._id
                 }).then((result) => {
@@ -76,7 +76,7 @@
             refuseMember() {
                 this.isRefuse = "danger";
                 this.disabled = true;
-                this.$http.post('http://localhost:3000/board/cancel', {
+                this.$http.post(config.serverUrl() + 'board/cancel', {
                     group: this.group.groupId, // 모임 Id
                     user: this.member._id
                 }).then((result) => {

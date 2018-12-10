@@ -171,7 +171,7 @@
     import format from 'date-fns/format';
     import vueSlider from 'vue-slider-component';
     import SearchMap from './searchMap.vue';
-
+    const config = require('../../server.config');
     export default {
         name: "createParty",
         components: {
@@ -302,7 +302,7 @@
 
                     this.$http.defaults.headers.post['Content-Type'] = 'multipart/form-data'
                     if (this.isEdit == false) {
-                        this.$http.post('http://localhost:3000/board', {
+                        this.$http.post(config.serverUrl()+'board', {
                             title: party.title,
                             due_date: party.recruitment_period_dateTwo,
                             start_date: party.recruitment_period_dateOne,
@@ -320,23 +320,23 @@
                         // 이미지 업로드
                             .then((result) => {
                                 boardId = result.data._id
-                                this.$http.post('http://localhost:3000/board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
-                                this.$http.post('http://localhost:3000/board/join', {
+                                this.$http.post( config.serverUrl()+'board/files/' + boardId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                                this.$http.post( config.serverUrl()+'board/join', {
                                     group: boardId,
                                     user: this.currentUser
                                 });
                             })
                             .then(() => {
-                                this.$http.get('http://localhost:3000/board/details/' + boardId).then((result) => {
+                                this.$http.get( config.serverUrl()+'board/details/' + boardId).then((result) => {
                                     vm.$socket.emit('group', {
                                         command: 'create',
                                         result
                                     })
-                                    window.location.href = "http://localhost:8080/party/detail/" + boardId
+                                    window.location.href = config.serverFE() + "party/detail/" + boardId
                                 })
                             })
                     } else if (this.isEdit == true) { // 수정
-                        this.$http.post('http://localhost:3000/board/edit/' + this.currentGroupId, {
+                        this.$http.post(config.serverUrl() + 'board/edit/' + this.currentGroupId, {
                             title: party.title,
                             due_date: party.recruitment_period_dateTwo,
                             start_date: party.recruitment_period_dateOne,
@@ -351,10 +351,10 @@
                             location: party.location
                         })
                             .then(() => {
-                                this.$http.post('http://localhost:3000/board/files/' + this.currentGroupId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
+                                this.$http.post( config.serverUrl()+'board/files/' + this.currentGroupId, this.formData, {headers: {'Content-Type': 'multipart/form-data'}})
                             })
                             .then(() => {
-                                window.location.href = "http://localhost:8080/party/detail/" + this.currentGroupId;
+                                window.location.href =  config.serverFE()+"party/detail/" + this.currentGroupId;
                             });
                     }
 
@@ -371,7 +371,7 @@
             async editor() {
                 var vm = this
                 console.log(vm.currentGroupId);
-                var result = await vm.$http.get('http://localhost:3000/board/details/' + vm.currentGroupId)
+                var result = await vm.$http.get( config.serverUrl() + 'board/details/' + vm.currentGroupId)
                 vm.detailEdit = result.data;
                 var age = [];
                 var selectAge = 'selectAge';
@@ -402,7 +402,7 @@
             },
             getCategoryList() {
                 var vm = this
-                this.$http.get('http://localhost:3000/category')
+                this.$http.get(config.serverUrl() +'category')
                     .then((result) => {
                         // get category list
                         for (var i = 0; i < result.data.length; i++) {

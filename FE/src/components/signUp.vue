@@ -35,8 +35,6 @@
             <label class="radioButtonlabel" for="male">남성</label>
 
 
-
-            <!-- <form action="http://localhost:3000/user" method="post">-->
                 <div class="inputLabel">관심 카테고리</div>
                     <div class="checkboxBackground">
                         <div class="checkboxGroup">
@@ -63,7 +61,7 @@
 
 <script>
     const axios = require('axios');
-
+    const config = require('../server.config');
     export default {
         /* eslint-disable no-console*/
         name: "signUp",
@@ -100,7 +98,7 @@
                 }
                 console.log(userData.categoryList)
 
-                var userFindRes = await this.$http.post('http://localhost:3000/user', [kakaoData,userData]);
+                var userFindRes = await this.$http.post(config.serverUrl() + 'user', [kakaoData,userData]);
                 console.log(userFindRes.data.result);
 
                 if(userFindRes.data.result=='exist'){
@@ -115,7 +113,7 @@
             },
             getCategoryList() {
             var vm = this
-            this.$http.get('http://localhost:3000/category')
+            this.$http.get(config.serverUrl()+'category')
             .then((result) => {
                 // get category list
                 console.log(result)
