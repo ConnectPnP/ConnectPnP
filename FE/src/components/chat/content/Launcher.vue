@@ -161,6 +161,7 @@
         sockets: {
             message(message) {
                 this.messageList.push(message)
+                this.newMessagesCount++
             },
             group(data) {
                 if (data.command == 'list') {
@@ -176,7 +177,7 @@
                 console.log("소켓 연결 종료")
             }
         },
-        
+
     }
 </script>
 <style scoped>

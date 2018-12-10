@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-md-5 col-6">
                   <input type="text" name="nickname" v-model="memberInfo.nickName">
-                </div>        
+                </div>
                 <div class="col-md-1 col-2">
                   <b-button class="btn btn-info ml-2" @click="changeNickname">닉네임 변경</b-button>
                 </div>
@@ -51,7 +51,7 @@
               </b-row>
             </div>
 
-          </b-row> 
+          </b-row>
 
           <hr>
 
@@ -70,7 +70,7 @@
 
           <b-row>
             <div class="col-sm-2 col-md-2 col-2">
-              <label style="font-weight:bold;">평가 지수</label>
+              <label style="font-weight:bold;">참여도</label>
             </div>
             <div class="col-sm-10 col-md-10 col-10">
               <Chart :eventMonth="eventMonth"></Chart>
@@ -99,7 +99,7 @@
           </div>
 
         </b-tab>
-        
+
         <b-tab title="내가 만든 모임">
 
           <div class="margin">
@@ -109,9 +109,9 @@
                 <ListView v-bind:groupTitle=group.groupInfo.title v-bind:groupLocation=group.groupInfo.location
                 v-bind:groupContent=group.groupInfo.content v-bind:groupImg=group.groupInfo.group_img />
               </span>
-            </div> 
+            </div>
           </div>
-        
+
         </b-tab> -->
 
       </b-tabs>
@@ -200,7 +200,7 @@ export default {
                         if(result.data[i].depth == 0){
                           var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
                           vm.categoryList.push(JSON.parse(categoryOption));
-                        } 
+                        }
                     }
                 });
             },
@@ -227,7 +227,7 @@ export default {
             view.memberInfo.eventsDate.push(JSON.parse(event));
             view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
           }
-          
+
         }
       )
     },
@@ -236,10 +236,10 @@ export default {
       this.formData.append('profileImage', newFile[0], newFile[0].name);
 
       this.$http.post(config.serverUrl()+'user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-    
+
     },
   }
-  
+
 }
 </script>
 
@@ -258,7 +258,7 @@ export default {
   position: relative;
   margin: 15px;
   margin-left: 40px;
-  
+
 }
 .userData {
     margin: 15px;

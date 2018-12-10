@@ -337,10 +337,10 @@
                                 });
                             })
                             .then(() => {
-                                this.$http.get( config.serverUrl()+'board/details/' + boardId).then((result) => {
+                                this.$http.get( config.serverUrl()+'board/details/' + boardId).then((board) => {
                                     vm.$socket.emit('group', {
                                         command: 'create',
-                                        result
+                                        result : board
                                     })
                                     window.location.href = config.serverFE() + "party/detail/" + boardId
                                 })

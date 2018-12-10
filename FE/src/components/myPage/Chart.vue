@@ -15,14 +15,14 @@
         },
         watch:{
             eventMonth : function(newVal, oldVal){
-                this.please();
+                this.showParticipation();
             }
         },
         methods:{
-           please(){
+           showParticipation(){
                 var date = new Date();
                 var monthNow = date.getMonth()+1;
-                
+
                 for(var i = 0;i<this.eventMonth.length;i++){
                     switch(this.eventMonth[i]){
                     case (monthNow):
@@ -36,7 +36,7 @@
                         break;
                     }
                 }
-                
+
                 Highcharts.chart('container', {
                     chart: {
                         type: 'bar'

@@ -125,7 +125,7 @@ export default {
         if(btn)
             this.currentPage = 0;
         var vm = this
-           this.$http.post( config.serverUrl()+'board/search/' +this.currentPage, 
+           this.$http.post( config.serverUrl()+'board/search/' +this.currentPage,
            {
                 host : this.$session.get('id')
             })
@@ -150,7 +150,7 @@ export default {
                 })
             }
             else vm.currentCategory = "전체"
-                
+
         },
         searchGroup(btn) {
             var vm = this
@@ -192,7 +192,7 @@ export default {
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
                                 ],
-                                "location.title" : { "$regex": vm.searchQuery, "$options": "i" } 
+                                "location.title" : { "$regex": vm.searchQuery, "$options": "i" }
                     }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
@@ -206,8 +206,8 @@ export default {
                                 $or: [
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
-                                ], 
-                                "start_date" : {$lte: currentDate}, 
+                                ],
+                                "start_date" : {$lte: currentDate},
                                 "due_date" : {$gte: currentDate},
                     }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
@@ -235,7 +235,7 @@ export default {
                                 $or: [
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
-                                ], 
+                                ],
                                 "conditions.gender" : "male"
                             }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
@@ -249,7 +249,7 @@ export default {
                                 $or: [
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
-                                ], 
+                                ],
                                 "conditions.gender" : "none"
                             }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
@@ -263,7 +263,7 @@ export default {
                             $or: [
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
-                                ], 
+                                ],
                             "max_num" : { $lte: 10 }
                         }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
@@ -277,7 +277,7 @@ export default {
                                 $or: [
                                 { subCategory: vm.$session.get('category')},
                                 { category : vm.$session.get('category')},
-                                ], 
+                                ],
                                 "max_num" : { $lte: 20 }
                             }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
@@ -285,7 +285,7 @@ export default {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
                     })
-                    break;  
+                    break;
             }
         },
 
@@ -317,8 +317,7 @@ export default {
 }
 
 .margin {
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 18%;
+    margin-right: 12%;
 }
-
 </style>
