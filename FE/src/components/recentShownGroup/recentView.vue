@@ -11,6 +11,8 @@
 
 
 <script>
+const config = require('../../server.config');
+
 export default {
     name: 'recentView',
     props: {
@@ -29,7 +31,7 @@ export default {
     },
     methods: {
         gotoPage(id) {
-            window.location.href = "http://localhost:8080/party/detail/"+id;
+            window.location.href = config.serverFE() + "party/detail/"+id;
         }
     },
     computed: {
