@@ -35,8 +35,6 @@
             <label class="radioButtonlabel" for="male">남성</label>
 
 
-
-            <!-- <form action="http://localhost:3000/user" method="post">-->
                 <div class="inputLabel">관심 카테고리</div>
                     <div class="checkboxBackground">
                         <div class="checkboxGroup">
@@ -63,7 +61,7 @@
 
 <script>
     const axios = require('axios');
-
+    const config = require('../server.config');
     export default {
         /* eslint-disable no-console*/
         name: "signUp",
@@ -81,8 +79,8 @@
        },
         computed:{
             userInfo(){
-                var userInfoName=this.$cookie.get('userName');
-                var userInfoProfile = this.$cookie.get('profile_path');
+                var userInfoName=this.$session.get('userName');
+                var userInfoProfile = this.$session.get('profile_path');
                 return [userInfoName, userInfoProfile]
             }
 
@@ -91,17 +89,14 @@
             async senddata(){
 
                 var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
-                console.log(kakaoData);
 
                 var userData ={
                     age: this.userAge,
                     gender: this.userGender,
                     categoryList: this.checkedCategory
                 }
-                console.log(userData.categoryList)
 
-                var userFindRes = await this.$http.post('http://localhost:3000/user', [kakaoData,userData]);
-                console.log(userFindRes.data.result);
+                var userFindRes = await this.$http.post(config.serverUrl() + 'user', [kakaoData,userData]);
 
                 if(userFindRes.data.result=='exist'){
                     alert("이미 회원가입된 회원입니다.");
@@ -115,10 +110,9 @@
             },
             getCategoryList() {
             var vm = this
-            this.$http.get('http://localhost:3000/category')
+            this.$http.get(config.serverUrl()+'category')
             .then((result) => {
                 // get category list
-                console.log(result)
                 for(var i=0; i<result.data.length; i++) {
                     var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
                     vm.categoryList.push(JSON.parse(categoryOption));

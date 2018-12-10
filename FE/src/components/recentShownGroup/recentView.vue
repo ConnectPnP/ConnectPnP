@@ -1,5 +1,4 @@
 <template>
-    <!-- <router-link :to= "{name: 'detailParty' , params: {id: groupId}}"> -->
     <div class = "imgTxt" @click="gotoPage(groupId)">    
         <tr>
             <b-img class="listView groupimg" :src = "groupImg"/>
@@ -8,11 +7,12 @@
             <p> {{getTitle}} </p>
         </tr>
     </div>    
-    <!-- </router-link> -->
 </template>
 
 
 <script>
+const config = require('../../server.config');
+
 export default {
     name: 'recentView',
     props: {
@@ -31,7 +31,7 @@ export default {
     },
     methods: {
         gotoPage(id) {
-            window.location.href = "http://localhost:8080/party/detail/"+id;
+            window.location.href = config.serverFE() + "party/detail/"+id;
         }
     },
     computed: {

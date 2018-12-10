@@ -49,6 +49,7 @@
 
 <script>
     /* eslint-disable */
+    const config = require('../../server.config');
     export default {
         name: "comment",
         props: {
@@ -100,7 +101,7 @@
                 modifyComment() {
                     if (this.isModify) { // 댓글 수정, 댓글 내용 업데이트
                         this.isModify = false;
-                        this.$http.post("http://localhost:3000/board/comments/" + this.$route.params.id + "/" + this.comment._id,
+                        this.$http.post( config.serverUrl()+"board/comments/" + this.$route.params.id + "/" + this.comment._id,
                             {
                                 content: this.comment.content,
                             })
@@ -113,13 +114,13 @@
                 }
                 ,
                 deleteComment() {
-                    this.$http.delete('http://localhost:3000/board/comments/' + this.$route.params.id + '/' + this.comment._id)
+                    this.$http.delete( config.serverUrl()+'board/comments/' + this.$route.params.id + '/' + this.comment._id)
                         .then((result) => {
                             window.location.reload();
                         })
                 }, 
                 deleteReply() {
-                    this.$http.delete('http://localhost:3000/board/reply/'+this.parentComment + '/' + this.comment._id)
+                    this.$http.delete( config.serverUrl()+'board/reply/'+this.parentComment + '/' + this.comment._id)
                      .then((result) => {
                             window.location.reload();
                         })
@@ -131,7 +132,7 @@
                         this.show = true
                 },
                 createReply() {
-                    this.$http.post('http://localhost:3000/board/reply/' + this.comment._id, 
+                    this.$http.post( config.serverUrl()+'board/reply/' + this.comment._id, 
                     {
                         content : this.reply , user_id : this.currentUser.id})
                     .then((result) => {

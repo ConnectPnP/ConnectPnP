@@ -3,7 +3,8 @@
         <modals-container/>
         <b-container>
             <b-row>
-                <coverflow :width=480 :coverList="coverList" :coverWidth="260" :index="Math.ceil(this.coverList.length/2)-1"></coverflow>
+                <coverflow :width=480 :coverList="coverList" :coverWidth="260"
+                           :index="Math.ceil(this.coverList.length/2)-1"></coverflow>
 
                 <b-col cols="6">
                     <b-card class="text-left"
@@ -13,7 +14,8 @@
                         <h1>{{detailPartyInfo.title}}</h1>
 
                         <hr>
-                        Host : <b> {{host.name}} </b> <br>
+                        Host : <b> {{host.name}} </b> 
+                        <star-rating id="starRating" :rating="starCalculate()" :read-only="true" :star-size="20" :increment="0.01"></star-rating>                  
                         Location : <b> {{detailPartyInfo.location.title}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
@@ -94,8 +96,8 @@
                             :comment="comment" :currentUser="currentUser">
                     </commentTemplate>
                     <commentTemplate style="padding-left:50px;"
-                            v-for="reply in comment.childComment" :key="reply._id"
-                            :comment="reply" :currentUser="currentUser" :parentComment="comment._id">
+                                     v-for="reply in comment.childComment" :key="reply._id"
+                                     :comment="reply" :currentUser="currentUser" :parentComment="comment._id">
                     </commentTemplate>
                 </div>
             </b-row>
@@ -112,7 +114,8 @@
     import commentTemplate from './comment.vue'
     import JoinList from '../joinListPopup/joinList.vue'
     import ShowMap from './showMap.vue'
-
+    import StarRating from 'vue-star-rating'
+    const config = require('../../server.config');
     export default {
         name: "detailParty",
         components: {
@@ -120,7 +123,8 @@
             memberSimpleProfile,
             commentTemplate,
             JoinList,
-            ShowMap
+            ShowMap,
+            StarRating,
         },
         data() {
             commentContent: "";
@@ -128,7 +132,7 @@
                 detailPartyInfo: {},
                 isMapTab: false,
                 isHost: false, // host인지 guest인지
-                isWaiting : false, // 대기중 리스트에 있으면 true
+                isWaiting: false, // 대기중 리스트에 있으면 true
                 isJoined: false, // 이 모임에 참여중인지
                 host: null,
                 currentUser: {
@@ -139,7 +143,7 @@
                     gender: '',
                     profile_img: ''
                 },
-                coverList: [],
+                coverList: []
             }
         },
         computed: {
@@ -172,10 +176,22 @@
                 this.currentUser.gender = this.$session.get('gender');
                 this.getPartyDetail();
             },
+            starCalculate() {
+                if(this.host.star_rate.divider != 0) {
+                    return this.host.star_rate.totalScore/this.host.star_rate.divider/2
+                }
+                else {
+                    return 0
+                }
+            },
             deletePost() {
-                this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)
+                this.$http.delete( config.serverUrl()+'board/delete/' + this.$route.params.id)
                     .then((result) => {
-                        window.location.href = "http://localhost:8080/party/list"
+                        this.$socket.emit('group', {
+                            command: 'delete',
+                            group: result.data
+                        })
+                        window.location.href = config.serverFE() +"party/list"
                     })
             },
             waitParty() {
@@ -183,20 +199,17 @@
                 var vm = this
                 var condition = this.detailPartyInfo.conditions;
 
-                if(vm.currentUser.user_id == undefined){
-                  alert("로그인이 필요합니다");  
-                }
-                else if(this.detailPartyInfo.max_num <= this.detailPartyInfo.guest.length){
+                if (vm.currentUser.user_id == undefined) {
+                    alert("로그인이 필요합니다");
+                } else if (this.detailPartyInfo.max_num <= this.detailPartyInfo.guest.length) {
                     alert("신청 가능 인원이 가득 찼습니다.");
-                }
-                else if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
+                } else if (((condition.gender == 'none') || (condition.gender == this.currentUser.gender))
                     && ((this.currentUser.age >= condition.age[0]) && (this.currentUser.age <= condition.age[1]))) {
                     //참여 신청 보내기
-                    this.$http.post('http://localhost:3000/board/wait', {
+                    this.$http.post(config.serverUrl()+'board/wait', {
                         group: vm.detailPartyInfo._id, // 모임 Id
-                        user : vm.currentUser.id
+                        user: vm.currentUser.id
                     }).then((result) => {
-                        console.log(result)
                     })
                     alert("신청 완료 되었습니다.");
                     this.isWaiting = true;
@@ -206,9 +219,9 @@
             },
             cancelWaiting() {
                 var vm = this
-                this.$http.post('http://localhost:3000/board/cancel', {
-                        group: vm.detailPartyInfo._id, // 모임 Id
-                        user : vm.currentUser.id
+                this.$http.post(config.serverUrl()+'board/cancel', {
+                    group: vm.detailPartyInfo._id, // 모임 Id
+                    user: vm.currentUser.id
                 })
                 this.isWaiting = false;
             },
@@ -217,38 +230,46 @@
                 var vm = this
                 this.isWaiting = false;
                 this.isJoined = false;
-                this.$http.post('http://localhost:3000/board/exit', {
-                        group: vm.detailPartyInfo._id, // 모임 Id
-                        user : vm.currentUser.id
+                this.$http.post( config.serverUrl() + 'board/exit', {
+                    group: vm.detailPartyInfo._id, // 모임 Id
+                    user: vm.currentUser.id
+                }).then((result, err) => {
+                    vm.$socket.emit('group', {
+                        command: 'leave',
+                        group: vm.detailPartyInfo,
+                        user: result.data
+                    })
+
                 })
+
             },
             showJoinList() {
-                if(this.detailPartyInfo.waiting.length == 0){
+                if (this.detailPartyInfo.waiting.length == 0) {
                     alert("새로운 신청자가 없습니다!");
                 } else {
-                this.$modal.show(JoinList, 
-                {
-                    members : this.detailPartyInfo.waiting, 
-                    group : {
-                        groupId : this.detailPartyInfo._id, 
-                        groupTitle : this.detailPartyInfo.title, 
-                        groupDate : this.detailPartyInfo.meeting_date}
-                    }, 
-                {
-                    name: 'joinList',
-                    width: '500px',
-                    height: '500px',
-                    draggable: true
-                })
+                    this.$modal.show(JoinList,
+                        {
+                            members: this.detailPartyInfo.waiting,
+                            group: {
+                                groupId: this.detailPartyInfo._id,
+                                groupTitle: this.detailPartyInfo.title,
+                                groupDate: this.detailPartyInfo.meeting_date
+                            }
+                        },
+                        {
+                            name: 'joinList',
+                            width: '500px',
+                            height: '500px',
+                            draggable: true
+                        })
                 }
             },
             getPartyDetail() {
                 var vm = this
-                this.$http.get('http://localhost:3000/board/details/' + this.$route.params.id)
+                this.$http.get( config.serverUrl() +'board/details/' + this.$route.params.id)
                     .then((result) => {
                         vm.detailPartyInfo = result.data
                         vm.host = result.data.host
-                        vm.detailPartyInfo.guest.unshift(vm.host);
                         for (var i = 0; i < vm.detailPartyInfo.images.length; i++) {
                             this.coverList.push({"cover": vm.detailPartyInfo.images[i]})
                         }
@@ -256,11 +277,10 @@
                         this.createCookie();
                     })
                     .then(() => {
-                        this.$http.post('http://localhost:3000/board/check', {
-                            group : vm.detailPartyInfo._id,
-                            user : vm.currentUser.id
+                        this.$http.post( config.serverUrl()+'board/check', {
+                            group: vm.detailPartyInfo._id,
+                            user: vm.currentUser.id
                         }).then((result) => {
-                            console.log(result)
                             if (vm.currentUser.id == vm.host._id) vm.isHost = true;
                             vm.isJoined = result.data.isJoined
                             vm.isWaiting = result.data.isWaiting
@@ -269,30 +289,30 @@
             },
             createComment(content) {
                 var vm = this
-                
-                if(vm.currentUser.user_id == undefined){
-                  alert("로그인이 필요합니다");  
-                }
-                else {
+
+                if (vm.currentUser.user_id == undefined) {
+                    alert("로그인이 필요합니다");
+                } else {
                     this.$http.defaults.headers.post['Content-Type'] = 'application/json'
-                this.$http.post('http://localhost:3000/board/comments/' + this.$route.params.id,
-                    {
-                        user_id: vm.currentUser.id,
-                        content: content,
-                        depth: 0,
-                    })
-                    .then((result) => {
-                        window.location.reload()
-                    });
+                    this.$http.post(config.serverUrl()+'board/comments/' + this.$route.params.id,
+                        {
+                            user_id: vm.currentUser.id,
+                            content: content,
+                            depth: 0,
+                        })
+                        .then((result) => {
+                            window.location.reload()
+                        });
                 }
-                
+
 
             },
             createCookie() {
                 // cookie 만들기 this.$route.params.id
                 var cookieName = "recentGroup" + this.$route.params.id;
+                var cookieId = String(this.$route.params.id);
                 var cookie = {
-                    id: this.$route.params.id,
+                    id: cookieId,
                     title: this.detailPartyInfo.title,
                     image: this.detailPartyInfo.images[0]
                 };
@@ -301,8 +321,7 @@
                     this.$cookies.remove(cookieName);
                 }
 
-                this.$cookies.set(cookieName, cookie, "1h");
-                console.log(this.$cookies.keys())
+                this.$cookies.set(cookieName, cookie, "3h");
 
                 // "recentGroup"+this.$route.params.id;
             },
@@ -313,6 +332,7 @@
         },
         mounted() {
             this.getUser()
+            this.$session.set('currentGroupId',this.$route.params.id);
         }
     }
 </script>

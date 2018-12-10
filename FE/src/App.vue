@@ -30,12 +30,9 @@
             //현재 로그인 상태 확인. 로그인/ 로그아웃시 보여져야하는 UI 조정.
             loginStatus() {
                 var session_status = this.$session.get('loginStatus');
-                console.log("loginStatus>>" + session_status);
                 if (session_status == 'login') {
-                    console.log(session_status == 'login');
                     return true
                 } else {
-                    console.log(session_status == 'login');
                     return false
                 }
             },
@@ -52,6 +49,5 @@
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
-        margin-top: 60px;
     }
 </style>

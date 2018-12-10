@@ -11,7 +11,9 @@ exports.createCategory = (req, res) => {
 
     var newCategory = new Category({
         name: req.body.name,
+        img_path: req.body.img_path,
         depth: 0
+
     });
     newCategory.save(function (err) {
         if (err) return res.json(err);
@@ -19,6 +21,12 @@ exports.createCategory = (req, res) => {
     })
 };
 
+exports.getCategoryDetail = (req, res) => {
+    Category.findOne({_id : req.params.id}, function (err, result) {
+        if (err) return res.json({result: "fail"});
+        return res.json(result);
+    })
+}
 // depth : 0 인것 home - 5개씩 보기
 
 exports.getMoreCategory = (req, res) => {
@@ -32,7 +40,7 @@ exports.getMoreCategory = (req, res) => {
 exports.uploadImage = (req, res) => {
     upload(req, res)
         .then((files) => {
-            Category.findOneAndUpdate({_id: req.params.id}, {img_path: `${config.serverUrl()}files/${req.files.categoryFile[0].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[0].filename}`}, {new: true})
+            Category.findOneAndUpdate({_id: req.params.id}, {img_path: `${config.serverUrl()}files/${req.files.categoryFile[req.files.categoryFile.length-1].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[req.files.categoryFile.length-1].filename}`}, {new: true})
                 .then((result) => {
                     return res.json(result);
                 })
@@ -50,10 +58,7 @@ exports.getAllCategory = (req, res) => {
     Category.find({depth: 0}, (err, category) => {
         if (err) return res.status(500).send(err); // 500 error
         return res.json(category);
-    }).populate('sub_category')
-        .exec(function (error, category) {
-            console.log(category)
-        });
+    }).populate('sub_category').exec()
 };
 
 // 카테고리 수정
@@ -71,8 +76,8 @@ exports.deleteCategory = (req, res) => {
     Category.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
             return res.json(result);
+
         }
-        ;
         return res.status(404).send({message: 'No data found to delete'});
     });
 };
@@ -100,20 +105,17 @@ exports.createSubCategory = (req, res) => {
 exports.getAllSubCategory = (req, res) => {
     Category.find({depth: 1}, (err, category) => {
         if (err) return res.status(500).send(err); // 500 error
-        console.log(category)
         return res.json(category);
     });
 };
 
 // 소분류 카테고리 삭제
 exports.deleteSubCategory = (req, res) => {
-    console.log(req);
     Category.findOneAndUpdate({_id: req.params.cat}, {$pull : {sub_category : req.params.id}}
         ,(err, result) => {
             if(!err && result) {
                 Category.findOneAndRemove({_id: req.params.id}, (err, result) => {
                     if(!err && result) {
-                        console.log("result>>"+result);
                         return res.json(result);
                     } else{
                         return res.status(404).send({ message: 'No data found to delete' });

@@ -61,7 +61,7 @@
               <label style="font-weight:bold;">나의 평점</label>
             </div>
             <div class="col-sm-2 col-md-2 col-2">
-              <star-rating id="starRating" :rating="memberInfo.starRating" :read-only="true" :star-size="30" :increment="0.5"></star-rating>
+              <star-rating id="starRating" :rating="memberInfo.starRating" :read-only="true" :star-size="30" :increment="0.01"></star-rating>
             </div>
 
           </b-row>
@@ -73,7 +73,7 @@
               <label style="font-weight:bold;">평가 지수</label>
             </div>
             <div class="col-sm-10 col-md-10 col-10">
-              <Chart :ratingResult="memberInfo.ratingStatus" :name="memberInfo.usrName"></Chart>
+              <Chart :eventMonth="eventMonth"></Chart>
             </div>
           </b-row>
 
@@ -126,6 +126,7 @@ import Chart from './Chart.vue'
 import { FullCalendar } from 'vue-full-calendar'
 import 'fullcalendar/dist/fullcalendar.css'
 
+const config = require('../../server.config');
 export default {
   name: 'mypage',
   components: {
@@ -135,6 +136,7 @@ export default {
   },
   data() {
     return {
+      eventMonth:[],
       categoryList: [],
       file : null,
       formData : new FormData(),
@@ -145,23 +147,22 @@ export default {
         nickName: "",
         interestedCategory: [],
         starRating:0,
-        ratingStatus: [],
+        joinHistory: [0,0,0], // 이번 달, 저번 달, 저저번 달
         events: [],
         eventsDate: []
       }
     }
   },
-  mounted(){
+  created(){
     this.memberInfo.id = this.$session.get('userID');
     this.memberInfo.usrName = this.$session.get('userName');
     this.memberInfo.img = this.$session.get('profile_path');
 
     this.getCategoryList();
 
-    this.$http.get('http://localhost:3000/user/details/'+this.memberInfo.id)
+    this.$http.get(config.serverUrl() + 'user/details/'+this.memberInfo.id)
       .then((result)=>{
         // 닉네임 가져오기
-        console.log(result.data)
         if((result.data.nickName == "")||(result.data.nickName == null)){
           this.memberInfo.nickName = this.memberInfo.usrName;
         } else {
@@ -176,16 +177,23 @@ export default {
         this.memberInfo.interestedCategory = catListtemp;
         this.memberInfo.img = result.data.avatar_path
         // 평점 가져오기
-        this.memberInfo.starRating = result.data.star_rate;
-        this.memberInfo.events = result.data.group_log
+        if(result.data.star_rate.divider != 0){
+          this.memberInfo.starRating = (result.data.star_rate.totalScore/result.data.star_rate.divider)/2;
 
-    }).then(()=>{ this.getGroupDate(); });
+        }
+        else {
+          this.memberInfo.starRating = 0;
+        }
+        this.memberInfo.events = result.data.group_log
+        console.log(this.memberInfo.starRating);
+
+    }).then(()=>{ this.getGroupDate(); })
 
   },
   methods:{
     getCategoryList() {
                 var vm = this
-                this.$http.get('http://localhost:3000/category')
+                this.$http.get(config.serverUrl()+'category')
                 .then((result) => {
                     // get category list
                     for(var i=0; i<result.data.length; i++) {
@@ -196,36 +204,40 @@ export default {
                     }
                 });
             },
-  changeNickname(){
-    this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
-      nickName: this.memberInfo.nickName
-    }).then((result)=>{
-      alert('닉네임 변경이 완료되었습니다.');
-    });
-  },
-  changeCategory(){
-    this.$http.post('http://localhost:3000/user/profile/'+this.memberInfo.id, {
-      categoryList: this.memberInfo.interestedCategory
-    }).then(()=>{
-        alert('관심 카테고리 변경이 완료되었습니다.');
-    });
-  },
-  getGroupDate(){
-    var view = this
-    this.memberInfo.events.forEach(
-      function getevent(value) {
-        var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false" }';
-        view.memberInfo.eventsDate.push(JSON.parse(event));
-      }
-    )
-  },
-  changeProfileImage(newFile){
-    this.file = {blob: URL.createObjectURL(newFile[0])};
-    this.formData.append('profileImage', newFile[0], newFile[0].name);
+    changeNickname(){
+      this.$http.post(config.serverUrl()+'user/profile/'+this.memberInfo.id, {
+        nickName: this.memberInfo.nickName
+      }).then((result)=>{
+        alert('닉네임 변경이 완료되었습니다.');
+      });
+    },
+    changeCategory(){
+      this.$http.post(config.serverUrl()+'user/profile/'+this.memberInfo.id, {
+        categoryList: this.memberInfo.interestedCategory
+      }).then(()=>{
+          alert('관심 카테고리 변경이 완료되었습니다.');
+      });
+    },
+    getGroupDate(){
+      var view = this
+      this.memberInfo.events.forEach(
+        function getevent(value) {
+          if(value.group_id != null){
+            var event = '{ "title": "'+ value.group_id.title + '", "start": "' + value.group_id.meeting_date + '", "editable": "false", "url": "'+config.serverFE()+'party/detail/'+ value.group_id._id+'" }';
+            view.memberInfo.eventsDate.push(JSON.parse(event));
+            view.eventMonth.push(Number(value.group_id.meeting_date.split('-')[1]));
+          }
+          
+        }
+      )
+    },
+    changeProfileImage(newFile){
+      this.file = {blob: URL.createObjectURL(newFile[0])};
+      this.formData.append('profileImage', newFile[0], newFile[0].name);
 
-    this.$http.post('http://localhost:3000/user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-  
-  }
+      this.$http.post(config.serverUrl()+'user/profile/files/'+this.memberInfo.id, this.formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    
+    },
   }
   
 }

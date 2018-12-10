@@ -45,8 +45,6 @@ export default {
             this.cookielist.push(this.$cookies.get(list[i]));
           }
         }
-        // this.cookielist.reverse().slice(0,3);
-        // console.log(this.cookielist.reverse().slice(0,3))
       },
   },
   mounted(){

@@ -18,5 +18,7 @@ router.get('/details/:id',userCtrl.getUser);
 router.post('/profile/:id', userCtrl.editProfile);
 router.post('/profile/files/:id', userCtrl.uploadAvatar); // profile photo
 
+router.post('/rating/:id',userCtrl.updateRating);
+
 
 module.exports = router;

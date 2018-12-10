@@ -8,6 +8,8 @@ router.post('/', categoryCtrl.createCategory);
 
 router.get('/', categoryCtrl.getAllCategory);
 
+router.get('/detail/:id', categoryCtrl.getCategoryDetail)
+
 router.post('/edit/:id',categoryCtrl.updateCategory);
 
 router.delete('/delete/:id',categoryCtrl.deleteCategory);
