@@ -15,7 +15,7 @@
 
                         <hr>
                         Host : <b> {{host.name}} </b> 
-                        <star-rating id="starRating" :rating="host.star_rate.totalScore/host.star_rate.divider/2" :read-only="true" :star-size="20" :increment="0.01"></star-rating>                  
+                        <star-rating id="starRating" :rating="starCalculate()" :read-only="true" :star-size="20" :increment="0.01"></star-rating>                  
                         Location : <b> {{detailPartyInfo.location.title}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
@@ -175,6 +175,14 @@
                 this.currentUser.age = this.$session.get('age');
                 this.currentUser.gender = this.$session.get('gender');
                 this.getPartyDetail();
+            },
+            starCalculate() {
+                if(this.host.star_rate.divider != 0) {
+                    return this.host.star_rate.totalScore/this.host.star_rate.divider/2
+                }
+                else {
+                    return 0
+                }
             },
             deletePost() {
                 this.$http.delete('http://localhost:3000/board/delete/' + this.$route.params.id)

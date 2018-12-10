@@ -3,8 +3,8 @@
         <b-container>
             <b-row>
                 <b-col>
-                    <h3>{{ group.groupTitle}}</h3>
-                    <h3>{{ group.groupDate}}</h3>
+                    <h3>{{ group.groupTitle }}</h3>
+                    <h3>{{ group.groupDate }}</h3>
                     <br>
                 </b-col>
             </b-row>
@@ -14,7 +14,7 @@
                 </b-col>
                 <b-col>
                     <h4>{{ member.name }}</h4>
-                    <star-rating id="starRating" :rating="member.star_rate" :read-only="true" :star-size="30"
+                    <star-rating id="starRating" :rating="ratingCalculate()" :read-only="true" :star-size="30"
                                  :increment="0.5"></star-rating>
                 </b-col>
             </b-row>
@@ -81,7 +81,15 @@
                     user: this.member._id
                 }).then((result) => {
                 })
-            }
+            },
+            ratingCalculate() {
+                if(this.member.star_rate.divider != 0){
+                    return (this.member.star_rate.totalScore)/(this.member.star_rate.divider)/2
+                }
+                else {
+                    return 0
+                }
+            },
         }
 
     }
