@@ -1,5 +1,4 @@
 <template>
-
   <div class="top">
     <b-navbar toggleable="md" type="dark" variant="secondary">
 
@@ -117,7 +116,7 @@
               return isAdmin;
           },
 
-         
+
       },
       methods: {
           //카카오 api 사용을 위한 초기화
@@ -136,25 +135,25 @@
 
             // 오늘 날짜 가져오기
             var today = new Date();
-            var year = today.getFullYear();                               
-            var month = (1 + today.getMonth());                  
-            month = month >= 10 ? month : '0' + month;     
-            var day = today.getDate();                                  
-            day = day >= 10 ? day : '0' + day;                          
+            var year = today.getFullYear();
+            var month = (1 + today.getMonth());
+            month = month >= 10 ? month : '0' + month;
+            var day = today.getDate();
+            day = day >= 10 ? day : '0' + day;
             var changeDateFormat = year+'-'+month+'-'+day;
             console.log(changeDateFormat);
 
             this.groupReviewList = [];
 
             this.$http.get('http://localhost:3000/user/details/'+id)
-            .then((userAllInfo) => { 
+            .then((userAllInfo) => {
                 console.log(userAllInfo.data);
                 console.log(userAllInfo.data.group_log.length);
 
                 // 날짜랑.. 리뷰팝업.. 둘다 고려
                 for(var i=0; i<userAllInfo.data.group_log.length; i++){
                     console.log(userAllInfo.data.group_log[i].group_id.title);
-                    if((userAllInfo.data.group_log[i].review_popup == true) 
+                    if((userAllInfo.data.group_log[i].review_popup == true)
                     && (userAllInfo.data.group_log[i].group_id.meeting_date < changeDateFormat)) {
 
                         this.groupReviewList.push(userAllInfo.data.group_log[i].group_id);
@@ -162,7 +161,7 @@
                     console.log(this.groupReviewList.length);
 
                 }
-            });            
+            });
             //this.groupReviewList.push(1);
         },
         showReview(id){

@@ -13,6 +13,7 @@ exports.createCategory = (req, res) => {
         name: req.body.name,
         img_path: req.body.img_path,
         depth: 0
+
     });
     newCategory.save(function (err) {
         if (err) return res.json(err);
@@ -33,7 +34,7 @@ exports.getMoreCategory = (req, res) => {
 exports.uploadImage = (req, res) => {
     upload(req, res)
         .then((files) => {
-            Category.findOneAndUpdate({_id: req.params.id}, {img_path: `${config.serverUrl()}files/${req.files.categoryFile[0].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[0].filename}`}, {new: true})
+            Category.findOneAndUpdate({_id: req.params.id}, {img_path: `${config.serverUrl()}files/${req.files.categoryFile[req.files.categoryFile.length-1].destination.match(/[^/]+/g).pop()}/${req.files.categoryFile[req.files.categoryFile.length-1].filename}`}, {new: true})
                 .then((result) => {
                     return res.json(result);
                 })
@@ -53,11 +54,13 @@ exports.getAllCategory = (req, res) => {
         return res.json(category);
     }).populate('sub_category')
         .exec(function (error, category) {
+            console.log(category)
         });
 };
 
 // 카테고리 수정
 exports.updateCategory = (req, res) => {
+    console.log("IMAGE>>>"+req.body.img_path);
     Category.findOneAndUpdate(
         {_id: req.params.id}, {$set: {name: req.body.name, img_path: req.body.img_path}}, (err, result) => {
             if (!err) {
@@ -71,8 +74,8 @@ exports.deleteCategory = (req, res) => {
     Category.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
             return res.json(result);
+
         }
-        ;
         return res.status(404).send({message: 'No data found to delete'});
     });
 };
@@ -112,7 +115,6 @@ exports.deleteSubCategory = (req, res) => {
             if(!err && result) {
                 Category.findOneAndRemove({_id: req.params.id}, (err, result) => {
                     if(!err && result) {
-                        console.log("result>>"+result);
                         return res.json(result);
                     } else{
                         return res.status(404).send({ message: 'No data found to delete' });
