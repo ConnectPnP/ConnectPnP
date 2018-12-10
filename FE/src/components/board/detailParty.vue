@@ -11,7 +11,7 @@
                             id="js-detailParty-info"
                             border-variant="light"
                     >
-                        <h1>{{detailPartyInfo.title}}</h1>
+                        <h2><b>{{detailPartyInfo.title}}</b></h2>
 
                         <hr>
                         Host : <b> {{host.name}} </b>
