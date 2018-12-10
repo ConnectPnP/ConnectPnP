@@ -14,8 +14,8 @@
                         <h1>{{detailPartyInfo.title}}</h1>
 
                         <hr>
-                        Host : <b> {{host.name}} </b> 
-                        <star-rating id="starRating" :rating="starCalculate()" :read-only="true" :star-size="20" :increment="0.01"></star-rating>                  
+                        Host : <b> {{host.name}} </b>
+                        <star-rating id="starRating" :rating="starCalculate()" :read-only="true" :star-size="20" :increment="0.01"></star-rating>
                         Location : <b> {{detailPartyInfo.location.title}}</b><br>
                         Recruitment Period : <b> {{detailPartyInfo.start_date}} ~ {{detailPartyInfo.due_date}}</b><br>
                         Party Date : <b> {{detailPartyInfo.meeting_date}}</b><br>
@@ -61,7 +61,7 @@
                 <b-col>
                     <b-tabs>
                         <b-tab id="tabsInfo-detail" title="Detail" active>
-                            <br>{{detailPartyInfo.detail}}
+                            <b-form-textarea class="detailArea" plaintext :value="detailPartyInfo.detail"></b-form-textarea>
                         </b-tab>
                         <b-tab title="Members">
                             <b-card-group columns>
@@ -364,6 +364,11 @@
 
     .comment-info {
         font-size: smaller;
+    }
+
+    .detailArea{
+        font-size: 1.2rem;
+        margin-top: 10px;
     }
 
     .hostBtnGroup, .guestBtnGroup {

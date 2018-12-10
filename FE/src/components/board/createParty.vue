@@ -24,6 +24,7 @@
                     <b-form-textarea id="js-party-detail"
                                      v-model="party_form.detail"
                                      placeholder="Enter something"
+                                     @keypress="onEnter"
                                      :rows="3"
                                      :max-rows="6">
                     </b-form-textarea>
@@ -252,6 +253,15 @@
             },
             onDeleteButtonClick(index) {
                 this.$delete(this.party_form.file_array, index)
+            },
+            onEnter(event){
+
+                if(event.which ==13){
+                    event.preventDefault();
+                    this.party_form.detail = this.party_form.detail+'\n'
+                    console.log(this.party_form.detail)
+                }
+
             },
             formatDates(dateOne, dateTwo) {
                 let formattedDates = ''
