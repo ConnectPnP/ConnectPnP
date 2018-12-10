@@ -41,6 +41,7 @@ exports.getPost = (req, res) => {
   })
   .exec(function(error, comments) {
   });
+
 };
 
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
@@ -53,7 +54,7 @@ exports.getMore = (req, res) => {
         ]
       }, function (err, result) {
         if (err) return res.json({result: "fail"});
-   
+
     }).sort({_id: -1}).skip((page) * npage).limit(npage)
     .exec((err, doc) => {
         if (err) {
@@ -121,16 +122,18 @@ exports.getMoreWithoutCategory = (req,res) => {
 exports.uploadFile = (req, res) => {
     upload(req, res)
         .then((files) => {
+            var final={}
             for (var i = 0; i < req.files.postFile.length; i++) {
-                Board.findOneAndUpdate({_id: req.params.id}, {$push: {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}`}})
+                 Board.findOneAndUpdate({_id: req.params.id}, {$push: {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}`}})
                     .catch((err) => {
                         return res.json({result: "db fail"});
                     })
                     .then((result) => {
-                        return res.json(result);
+                        final =result
                     })
 
             }
+            return res.json(final)
         })
         .catch((err) => {
             res.status(500).send('Upload middlewares error');
