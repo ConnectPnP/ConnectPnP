@@ -105,12 +105,7 @@ exports.getMoreWithoutCategory = (req,res) => {
         if (err) {
           return res.json(err);
         }
-        Board.count({
-            $or: [
-              { subCategory: req.params.category},
-              { category : req.params.category},
-            ]
-          }).exec((count_error, count) => {
+        Board.count({$text: {$search: req.body.query}}).exec((count_error, count) => {
           if (err) {
             return res.json(count_error);
           }

@@ -89,7 +89,7 @@ export default {
       pageChange(page) {
         this.currentPage = page - 1
         switch(this.type) {
-            case 0 :
+            case 0:
                 this.getPostData()
                 break;
             case 1 :
