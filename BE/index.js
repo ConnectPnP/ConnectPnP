@@ -60,7 +60,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('logout', function (login) {
         console.log('logout 이벤트를 받았습니다.');
 
-        login_ids.splice(login.id, 1)
+        if (login_ids.length != 0) {
+            login_ids.splice(login.id, 1)
+        }
 
         console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
     })

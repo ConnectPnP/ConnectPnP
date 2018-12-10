@@ -176,7 +176,7 @@
                 console.log("소켓 연결 종료")
             }
         },
-        }
+        
     }
 </script>
 <style scoped>
