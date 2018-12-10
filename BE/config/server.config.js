@@ -8,7 +8,7 @@ exports.serverUrl = function() {
 };
 
 exports.serverFE = function() {
-  return 'http://54.180.96.156:8080/'
+  return 'http://54.180.96.156:8080'
   // return 'http://localhost:8080'
 };
 
