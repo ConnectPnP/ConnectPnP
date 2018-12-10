@@ -47,25 +47,25 @@ io.sockets.on('connection', function (socket) {
     socket.remotePort = socket.request.connection.remotePort;
 
     var login_ids = {};
-    socket.on('login', function (login) {
-        // 기존 클라이언트 ID가 없으면 클라이언트 ID를 맵에 추가
-        console.log('접속한 소켓의 ID : ' + socket.id);
-        login_ids[login.id] = socket.id;
-        socket.login_id = login.id;
+    // socket.on('login', function (login) {
+    //     // 기존 클라이언트 ID가 없으면 클라이언트 ID를 맵에 추가
+    //     console.log('접속한 소켓의 ID : ' + socket.id);
+    //     login_ids[login.id] = socket.id;
+    //     socket.login_id = login.id;
 
-        console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
+    //     console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
 
-    });
+    // });
 
-    socket.on('logout', function (login) {
-        console.log('logout 이벤트를 받았습니다.');
+    // socket.on('logout', function (login) {
+    //     console.log('logout 이벤트를 받았습니다.');
 
-        if (login_ids.length != 0) {
-            login_ids.splice(login.id, 1)
-        }
+    //     if (login_ids.length != 0) {
+    //         login_ids.splice(login.id, 1)
+    //     }
 
-        console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
-    })
+    //     console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
+    // })
 
 
     // 'message' 이벤트를 받았을 때의 처리 (
