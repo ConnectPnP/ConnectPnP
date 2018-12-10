@@ -100,7 +100,6 @@ exports.getMoreWithoutCategory = (req,res) => {
     Board.find({$text: {$search: req.body.query}} , (err, result) => {
         if (err) {
             return res.status(500).send(err);} // 500 error
-        console.log(result)
     }).sort({_id: -1}).skip((page) * npage).limit(npage)
     .exec((err, doc) => {
         if (err) {
@@ -158,7 +157,7 @@ exports.deletePost = (req, res) => {
     Board.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
             fs.unlink(path.join(__dirname, `../../files/${result.img_path}`), (fsErr) => {
-                if (fsErr) console.warn({err: 'not removed on Server'});
+                if (fsErr) res.json({err: 'not removed on Server'});
             }); // db에 저장된 img_path와 함께 해당 파일 삭제
             return res.json(result);
         }
@@ -169,11 +168,9 @@ exports.deletePost = (req, res) => {
 
 exports.searchPost = (req, res) => {
   var page = req.params.page
-  console.log(req.body)
   Board.find(req.body, (err,result) => {
     if(err) {
-      console.log(err);
-      return res.json({ result : "fail"});}
+      return res.json(err);}
   }).sort({_id: -1}).skip((page) * npage).limit(npage)
   .exec((err, doc) => {
     if (err) {

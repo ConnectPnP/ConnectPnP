@@ -22,12 +22,9 @@ router.get('/home', (req, res) => {
     day = day >= 10 ? day : '0' + day;
 
     var changeDateFormat = year+'-'+month+'-'+day;
-    console.log(changeDateFormat);
 
     //groupInfo의 guest 별점평균 + 조회수 + 신청자수
     GroupInfo.find({due_date : { $gt : changeDateFormat }}).populate('guest', 'star_rate').exec((err, data) => {
-
-        // console.log(data);
 
         var rank5GroupList = [];
 
@@ -52,11 +49,6 @@ router.get('/home', (req, res) => {
 
             var dueDate = data[i].due_date;
 
-            console.log();
-            console.log('due date           '+dueDate);
-            console.log(data[i].title);
-            console.log(guestnum);
-
             // 참여자 별점 평균 bayesian_rating
             if((guestnum) > 0){
                 for(var j=0; j<guestnum; j++){
@@ -75,9 +67,6 @@ router.get('/home', (req, res) => {
                 starRate = 0;
             }
 
-            console.log('starRate               ' + starRate); // log
-
-
 
             // 조회수 대비 신청자수 bayesian_rating
             if(data[i].applicants != 0) {
@@ -87,9 +76,6 @@ router.get('/home', (req, res) => {
             else {
                 hitsApplicantsRate = 0;
             }
-            console.log('hitsApplicantsRate     ' + hitsApplicantsRate); // log
-
-            console.log(starRate + hitsApplicantsRate);
 
             data[i].evaluationIndex = starRate + hitsApplicantsRate;
 
@@ -98,7 +84,6 @@ router.get('/home', (req, res) => {
         rank5GroupList.sort(function(a, b) { // 내림차순 정렬
             return a.evaluationIndex > b.evaluationIndex ? -1 : a.evaluationIndex < b.evaluationIndex ? 1 : 0;
         });
-        // console.log(rank5GroupList);
         res.json(rank5GroupList);
     });
 });

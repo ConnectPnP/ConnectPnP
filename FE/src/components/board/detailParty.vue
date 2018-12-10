@@ -322,7 +322,6 @@
                 }
 
                 this.$cookies.set(cookieName, cookie, "3h");
-                console.log(this.$cookies.keys())
 
                 // "recentGroup"+this.$route.params.id;
             },

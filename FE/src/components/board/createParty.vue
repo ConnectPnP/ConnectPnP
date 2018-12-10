@@ -370,7 +370,6 @@
             ,
             async editor() {
                 var vm = this
-                console.log(vm.currentGroupId);
                 var result = await vm.$http.get( config.serverUrl() + 'board/details/' + vm.currentGroupId)
                 vm.detailEdit = result.data;
                 var age = [];

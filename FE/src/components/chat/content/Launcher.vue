@@ -160,11 +160,9 @@
         },
         sockets: {
             message(message) {
-                console.log('메세지 event 받음')
                 this.messageList.push(message)
             },
             group(data) {
-                console.log('채팅방 리스트 정보 받음')
                 if (data.command == 'list') {
                     this.groups = data.roomList
                     this.arrangeChatroom(data.messageList)
@@ -178,22 +176,6 @@
                 console.log("소켓 연결 종료")
             }
         },
-        mounted() {
-            // this.socket.on('message', (message) => {
-            //     console.log('메세지 event 받음')
-            //     this.messageList.push(message)
-            // })
-            // this.socket.on('group', (data) => {
-            //     console.log('채팅방 리스트 정보 받음')
-            //     if (data.command == 'list') {
-            //         this.groups = data.roomList
-            //         this.arrangeChatroom(data.messageList)
-            //     }
-            // })
-            // this.socket.on('response', (response) => {
-            //     console.log('응답 메세지를 받았습니다.' + response.command + ','
-            //         + response.code + ',' + response.message)
-            // })
         }
     }
 </script>

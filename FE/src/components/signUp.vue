@@ -89,17 +89,14 @@
             async senddata(){
 
                 var kakaoData = await Kakao.API.request({url: '/v1/user/me'});
-                console.log(kakaoData);
 
                 var userData ={
                     age: this.userAge,
                     gender: this.userGender,
                     categoryList: this.checkedCategory
                 }
-                console.log(userData.categoryList)
 
                 var userFindRes = await this.$http.post(config.serverUrl() + 'user', [kakaoData,userData]);
-                console.log(userFindRes.data.result);
 
                 if(userFindRes.data.result=='exist'){
                     alert("이미 회원가입된 회원입니다.");
@@ -116,7 +113,6 @@
             this.$http.get(config.serverUrl()+'category')
             .then((result) => {
                 // get category list
-                console.log(result)
                 for(var i=0; i<result.data.length; i++) {
                     var categoryOption = '{"value" : "' + result.data[i]._id + '", "text" : "'+ result.data[i].name+'"}';
                     vm.categoryList.push(JSON.parse(categoryOption));

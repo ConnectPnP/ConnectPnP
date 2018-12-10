@@ -13,9 +13,6 @@
                 joinHistory: [0,0,0]
             }
         },
-        created(){
-            console.log("created Chart.vue");
-        },
         watch:{
             eventMonth : function(newVal, oldVal){
                 this.please();

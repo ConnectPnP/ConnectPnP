@@ -30,16 +30,12 @@ exports.findUser= (req,res)=>{
             return res.json({});}
         else if(user == null) {
             //회원이 아님.
-                    console.log("not found");
-                    res.send({user:false});
+                res.send({user:false});
             }
         else {
             //회원임.
-            console.log("Found!");
-
             //서버에 현재 로그인 된 유저 아이디값 저장.
             global.currentUser=userid;
-            console.log("현재 유저 아이디: "+global.currentUser);
             res.send({user:true, _id : user._id, gender : user.gender, age : user.age});
         }
 
@@ -64,7 +60,7 @@ exports.create = (req, res) => {
 
                 }
                 else{
-                    console.log(err)
+                    res.json(err);
                 }
             }); // 존재하지 않는 회원 id는 새로 생성.
         }
@@ -131,25 +127,20 @@ exports.uploadAvatar = (req, res) => {
 
 exports.updateRating=(req,res)=>{
   var hostId = req.params.id;
-  console.log(req.body.rating);
-  console.log(req.body.currentUserId);
   //req.body.group_id
   User.findOneAndUpdate({_id : hostId}, {$inc: {"star_rate.divider": 1,"star_rate.totalScore":req.body.rating}},{new:true},function (err, user) {
       if(err) {
-          console.log(err);
-          return res.json({});}
+          return res.json(err);}
       else {
           User.findOneAndUpdate({_id:req.body.currentUserId},{})
-          console.log(user)
       }
   });
 
   User.findOneAndUpdate({_id : req.body.currentUserId, "group_log.group_id":req.body.group_id}, {"group_log.$.review_popup":false},{new:true},function (err, user) {
       if(err) {
-          console.log(err);
-          return res.json({});}
+          return res.json(err);}
       else {
-          console.log(user)
+        return res.json(user);
       }
   })
 };

@@ -106,13 +106,10 @@ io.sockets.on('connection', function (socket) {
      leave : 그룹 채팅방 나감
      **/
     socket.on('group', function (group) {
-        console.log('group 이벤트를 받았습니다.');
         if (group.command === 'create') {
             group = group.result.data
             if (io.sockets.adapter.rooms[group._id]) { // 방이 이미 만들어져 있는 경우
-                console.log('방이 이미 만들어져 있습니다.');
             } else {
-                console.log('방을 새로 만듭니다.');
                 chat_controller.createChatRoom(socket, group)
             }
 
@@ -130,67 +127,34 @@ io.sockets.on('connection', function (socket) {
                 chat_controller.deleteChatRoom(socket, group)
                 delete io.sockets.adapter.rooms[group._id];
 
-            } else {  // 방이  만들어져 있지 않은 경우
-                console.log('방이 만들어져 있지 않습니다.');
+            } else {  
+                // 방이  만들어져 있지 않은 경우
             }
 
         } else if (group.command === 'join') {
             group = group.data
 
             if (!io.sockets.adapter.rooms[group._id]) { // 방이 없는 경우
-                console.log('존재하지 않는 방입니다.')
-            } else {  // 방이 있는 경우
+            } else {  
+                // 방이 있는 경우
                 chat_controller.joinChatRoom(socket, group)
             }
         } else if (group.command === 'leave') {  // 방 나가기 요청
 
-            if (!io.sockets.adapter.rooms[group.group._id]) { // 방이 없는 경우
-                console.log('존재하지 않는 방입니다.');
+            if (!io.sockets.adapter.rooms[group.group._id]) { 
+                // 방이 없는 경우
             } else {  // 방이 있는 경우
                 chat_controller.leaveChatRoom(socket, group.group, group.user)
             }
 
         } else if (group.command === 'group') {
-            console.log('채팅방 정보를 찾아옵니다.')
             chat_controller.getRoomList(socket, group.userId)
         }
     });
 
 
 });
-//
-// function getRoomList() {
-//     console.dir(io.sockets.adapter.rooms);
-//
-//     var roomList = [];
-//
-//     Object.keys(io.sockets.adapter.rooms).forEach(function (roomId) {
-//         console.log('current room id : ' + roomId);
-//         var outRoom = io.sockets.adapter.rooms[roomId];
-//
-//         // socket 내의 broadcasting으로 뿌려줄 때 쓰는 default room 찾기
-//         var foundDefault = false;
-//         var index = 0;
-//         Object.keys(outRoom).forEach(function (key) {
-//             console.log('#' + index + ' : ' + key + ', ' + outRoom[key]);
-//
-//             if (roomId == key) {  // default room
-//                 foundDefault = true;
-//                 console.log('this is default room.');
-//             }
-//             index++;
-//         });
-//
-//         if (!foundDefault) {
-//             roomList.push(outRoom);
-//         }
-//     });
-//
-//     console.log('[ROOM LIST]');
-//     console.dir(roomList);
-//
-//     return roomList;
-// }
+
 
 
 const db = mongoose.connection;

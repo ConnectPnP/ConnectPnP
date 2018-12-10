@@ -58,15 +58,11 @@ exports.getAllCategory = (req, res) => {
     Category.find({depth: 0}, (err, category) => {
         if (err) return res.status(500).send(err); // 500 error
         return res.json(category);
-    }).populate('sub_category')
-        .exec(function (error, category) {
-            console.log(category)
-        });
+    }).populate('sub_category').exec()
 };
 
 // 카테고리 수정
 exports.updateCategory = (req, res) => {
-    console.log("IMAGE>>>"+req.body.img_path);
     Category.findOneAndUpdate(
         {_id: req.params.id}, {$set: {name: req.body.name, img_path: req.body.img_path}}, (err, result) => {
             if (!err) {
@@ -115,7 +111,6 @@ exports.getAllSubCategory = (req, res) => {
 
 // 소분류 카테고리 삭제
 exports.deleteSubCategory = (req, res) => {
-    console.log(req);
     Category.findOneAndUpdate({_id: req.params.cat}, {$pull : {sub_category : req.params.id}}
         ,(err, result) => {
             if(!err && result) {

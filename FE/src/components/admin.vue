@@ -274,11 +274,9 @@ const config = require('../server.config');
             categoryClicked(categoryName, categoryid){
                 this.selectedCategoryName= categoryName;
                 this.selectedCategoryID=categoryid;
-                console.log(categoryid);
             },
             //이미지 업로드
             onFileChange(newFile) {
-                console.log(newFile);
                 this.file = {blob: URL.createObjectURL(newFile[0])};
                 //this.imageName=newFile[0].name;
                 this.formData.append('categoryFile', newFile[0], newFile[0].name);
@@ -286,7 +284,6 @@ const config = require('../server.config');
             //전체카테고리 리스트 가져오기
             async getCategory(){
                 var categoryList  = await this.$http.get( config.serverUrl()+'category');
-                console.log(categoryList.data);
                 this.mainCategoryList=categoryList.data;
             },
             //메인카테고리 추가
@@ -302,7 +299,6 @@ const config = require('../server.config');
                     var imgFileUpload = await adminVue.$http.post( config.serverUrl()+'category/files/'+categoryDataUpload.data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
                     adminVue.mainCategoryList.push(imgFileUpload.data);
                 } else {
-                    console.log("methodURL!")
                     adminVue.mainCategoryList.push(categoryDataUpload.data);
                 }
                 this.addCategoryName="";
@@ -320,11 +316,9 @@ const config = require('../server.config');
                 addedData.then(function (result) {
                     for(let i=0;i<adminVue.mainCategoryList.length;i++){
                         if(adminVue.mainCategoryList[i]._id==adminVue.selectedCategoryID){
-                            console.log(result.data.sub_category);
                             adminVue.mainCategoryList[i].sub_category= result.data.sub_category
                         }
                     }
-                    console.log(result.data);
                 });
                 this.addSubCategoryName=""
             },
@@ -340,13 +334,11 @@ const config = require('../server.config');
                 var updatedCategory = await this.$http.post(updateURL,categoryData);
                 if(this.condition.reviseimgUpload=='methodFile'){
                     var imgFileUpload = await adminVue.$http.post( config.serverUrl()+'category/files/'+data._id, adminVue.formData,{ headers: { 'Content-Type': 'multipart/form-data' } })
-                    console.log(imgFileUpload.data);
                     for(let i=0;i<this.mainCategoryList.length;i++){
                         if(this.mainCategoryList[i]._id==data._id){
                             adminVue.mainCategoryList[i].img_path=imgFileUpload.data.img_path
                         }}
                 } else {
-                    console.log("Updated CategoryPath>>>"+this.reviseCategoryPath)
                     for(let i=0;i<this.mainCategoryList.length;i++){
                         if(this.mainCategoryList[i]._id==data._id){
                             this.mainCategoryList[i].img_path = this.reviseCategoryPath;
@@ -357,7 +349,6 @@ const config = require('../server.config');
             },
             //세부카테고리 수정
             subcategoryUpdate(data){
-                console.log(data._id)
                 var updateURL= config.serverUrl()+'category/edit/'+data._id;
                 var updatedCategory = this.$http.post(updateURL,data);
                 this.condition.subreviseComplete='revise';

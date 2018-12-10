@@ -24,9 +24,6 @@
         props: {
             member: {},
             index: Number
-        },
-        mounted(){
-            console.log(this.member);
         }
     }
 </script>

@@ -49,7 +49,6 @@ export default {
         //'/details/:id'var deleteResult = this.$http.post(subdeleteURL);
         var groupID = this.getid;
         var getGroupData = await this.$http.get( config.serverUrl()+"board/details/"+groupID);
-        console.log(getGroupData.data);
         this.groupData.id=getGroupData.data._id;
         this.groupData.name= getGroupData.data.title;
         this.groupData.hostId=getGroupData.data.host._id;

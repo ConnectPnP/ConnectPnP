@@ -8,12 +8,10 @@ exports.createChatRoom = (socket, group) => {
     chatRoom.find({group_id: group._id},
         function (err, existchatRoom) {
             if (err) {
-                console.log(err)
                 return null
             }
             //이미 db에 방이 존재하는 경우
             if (existchatRoom.length != 0) {
-                console.log("이미 존재하는 방입니다.")
                 return null
             }
             //존재하지 않는 경우
@@ -29,7 +27,6 @@ exports.createChatRoom = (socket, group) => {
                 })
                 newRoom.save((err, result) => {
                     if (err) {
-                        console.log(err)
                         return null
                     } else {
                         chatRoom.find({group_id: group._id})
@@ -42,9 +39,8 @@ exports.createChatRoom = (socket, group) => {
                                 if (createdGroup) {
                                     socket.join(createdGroup.group_id);
                                     socket.emit('created', createdGroup);
-                                    console.log("방이 생성되었습니다")
                                 } else {
-                                    console.log('방이 생성되지 않았습니다.')
+                                    //방이 생성되지 않았습니다.
                                 }
                             })
                     }
@@ -64,8 +60,6 @@ exports.deleteChatRoom = (socket, group) => {
             } else {
                 chatMessage.deleteMany({dest: group._id},
                     () => {
-
-                        console.log('메세지다지움\n getRoomList 실행')
                         vm.getRoomList(socket, group.host)
                         group.guest.forEach((one) => {
                             vm.getRoomList(socket, one)
@@ -102,11 +96,11 @@ exports.joinChatRoom = (socket, group) => {
                     } else {
                         socket.in(group._id).emit('join', group.user)
                         socket.in(group._id).emit('message', newMessage)
-                        console.log('채팅방 참여인원으로 등록')
+                        //채팅방 참여인원으로 등록
                     }
                 })
             } else {
-                console.log("이미 참가중인 상태입니다.")
+                // 이미 참가중인 상태입니다.
             }
 
         })
@@ -138,7 +132,6 @@ exports.leaveChatRoom = (socket, group, user) => {
                     .exec((err, result) => {
                         if (err) {
                             console.log(err)
-                            console.log("채팅방 나가기 불가")
                         } else {
                             socket.leave(group._id, function (err) {
                                 if (err) {
@@ -160,7 +153,6 @@ exports.getRoomList = (socket, id) => {
     var roomList = []
     var messageList = []
 
-    console.log('getRooms')
     chatRoom.find({participants: {"$in": [id]}})
         .populate({path: 'host', model: 'User'})
         .populate({
@@ -194,7 +186,6 @@ exports.getRoomList = (socket, id) => {
                     messageList = list.filter(message => roomList.filter(room => room.group_id == message.dest) != null)
 
                     var output = {command: 'list', roomList: roomList, messageList: messageList};
-                    // console.log('클라이언트로 보낼 데이터 : ' + JSON.stringify(output));
                     socket.emit('leave')
                     socket.emit('group', output)
 
@@ -217,7 +208,6 @@ exports.sendMessage = (message) => {
         })
     } else if (message.command == 'groupchat') {
         if (message.type == 'text') {
-            console.log("db저장 전")
             var newMessage = new chatMessage({
                 dest: message.dest,
                 author: message.author._id,
@@ -231,7 +221,6 @@ exports.sendMessage = (message) => {
             })
         }
         else if(message.type=="emoji"){
-            console.log("db저장 전")
             var newMessage = new chatMessage({
                 dest: message.dest,
                 author: message.author._id,
