@@ -161,7 +161,6 @@
         sockets: {
             message(message) {
                 this.messageList.push(message)
-                this.newMessagesCount++
             },
             group(data) {
                 if (data.command == 'list') {
