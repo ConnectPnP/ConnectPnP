@@ -11,8 +11,8 @@ const Schema = mongoose.Schema;
 const GroupSchema = new Schema({
     category: {type: Number, ref: 'Category'},
     subCategory: {type: Number, ref: 'Category'},
-    title: {type: String},
-    detail: {type: String},
+    title: {type: String, text :true},
+    detail: {type: String, text :true},
     conditions: {gender: {type: String}, age: [{type: Number}]},
     hits: {type: Number, default: 1},
     applicants: {type: Number, default: 0},
@@ -21,10 +21,10 @@ const GroupSchema = new Schema({
     meeting_date: {type: String},
     min_num: {type: Number},
     max_num: {type: Number},
-    cost: {type: String},
+    cost: {type: String, text :true},
     images: [{type: String}],
     location: {
-        title: {type: String},
+        title: {type: String, text :true},
         latlng: {lat: {type: String}, lng: {type: String}},
         url: {type: String}
     },

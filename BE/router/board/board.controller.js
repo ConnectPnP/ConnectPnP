@@ -46,10 +46,34 @@ exports.getPost = (req, res) => {
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
 exports.getMore = (req, res) => {
     var page = req.params.page;
-    Board.find({subCategory: req.params.category}, function (err, result) {
+    Board.find({
+        $or: [
+          { subCategory: req.params.category},
+          { category : req.params.category},
+        ]
+      }, function (err, result) {
         if (err) return res.json({result: "fail"});
-        return res.json(result);
-    }).sort({_id: -1}).skip((page) * npage).limit(npage);
+   
+    }).sort({_id: -1}).skip((page) * npage).limit(npage)
+    .exec((err, doc) => {
+        if (err) {
+          return res.json(err);
+        }
+        Board.count({
+            $or: [
+              { subCategory: req.params.category},
+              { category : req.params.category},
+            ]
+          }).exec((count_error, count) => {
+          if (err) {
+            return res.json(count_error);
+          }
+          return res.json({
+            total: count,
+            board: doc
+          });
+        });
+    });
 };
 
 // //post create edit delete
@@ -70,6 +94,34 @@ exports.getAllPost = (req, res) => {
         return res.json(board);
     });
 };
+
+exports.getMoreWithoutCategory = (req,res) => {
+    var page = req.params.page;
+    Board.find({$text: {$search: req.body.query}} , (err, result) => {
+        if (err) {
+            return res.status(500).send(err);} // 500 error
+        console.log(result)
+    }).sort({_id: -1}).skip((page) * npage).limit(npage)
+    .exec((err, doc) => {
+        if (err) {
+          return res.json(err);
+        }
+        Board.count({
+            $or: [
+              { subCategory: req.params.category},
+              { category : req.params.category},
+            ]
+          }).exec((count_error, count) => {
+          if (err) {
+            return res.json(count_error);
+          }
+          return res.json({
+            total: count,
+            board: doc
+          });
+        });
+    });
+}
 
 // 게시글에 딸린 사진 저장하기
 exports.uploadFile = (req, res) => {
@@ -117,14 +169,31 @@ exports.deletePost = (req, res) => {
 
 exports.searchPost = (req, res) => {
   var page = req.params.page
+  console.log(req.body)
   Board.find(req.body, (err,result) => {
     if(err) {
       console.log(err);
       return res.json({ result : "fail"});}
-    else {
-      console.log(result)
-      return res.json(result);}
-  }).sort({_id: -1}).skip((page) * npage).limit(npage);;
+  }).sort({_id: -1}).skip((page) * npage).limit(npage)
+  .exec((err, doc) => {
+    if (err) {
+      return res.json(err);
+    }
+    Board.count({
+        $or: [
+          { subCategory: req.params.category},
+          { category : req.params.category},
+        ]
+      }).exec((count_error, count) => {
+      if (err) {
+        return res.json(count_error);
+      }
+      return res.json({
+        total: count,
+        board: doc
+      });
+    });
+});
 };
 
 exports.searchUser = (req, res) => {

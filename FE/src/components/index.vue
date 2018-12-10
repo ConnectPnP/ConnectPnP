@@ -14,9 +14,9 @@
     <div class="searchArea">
         <form action="#">
             <b-input-group >
-                <b-form-input></b-form-input>
+                <b-form-input type="text" v-model="searchQuery" placeholder="Search"/>
                 <b-input-group-append>
-                    <b-btn variant="info">검색</b-btn>
+                    <b-btn variant="info" @click="searchGroup(true)">검색</b-btn>
                 </b-input-group-append>
             </b-input-group>
         </form>
@@ -102,6 +102,7 @@ import Review from './reviewPopup/Review.vue'
         } ,
         data() {
             return {
+                searchQuery :'',
                 categoryPage : 0,
                 btnclicked:5,
                 categoryList: [],
@@ -126,6 +127,15 @@ import Review from './reviewPopup/Review.vue'
             moreBtn(){
                 this.categoryPage ++
                 this.getCategoryList()
+            },
+            goCategoryList(categoryId) {
+                this.$session.set('category',categoryId);
+                window.location.href="http://localhost:8080/party/list"
+            },
+            searchGroup() {
+                this.$session.set('mainQuery',this.searchQuery);
+                this.$session.set('category',null);
+                window.location.href="http://localhost:8080/party/list"
             },
             getGroupRanking(){
                 // 모든 그룹 중에 top 5

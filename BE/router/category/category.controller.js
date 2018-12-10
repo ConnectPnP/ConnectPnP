@@ -21,6 +21,12 @@ exports.createCategory = (req, res) => {
     })
 };
 
+exports.getCategoryDetail = (req, res) => {
+    Category.findOne({_id : req.params.id}, function (err, result) {
+        if (err) return res.json({result: "fail"});
+        return res.json(result);
+    })
+}
 // depth : 0 인것 home - 5개씩 보기
 
 exports.getMoreCategory = (req, res) => {
