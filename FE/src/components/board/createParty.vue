@@ -57,6 +57,7 @@
                             :value="formatDates(party_form.recruitment_period_dateOne, party_form.recruitment_period_dateTwo)"
                     >
                     <AirbnbStyleDatepicker
+                            class="calendarPosition"
                             :trigger-element-id="'party-recruitment-period'"
                             :mode="'range'"
                             :fullscreen-mobile="true"
@@ -78,6 +79,7 @@
                             :value="formatDates(party_form.date)"
                     >
                     <AirbnbStyleDatepicker
+                            class="calendarPosition"
                             :trigger-element-id="'party-date'"
                             :mode="'single'"
                             :min-date="party_form.recruitment_period_dateTwo"
@@ -406,6 +408,9 @@
 </script>
 
 <style scoped>
+    .calendarPosition{
+        position: unset !important;
+    }
     body {
         background-color: #e2e2e2;
     }

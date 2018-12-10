@@ -59,8 +59,8 @@
             <!--justify-content-md-center-->
             <b-container fluid>
                 <b-row class="rankingGroup justify-content-md-center">
-                    <div  v-for="item in rankingList" :key="item.id">
-                        <b-col class="singleRanking">
+                    <div class="singleRanking" v-for="item in rankingList" :key="item.id">
+                        <b-col >
                             <b-img fluid :src="item.images[0]" style="max-height: 200px;" alt="Thumbnail" />
                             <div class="singleRankingTitile">{{item.title}}</div>
                             <div class="singleRankingDescription">{{item.locationText}}</div>
@@ -258,7 +258,6 @@ import Review from './reviewPopup/Review.vue'
     .rankingArea{
         width: 100%;
         margin-bottom: 100px;
-        background-color: #d2e8ff;
         padding-top: 100pt;
         padding-bottom: 100pt;
     }
@@ -268,9 +267,8 @@ import Review from './reviewPopup/Review.vue'
         margin-top: 60px;
     }
     .singleRanking{
-        padding:10px;
-        background-color: white;
-        border:10px solid #d2e8ff;
+        background-color: #d2e8ff;
+        margin:20px;
     }
     .singleRankingTitile{
         margin-top: 5px;
