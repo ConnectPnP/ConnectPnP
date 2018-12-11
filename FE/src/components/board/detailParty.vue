@@ -138,7 +138,7 @@
                 currentUser: {
                     id: '',
                     user_id: '',
-                    name: '',
+                    nickName: '',
                     age: null,
                     gender: '',
                     profile_img: ''
