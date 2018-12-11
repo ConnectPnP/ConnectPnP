@@ -95,28 +95,6 @@ exports.getAllPost = (req, res) => {
     });
 };
 
-exports.getMoreWithoutCategory = (req,res) => {
-    var page = req.params.page;
-    Board.find({$text: {$search: req.body.query}} , (err, result) => {
-        if (err) {
-            return res.status(500).send(err);} // 500 error
-    }).sort({_id: -1}).skip((page) * npage).limit(npage)
-    .exec((err, doc) => {
-        if (err) {
-          return res.json(err);
-        }
-        Board.count({$text: {$search: req.body.query}}).exec((count_error, count) => {
-          if (err) {
-            return res.json(count_error);
-          }
-          return res.json({
-            total: count,
-            board: doc
-          });
-        });
-    });
-}
-
 // 게시글에 딸린 사진 저장하기
 exports.uploadFile = (req, res) => {
     upload(req, res)
@@ -163,27 +141,22 @@ exports.deletePost = (req, res) => {
 
 exports.searchPost = (req, res) => {
   var page = req.params.page
-  Board.find(req.body, (err,result) => {
-    if(err) {
-      return res.json(err);}
-  }).sort({_id: -1}).skip((page) * npage).limit(npage)
+  Board.find(req.body)
+  .sort({_id: -1}).skip((page) * npage).limit(npage)
   .exec((err, doc) => {
     if (err) {
       return res.json(err);
     }
-    Board.count({
-        $or: [
-          { subCategory: req.params.category},
-          { category : req.params.category},
-        ]
-      }).exec((count_error, count) => {
+    Board.count(req.body).exec((count_error, count) => {
       if (err) {
         return res.json(count_error);
       }
+      else {
       return res.json({
-        total: count,
-        board: doc
-      });
+                total: count,
+                board: doc
+            });
+      }
     });
 });
 };
