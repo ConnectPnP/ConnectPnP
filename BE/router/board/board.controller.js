@@ -41,7 +41,6 @@ exports.getPost = (req, res) => {
   })
   .exec(function(error, comments) {
   });
-
 };
 
 // 한 페이지당 5개의 log 정보를 불러와서 return. sort 는 id 순으로.
@@ -52,9 +51,6 @@ exports.getMore = (req, res) => {
           { subCategory: req.params.category},
           { category : req.params.category},
         ]
-      }, function (err, result) {
-        if (err) return res.json({result: "fail"});
-
     }).sort({_id: -1}).skip((page) * npage).limit(npage)
     .exec((err, doc) => {
         if (err) {
@@ -69,10 +65,12 @@ exports.getMore = (req, res) => {
           if (err) {
             return res.json(count_error);
           }
+          else {
           return res.json({
             total: count,
             board: doc
           });
+        }
         });
     });
 };
@@ -92,46 +90,23 @@ exports.create = (req, res) => {
 exports.getAllPost = (req, res) => {
     Board.find({}, (err, board) => {
         if (err) return res.status(500).send(err); // 500 error
-        return res.json(board);
+        else return res.json(board);
     });
 };
-
-exports.getMoreWithoutCategory = (req,res) => {
-    var page = req.params.page;
-    Board.find({$text: {$search: req.body.query}} , (err, result) => {
-        if (err) {
-            return res.status(500).send(err);} // 500 error
-    }).sort({_id: -1}).skip((page) * npage).limit(npage)
-    .exec((err, doc) => {
-        if (err) {
-          return res.json(err);
-        }
-        Board.count({$text: {$search: req.body.query}}).exec((count_error, count) => {
-          if (err) {
-            return res.json(count_error);
-          }
-          return res.json({
-            total: count,
-            board: doc
-          });
-        });
-    });
-}
 
 // 게시글에 딸린 사진 저장하기
 exports.uploadFile = (req, res) => {
     upload(req, res)
         .then((files) => {
-            var final={}
+            var final = {}
             for (var i = 0; i < req.files.postFile.length; i++) {
-                 Board.findOneAndUpdate({_id: req.params.id}, {$push: {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}`}})
+                Board.findOneAndUpdate({_id: req.params.id}, {$push: {images: `${config.serverUrl()}files/${req.files.postFile[i].destination.match(/[^/]+/g).pop()}/${req.files.postFile[i].filename}`}})
                     .catch((err) => {
                         return res.json({result: "db fail"});
                     })
                     .then((result) => {
-                        final =result
+                        final = result
                     })
-
             }
             return res.json(final)
         })
@@ -145,7 +120,7 @@ exports.updatePost = (req, res) => {
     Board.findOneAndUpdate(
         {_id: req.params.id}, {$set: req.body}, (err, result) => {
             if (!err) {
-                return res.json({result: "ok"});
+                return res.json(result);
             } else return res.json({result: "fail"});
         });
 };
@@ -154,39 +129,31 @@ exports.updatePost = (req, res) => {
 exports.deletePost = (req, res) => {
     Board.findOneAndRemove({_id: req.params.id}, (err, result) => {
         if (!err && result) {
-            // for(var i = 0; i < result.images.length ; i++) {
-            // fs.unlink(path.join(__dirname, `../../files/${result.images[i]}`)); // db에 저장된 img_path와 함께 해당 파일 삭제
-            // }
             return res.json(result);
         }
-        else {return res.status(404).send({message: 'No data found to delete'})};
+        else return res.status(404).send({message: 'No data found to delete'});
     });
 };
 
 
 exports.searchPost = (req, res) => {
   var page = req.params.page
-  Board.find(req.body, (err,result) => {
-    if(err) {
-      return res.json(err);}
-  }).sort({_id: -1}).skip((page) * npage).limit(npage)
+  Board.find(req.body)
+  .sort({_id: -1}).skip((page) * npage).limit(npage)
   .exec((err, doc) => {
     if (err) {
       return res.json(err);
     }
-    Board.count({
-        $or: [
-          { subCategory: req.params.category},
-          { category : req.params.category},
-        ]
-      }).exec((count_error, count) => {
+    Board.count(req.body).exec((count_error, count) => {
       if (err) {
         return res.json(count_error);
       }
+      else {
       return res.json({
-        total: count,
-        board: doc
-      });
+                total: count,
+                board: doc
+            });
+      }
     });
 });
 };
@@ -195,7 +162,7 @@ exports.searchUser = (req, res) => {
   User.find(req.body, (err, result) => {
     if(!err) {
       return res.json(result)
-    } else return res.json({result: "fail"});
+    } else return res.json(err);
   })
 
 }
@@ -237,7 +204,7 @@ exports.updateComment = (req, res) => {
     Comment.findOneAndUpdate({_id: req.params.comment},
         {content: req.body.content}, (err, result) => {
             if (!err) {
-                return res.json({result: "ok"});
+                return res.json(result);
             } else return res.json({result: "fail"});
         });
 };
@@ -249,7 +216,7 @@ exports.deleteComment = (req, res) => {
             Comment.findOneAndRemove({_id: req.params.comment}, (err, result) => {
                 if (!err && result) {
                     return res.json(result);
-                }
+                } 
             })
         } else return res.json({result: "fail"});
     });

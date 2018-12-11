@@ -54,7 +54,7 @@ export default {
   },
   data(){
       return {
-          query : '',
+          query : {},
           currentPage: 0,
           currentCategory : '',
           searchQuery : '',
@@ -111,21 +111,25 @@ export default {
                 })
            }
            else {
-                this.$http.post( config.serverUrl() +'board/listAll/' + page, {
-                    query : this.$session.get('mainQuery')
+               this.$http.post( config.serverUrl() +'board/search/' + page, 
+                {
+                    $or :[{title : {"$regex": this.$session.get('mainQuery'), "$options": "i" }},
+                    {detail : {"$regex": this.$session.get('mainQuery'), "$options": "i" }},
+                    {"location.title" : {"$regex": this.$session.get('mainQuery'), "$options": "i" }},
+                    {cost : {"$regex": this.$session.get('mainQuery'), "$options": "i" }}
+                    ]
                 })
                 .then((result) => {
                     vm.groupList = result.data.board
                     vm.totalCount = result.data.total
                 })
            }
-
        },
        getMyGroup(btn) {
         if(btn)
             this.currentPage = 0;
         var vm = this
-           this.$http.post( config.serverUrl()+'board/search/' +this.currentPage,
+           this.$http.post( config.serverUrl()+'board/search/' +this.currentPage, 
            {
                 host : this.$session.get('id')
             })
@@ -150,7 +154,7 @@ export default {
                 })
             }
             else vm.currentCategory = "전체"
-
+                
         },
         searchGroup(btn) {
             var vm = this
@@ -162,6 +166,14 @@ export default {
             else searchParam = this.firstSelect
             if(btn)
                 page = 0;
+            if(vm.$session.get('category') != null) 
+            {
+                vm.query = {}
+                vm.query.$or = [{ subCategory: vm.$session.get('category')},{ category : vm.$session.get('category')}];
+            }
+            else {
+                vm.query = {}
+            }
             switch(searchParam) {
                 case 1*1 : // 주최자 nickName
                     vm.$http.post( config.serverUrl()+'board/searchUser',{name : vm.searchQuery})
@@ -172,13 +184,7 @@ export default {
                                 id.push(newId._id)
                             }
                         )
-                        vm.query = {
-                            $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                            "host" : {$in: id}
-                        }
+                        vm.query.host = {$in: id};
                         vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                             vm.groupList = result.data.board
@@ -187,13 +193,8 @@ export default {
                     })
                     break;
                 case 2 : // 위치
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "location.title" : { "$regex": vm.searchQuery, "$options": "i" }
-                    }
+                    vm.query.$and = [{ "location.title" : {"$regex": vm.searchQuery, "$options": "i" }}]
+                    console.log(vm.query)
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -202,14 +203,8 @@ export default {
                     break;
                 case 3*1 : // 현재 모집중
                     var currentDate = new Date().toISOString().slice(0,10);
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "start_date" : {$lte: currentDate},
-                                "due_date" : {$gte: currentDate},
-                    }
+                    vm.query.start_date = {$lte: currentDate}
+                    vm.query.due_date = {$gte: currentDate}
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -217,13 +212,7 @@ export default {
                     })
                     break;
                 case 3*2 : // 여자
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "conditions.gender" : "female"
-                            }
+                    vm.query.$and = [{"conditions.gender" : "female"}]
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -231,13 +220,7 @@ export default {
                     })
                     break;
                 case 3*3 : // 남자
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "conditions.gender" : "male"
-                            }
+                    vm.query.$and = [{"conditions.gender" : "male"}]
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -245,13 +228,7 @@ export default {
                     })
                     break;
                  case 3*4 : // 혼성
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "conditions.gender" : "none"
-                            }
+                    vm.query.$and = [{"conditions.gender" : "none"}]
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -259,13 +236,7 @@ export default {
                     })
                     break;
                 case 3*8 : // 10명 이하
-                    vm.query = {
-                            $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                            "max_num" : { $lte: 10 }
-                        }
+                    vm.query.max_num = { $lte: 10 }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
@@ -273,19 +244,13 @@ export default {
                     })
                     break;
                 case 3*9 : // 20명 이하
-                    vm.query = {
-                                $or: [
-                                { subCategory: vm.$session.get('category')},
-                                { category : vm.$session.get('category')},
-                                ],
-                                "max_num" : { $lte: 20 }
-                            }
+                    vm.query.max_num = { $lte: 20 }
                     vm.$http.post( config.serverUrl()+'board/search/' + page, vm.query)
                         .then((result) => {
                         vm.groupList = result.data.board
                         vm.totalCount = result.data.total
                     })
-                    break;
+                    break;  
             }
         },
 
@@ -320,4 +285,5 @@ export default {
     margin-left: 18%;
     margin-right: 12%;
 }
+
 </style>

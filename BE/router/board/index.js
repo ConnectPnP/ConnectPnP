@@ -8,7 +8,6 @@ router.get('/details/:id',boardCtrl.getPost);
 
 // 게시판 보기
 router.get('/list/:page/:category',boardCtrl.getMore);
-router.post('/listAll/:page',boardCtrl.getMoreWithoutCategory);
 
 // 게시판 검색
 router.post('/search/:page',boardCtrl.searchPost);
